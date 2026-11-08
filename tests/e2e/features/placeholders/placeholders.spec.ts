@@ -30,14 +30,4 @@ test.describe('Placeholder and Enterprise Pages', () => {
     await expect(page).toHaveURL(/\/workspace\/scim(?:\?.*)?$/)
   })
 
-  test('should load adaptive-routing page', async ({ page }) => {
-    await page.goto('/workspace/adaptive-routing')
-    await page.waitForLoadState('networkidle')
-    await expect(page.getByText('Unlock adaptive routing for better performance')).toBeVisible()
-    const readMore = page.getByRole('button', { name: /Read more/i })
-    await expect(readMore).toBeVisible()
-    const [popup] = await Promise.all([page.waitForEvent('popup'), readMore.click()])
-    await expect(popup).toHaveURL(/^https:\/\/docs\.getbifrost\.ai\/enterprise\/adaptive-load-balancing(\?|$)/)
-    await popup.close()
-  })
 })

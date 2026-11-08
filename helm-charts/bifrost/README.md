@@ -75,6 +75,7 @@ Official Helm charts for deploying [Bifrost](https://github.com/maximhq/bifrost)
 - Documented `calendar_aligned` in the `bifrost.governance.budgets[*]` example. Was already schema-supported; now shown in the `values.yaml` commented example.
 - Added `bifrost.alerting` for declarative alert channels and rules. Supports `history_retention_days`, `webhook_network` (`allow_http`, `allow_private_network`), `channels[]` (slack, microsoft_teams, pagerduty, webhook), and `rules[]` (CEL-expression-based, governance-scope-aware). Renders into `alerting`.
 - Removed: guardrails are not part of this fork, so `bifrost.guardrails` and the top-level `guardrails_config` config key were dropped.
+- Removed: adaptive routing (enterprise load balancing) is not part of this fork, so `bifrost.loadBalancer` and the top-level `load_balancer_config` config key were dropped.
 - Removed: alerting is not part of this fork, so `bifrost.alerting` and the top-level `alerting` config key were dropped.
 - `postgresql.external.port` now accepts a string in addition to an integer, enabling env-variable substitution via `env.VAR_NAME` references when mounting port from a Kubernetes secret. Renders into `postgres_config.port`.
 - `bifrost.mcp.toolGroups[*].id` — optional integer DB ID for an existing MCP tool group. When set, the reconciler updates the group by ID instead of matching by name. Renders into `mcp.tool_groups[*].id`.

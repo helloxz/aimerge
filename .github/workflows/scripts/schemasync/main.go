@@ -70,7 +70,6 @@ var ignoreSchemaProps = map[string]string{
 	"/properties/access_profiles":            "enterprise-only; defined in bifrost-enterprise/lib/config.go",
 	"/properties/audit_logs":                 "enterprise-only; defined in bifrost-enterprise/lib/config.go",
 	"/properties/large_payload_optimization": "enterprise-only; defined in bifrost-enterprise/lib/config.go",
-	"/properties/load_balancer_config":       "enterprise-only; defined in bifrost-enterprise/lib/config.go",
 	"/properties/scim_config":                "enterprise-only; defined in bifrost-enterprise/lib/config.go",
 	"/properties/circuit_breaker_config":     "enterprise-only; defined in bifrost-enterprise/lib/config.go",
 	// Enterprise governance extensions not yet in OSS structs.

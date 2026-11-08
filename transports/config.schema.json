@@ -2802,9 +2802,6 @@
     "audit_logs": {
       "$ref": "#/$defs/audit_logs_config"
     },
-    "load_balancer_config": {
-      "$ref": "#/$defs/load_balancer_config"
-    },
     "large_payload_optimization": {
       "$ref": "#/$defs/large_payload_optimization"
     },
@@ -5801,60 +5798,6 @@
           }
         }
       ]
-    },
-    "load_balancer_config": {
-      "type": "object",
-      "description": "Load balancer configuration for intelligent request routing",
-      "properties": {
-        "enabled": {
-          "type": "boolean",
-          "description": "Whether load balancing is enabled"
-        },
-        "direction_selection_enabled": {
-          "type": "boolean",
-          "description": "Enable adaptive provider (direction) selection. Defaults to true; omit to leave on."
-        },
-        "route_selection_enabled": {
-          "type": "boolean",
-          "description": "Enable adaptive per-key (route) selection. Defaults to true; omit to leave on."
-        },
-        "append_fallbacks_to_pinned": {
-          "type": "boolean",
-          "description": "When a request already carries a provider, append the healthy providers eligible for its model as fallbacks behind any it configured. Defaults to false."
-        },
-        "reroute_failed_directions": {
-          "type": "boolean",
-          "description": "When a pinned provider's direction is unhealthy, re-route the request to a healthy provider. Defaults to false."
-        },
-        "prune_failed_fallbacks": {
-          "type": "boolean",
-          "description": "Drop unhealthy directions from a request's configured fallbacks. Defaults to false."
-        },
-        "tracker_config": {
-          "type": "object",
-          "description": "Configuration for tracking route metrics and performance"
-        },
-        "bootstrap": {
-          "type": "object",
-          "description": "Bootstrap data for initializing load balancer with historical metrics",
-          "properties": {
-            "route_metrics": {
-              "type": "object",
-              "description": "Historical metrics per route"
-            },
-            "direction_metrics": {
-              "type": "object",
-              "description": "Historical metrics per direction"
-            },
-            "routes": {
-              "type": "object",
-              "description": "Known routes"
-            }
-          }
-        }
-      },
-      "required": ["enabled"],
-      "additionalProperties": false
     },
     "access_profiles": {
       "type": "array",

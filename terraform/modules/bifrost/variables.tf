@@ -108,12 +108,6 @@ variable "scim_config" {
   sensitive   = true
 }
 
-variable "load_balancer_config" {
-  description = "Intelligent load balancer configuration (enabled, tracker_config, bootstrap)."
-  type        = any
-  default     = null
-}
-
 variable "plugins" {
   description = "Plugins configuration. Array of plugin objects (telemetry, logging, governance, maxim, semantic_cache, otel, datadog)."
   type        = any

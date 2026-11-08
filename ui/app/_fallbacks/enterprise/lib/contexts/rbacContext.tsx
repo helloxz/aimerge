@@ -14,7 +14,6 @@ export enum RbacResource {
 	MCPGateway = "MCPGateway",
 	MCPToolGroups = "MCPToolGroups",
 	MCPLogs = "MCPLogs",
-	AdaptiveRouter = "AdaptiveRouter",
 	AuditLogs = "AuditLogs",
 	Customers = "Customers",
 	Teams = "Teams",

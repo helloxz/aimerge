@@ -40,7 +40,6 @@ locals {
       config_store         = var.config_store
       logs_store           = var.logs_store
       scim_config          = var.scim_config
-      load_balancer_config = var.load_balancer_config
       plugins              = var.plugins
       audit_logs           = var.audit_logs
       websocket            = var.websocket

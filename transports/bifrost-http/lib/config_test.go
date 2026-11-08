@@ -17335,7 +17335,6 @@ var enterpriseSchemaPaths = map[string]bool{
 	"audit_logs":                 true,
 	"circuit_breaker_config":     true,
 	"scim_config":                true,
-	"load_balancer_config":       true,
 	"large_payload_optimization": true,
 }
 
@@ -17735,8 +17734,7 @@ func TestConfigSchemaSyncTopLevel(t *testing.T) {
 			"audit_logs":                 true,
 		"circuit_breaker_config":     true,
 			"scim_config":                true,
-		"load_balancer_config":       true,
-			"large_payload_optimization": true,
+				"large_payload_optimization": true,
 	}
 
 	schema := loadJSONSchema(t)

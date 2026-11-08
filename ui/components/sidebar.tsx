@@ -4,7 +4,6 @@ import {
 	BookUser,
 	Boxes,
 	BoxIcon,
-	BugIcon,
 	Building,
 	Building2,
 	ChartColumnBig,
@@ -28,7 +27,6 @@ import {
 	Settings,
 	Settings2Icon,
 	ShieldCheck,
-	Shuffle,
 	SlidersHorizontal,
 	Telescope,
 	ToolCase,
@@ -68,7 +66,7 @@ import { useGetCoreConfigQuery, useGetVersionQuery, useLogoutMutation } from "@/
 import { RbacOperation, RbacResource, useRbac } from "@enterprise/lib";
 import type { UserInfo } from "@enterprise/lib/store/utils/tokenManager";
 import { getUserInfo } from "@enterprise/lib/store/utils/tokenManager";
-import { BooksIcon, DiscordLogoIcon, GithubLogoIcon } from "@phosphor-icons/react";
+import { BooksIcon, GithubLogoIcon } from "@phosphor-icons/react";
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { ChevronRight } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -109,20 +107,9 @@ const MCPIcon = ({ className }: { className?: string }) => (
 // External links
 const externalLinks = [
 	{
-		title: "Discord Server",
-		url: "https://discord.gg/exN5KAydbU",
-		icon: DiscordLogoIcon,
-	},
-	{
 		title: "GitHub Repository",
-		url: "https://github.com/maximhq/bifrost",
+		url: "https://github.com/helloxz/aimerge",
 		icon: GithubLogoIcon,
-	},
-	{
-		title: "Report a bug",
-		url: "https://github.com/maximhq/bifrost/issues/new?title=[Bug Report]&labels=bug&type=bug&projects=maximhq/1",
-		icon: BugIcon,
-		strokeWidth: 1.5,
 	},
 	{
 		title: "Full Documentation",
@@ -249,7 +236,7 @@ const SidebarItemView = ({
 	const isRouteMatch = (url: string) => {
 		// Exact-match base paths that have sibling tab routes nested under them, so the base
 		// tab isn't also highlighted when a child tab (e.g. /settings) is active.
-		if (url === "/workspace/custom-pricing" || url === "/workspace/adaptive-routing") return pathname === url;
+		if (url === "/workspace/custom-pricing") return pathname === url;
 		// Avoid double-highlighting with "/workspace/mcp-registry/library"
 		if (url === "/workspace/mcp-registry") return !pathname.startsWith("/workspace/mcp-registry/library") && pathname.startsWith(url);
 		return pathname.startsWith(url);
@@ -530,7 +517,6 @@ export default function AppSidebar() {
 	const hasGovernanceLegacyAccess = useRbac(RbacResource.Governance, RbacOperation.View);
 	const hasRoutingRulesAccess = useRbac(RbacResource.RoutingRules, RbacOperation.View);
 	const hasCircuitBreakerAccess = useRbac(RbacResource.CircuitBreaker, RbacOperation.View);
-	const isAdaptiveRoutingAllowed = useRbac(RbacResource.AdaptiveRouter, RbacOperation.View);
 	const hasSettingsAccess = useRbac(RbacResource.Settings, RbacOperation.View);
 	const hasFeatureFlagsAccess = useRbac(RbacResource.FeatureFlags, RbacOperation.View);
 	const hasAPIKeyAccess = useRbac(RbacResource.APIKeys, RbacOperation.View);
@@ -822,29 +808,6 @@ export default function AppSidebar() {
 				description: "Async job webhook endpoints",
 				hasAccess: hasGovernanceLegacyAccess,
 			},
-			{
-				title: "Adaptive Routing",
-				url: "/workspace/adaptive-routing",
-				icon: Shuffle,
-				description: "Manage adaptive routing",
-				hasAccess: isAdaptiveRoutingAllowed,
-				subItems: [
-					{
-						title: "Dashboard",
-						url: "/workspace/adaptive-routing",
-						icon: ChartColumnBig,
-						description: "Adaptive routing metrics",
-						hasAccess: isAdaptiveRoutingAllowed,
-					},
-					{
-						title: "Settings",
-						url: "/workspace/adaptive-routing/settings",
-						icon: Settings,
-						description: "Adaptive routing settings",
-						hasAccess: isAdaptiveRoutingAllowed,
-					},
-				],
-			},
 			...(isDbConnected
 				? [
 						{
@@ -955,7 +918,6 @@ export default function AppSidebar() {
 			hasAnyGovernanceAccess,
 			hasRoutingRulesAccess,
 			hasCircuitBreakerAccess,
-			isAdaptiveRoutingAllowed,
 			hasSettingsAccess,
 			hasPromptRepositoryAccess,
 			hasSkillsRepositoryAccess,
@@ -1023,7 +985,7 @@ export default function AppSidebar() {
 	useEffect(() => {
 		const newExpandedItems = new Set<string>();
 		const isRouteMatch = (url: string) => {
-			if (url === "/workspace/custom-pricing" || url === "/workspace/adaptive-routing") return pathname === url;
+			if (url === "/workspace/custom-pricing") return pathname === url;
 			return pathname.startsWith(url);
 		};
 		items.forEach((item) => {
