@@ -11,7 +11,6 @@ import KafkaView from "./plugins/kafkaView";
 import MaximView from "./plugins/maximView";
 import NewrelicView from "./plugins/newRelicView";
 import OtelView from "./plugins/otelView";
-import PrometheusView from "./plugins/prometheusView";
 import PubSubView from "./plugins/pubsubView";
 
 type SupportedPlatform = {
@@ -38,11 +37,6 @@ const supportedPlatformsList = (resolvedTheme: string): SupportedPlatform[] => [
 				/>
 			</svg>
 		),
-	},
-	{
-		id: "prometheus",
-		name: "Prometheus",
-		icon: <img alt="Prometheus" src="/images/prometheus-logo.svg" width={21} height={21} className="-ml-0.5" />,
 	},
 	{
 		id: "maxim",
@@ -91,15 +85,13 @@ export default function ObservabilityView() {
 
 	const supportedPlatforms = useMemo(() => supportedPlatformsList(resolvedTheme || "light"), [resolvedTheme]);
 
-	// Map UI tab IDs to actual plugin names (prometheus tab uses telemetry plugin)
-	const getPluginNameForTab = (tabId: string) => (tabId === "prometheus" ? "telemetry" : tabId);
 
 	useEffect(() => {
 		if (!plugins || plugins.length === 0) return;
 		if (!selectedPluginId) {
 			setSelectedPluginId(supportedPlatforms[0].id);
 		} else {
-			const pluginName = getPluginNameForTab(selectedPluginId);
+			const pluginName = selectedPluginId;
 			const plugin = plugins.find((plugin) => plugin.name === pluginName) ?? {
 				name: selectedPluginId,
 				enabled: false,
@@ -114,7 +106,7 @@ export default function ObservabilityView() {
 
 	useEffect(() => {
 		if (selectedPluginId) {
-			const pluginName = getPluginNameForTab(selectedPluginId);
+			const pluginName = selectedPluginId;
 			const plugin = plugins?.find((plugin) => plugin.name === pluginName) ?? {
 				name: selectedPluginId,
 				enabled: false,
@@ -181,7 +173,6 @@ export default function ObservabilityView() {
 				</div>
 			</div>
 			<div className="w-full pt-4">
-				{selectedPluginId === "prometheus" && <PrometheusView />}
 				{selectedPluginId === "otel" && <OtelView />}
 				{selectedPluginId === "maxim" && <MaximView />}
 				{selectedPluginId === "kafka" && <KafkaView />}

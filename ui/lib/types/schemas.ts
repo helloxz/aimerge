@@ -1025,77 +1025,6 @@ export const maximFormSchema = z
 		}
 	});
 
-// Prometheus Push Gateway Configuration Schema
-export const prometheusConfigSchema = z
-	.object({
-		push_gateway_url: secretVarSchema.optional(),
-		job_name: z.string().default("bifrost"),
-		instance_id: z.string().optional(),
-		push_interval: z.number().min(1).max(300).default(15),
-		basic_auth_username: secretVarSchema.optional(),
-		basic_auth_password: secretVarSchema.optional(),
-	})
-	.superRefine((data, ctx) => {
-		// Validate push_gateway_url format — skip for env var references
-		const url = (data.push_gateway_url?.value || "").trim();
-		if (url && (data.push_gateway_url?.type === "plain_text" || !data.push_gateway_url?.type)) {
-			try {
-				const u = new URL(url);
-				if (!(u.protocol === "http:" || u.protocol === "https:")) {
-					ctx.addIssue({
-						code: "custom",
-						path: ["push_gateway_url"],
-						message: "请输入有效的 HTTP 或 HTTPS URL",
-					});
-				}
-			} catch {
-				ctx.addIssue({
-					code: "custom",
-					path: ["push_gateway_url"],
-					message: "请输入有效的 URL（例如 http://pushgateway:9091）",
-				});
-			}
-		}
-
-		// Validate basic auth: if one credential is provided, both must be provided
-		const hasUsername = isSecretVarSet(data.basic_auth_username);
-		const hasPassword = isSecretVarSet(data.basic_auth_password);
-		if (hasUsername && !hasPassword) {
-			ctx.addIssue({
-				code: "custom",
-				path: ["basic_auth_password"],
-				message: "填写用户名时必须填写密码",
-			});
-		}
-		if (hasPassword && !hasUsername) {
-			ctx.addIssue({
-				code: "custom",
-				path: ["basic_auth_username"],
-				message: "填写密码时必须填写用户名",
-			});
-		}
-	});
-
-// Prometheus form schema for the PrometheusFormFragment.
-export const prometheusFormSchema = z
-	.object({
-		metrics_enabled: z.boolean().default(true),
-		push_gateway_enabled: z.boolean().default(false),
-		prometheus_config: prometheusConfigSchema,
-	})
-	.superRefine((data, ctx) => {
-		if (data.push_gateway_enabled) {
-			const urlIsSet = isSecretVarSet(data.prometheus_config.push_gateway_url);
-			if (!urlIsSet) {
-				ctx.addIssue({
-					code: "custom",
-					path: ["prometheus_config", "push_gateway_url"],
-					message: "启用推送网关时必须填写 Push Gateway 地址",
-				});
-			}
-		}
-	});
-
 // MCP Client update schema
 export const mcpClientUpdateSchema = z.object({
 	is_code_mode_client: z.boolean().optional(),
@@ -1303,8 +1232,6 @@ export type OtelConfigSchema = z.infer<typeof otelConfigSchema>;
 export type OtelFormSchema = z.infer<typeof otelFormSchema>;
 export type MaximConfigSchema = z.infer<typeof maximConfigSchema>;
 export type MaximFormSchema = z.infer<typeof maximFormSchema>;
-export type PrometheusConfigSchema = z.infer<typeof prometheusConfigSchema>;
-export type PrometheusFormSchema = z.infer<typeof prometheusFormSchema>;
 export type NetworkOnlyFormSchema = z.infer<typeof networkOnlyFormSchema>;
 export type PerformanceFormSchema = z.infer<typeof performanceFormSchema>;
 export type CustomProviderConfigSchema = z.infer<typeof customProviderConfigSchema>;

@@ -15,7 +15,6 @@ import (
 	"github.com/maximhq/bifrost/plugins/otel"
 	"github.com/maximhq/bifrost/plugins/prompts"
 	"github.com/maximhq/bifrost/plugins/semanticcache"
-	"github.com/maximhq/bifrost/plugins/telemetry"
 	"github.com/maximhq/bifrost/transports/bifrost-http/handlers"
 	"github.com/maximhq/bifrost/transports/bifrost-http/lib"
 )
@@ -52,27 +51,6 @@ func InstantiatePlugin(ctx context.Context, name string, path *string, pluginCon
 // loadBuiltinPlugin instantiates a built-in plugin by name
 func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifrostConfig *lib.Config) (schemas.BasePlugin, error) {
 	switch name {
-	case telemetry.PluginName:
-		telConfig := &telemetry.Config{
-			CustomLabels: bifrostConfig.ClientConfig.PrometheusLabels,
-		}
-		// Merge persisted config if provided.
-		if pluginConfig != nil {
-			extraConfig, err := MarshalPluginConfig[telemetry.Config](pluginConfig)
-			if err != nil {
-				return nil, fmt.Errorf("failed to marshal telemetry plugin config: %w", err)
-			}
-			if extraConfig != nil {
-				if extraConfig.PushGateway != nil {
-					telConfig.PushGateway = extraConfig.PushGateway
-				}
-				if extraConfig.MetricsEnabled != nil {
-					telConfig.MetricsEnabled = extraConfig.MetricsEnabled
-				}
-			}
-		}
-		return telemetry.Init(telConfig, bifrostConfig.ModelCatalog, logger)
-
 	case prompts.PluginName:
 		return prompts.Init(ctx, bifrostConfig.ConfigStore, logger)
 
@@ -173,21 +151,6 @@ func (s *BifrostHTTPServer) getPluginConfig(name string) *schemas.PluginConfig {
 // loadBuiltinPlugins loads required built-in plugins in specific order
 func (s *BifrostHTTPServer) loadBuiltinPlugins(ctx context.Context) error {
 	builtinPlacement := schemas.Ptr(schemas.PluginPlacementBuiltin)
-
-	// 1. Telemetry (always first - tracks everything).
-	// Default-on: absent PluginConfig entry is treated as enabled, matching pre-#3269 behavior
-	// so upgraders don't silently lose /metrics. Only an explicit Enabled=false disables it.
-	telemetryPluginConfig := s.getPluginConfig(telemetry.PluginName)
-	var pluginConfig any
-	if telemetryPluginConfig != nil {
-		pluginConfig = telemetryPluginConfig.Config
-	}
-	if telemetryPluginConfig == nil || telemetryPluginConfig.Enabled {
-		s.registerPluginWithStatus(ctx, telemetry.PluginName, nil, pluginConfig, false)
-	} else {
-		s.markPluginDisabled(telemetry.PluginName)
-	}
-	s.Config.SetPluginOrderInfo(telemetry.PluginName, builtinPlacement, schemas.Ptr(1))
 
 	// 2. Prompts (requires config store for prompt repository; disabled in enterprise)
 	if s.Config.ConfigStore != nil && ctx.Value(schemas.BifrostContextKeyIsEnterprise) == nil {
