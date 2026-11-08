@@ -7,13 +7,11 @@ function RouteComponent() {
 	const hasVirtualKeysAccess = useRbac(RbacResource.VirtualKeys, RbacOperation.View);
 	const hasTeamsAccess = useRbac(RbacResource.Teams, RbacOperation.View);
 	const hasCustomersAccess = useRbac(RbacResource.Customers, RbacOperation.View);
-	const hasAccessProfilesAccess = useRbac(RbacResource.AccessProfiles, RbacOperation.View);
 
 	const hasAnyGovernanceAccess =
 		hasVirtualKeysAccess ||
 		hasTeamsAccess ||
-		hasCustomersAccess ||
-		hasAccessProfilesAccess;
+		hasCustomersAccess;
 
 	const childMatches = useChildMatches();
 	if (!hasAnyGovernanceAccess) {

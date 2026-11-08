@@ -505,12 +505,10 @@ export default function AppSidebar() {
 	const hasFeatureFlagsAccess = useRbac(RbacResource.FeatureFlags, RbacOperation.View);
 	const hasPromptRepositoryAccess = useRbac(RbacResource.PromptRepository, RbacOperation.View);
 	const hasSkillsRepositoryAccess = useRbac(RbacResource.SkillsRepository, RbacOperation.View);
-	const hasAccessProfilesAccess = useRbac(RbacResource.AccessProfiles, RbacOperation.View);
 	const hasAnyGovernanceAccess =
 		hasVirtualKeysAccess ||
 		hasTeamsAccess ||
 		hasCustomersAccess ||
-		hasAccessProfilesAccess ||
 		hasGovernanceLegacyAccess;
 	const { data: coreConfig } = useGetCoreConfigQuery({});
 	const isDbConnected = coreConfig?.is_db_connected ?? false;
@@ -716,13 +714,6 @@ export default function AppSidebar() {
 						description: "Manage customers",
 						hasAccess: hasCustomersAccess,
 					},
-					{
-						title: "Access Profiles",
-						url: "/workspace/governance/access-profiles",
-						icon: ShieldCheck,
-						description: "Manage access profiles for roles",
-						hasAccess: hasAccessProfilesAccess,
-					},
 				],
 			},
 			{
@@ -829,7 +820,6 @@ export default function AppSidebar() {
 			hasSettingsAccess,
 			hasPromptRepositoryAccess,
 			hasSkillsRepositoryAccess,
-			hasAccessProfilesAccess,
 			isDbConnected,
 		],
 	);

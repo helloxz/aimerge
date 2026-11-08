@@ -7,7 +7,6 @@
  * so translating the UI never moves a test id or a piece of state.
  */
 const NAV_LABELS: Record<string, string> = {
-	"Access Profiles": "访问配置",
 	"Auth Sessions": "登录会话",
 	"Budgets & Limits": "预算与限额",
 	Caching: "缓存",
