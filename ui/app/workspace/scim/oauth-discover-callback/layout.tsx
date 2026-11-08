@@ -6,7 +6,7 @@ import OAuthDiscoverCallbackPage from "./page";
 function RouteComponent() {
 	const hasUserProvisioningAccess = useRbac(RbacResource.UserProvisioning, RbacOperation.View);
 	if (!hasUserProvisioningAccess) {
-		return <NoPermissionView entity="user provisioning" />;
+		return <NoPermissionView entity="用户预配" />;
 	}
 	return <OAuthDiscoverCallbackPage />;
 }

@@ -18,10 +18,9 @@ export function WebhooksEmptyState({ onAddClick, canCreate }: WebhooksEmptyState
 				<Webhook className="h-[5.5rem] w-[5.5rem]" strokeWidth={1} />
 			</div>
 			<div className="flex flex-col gap-1">
-				<h1 className="text-muted-foreground text-xl font-medium">Get notified when async jobs finish</h1>
+				<h1 className="text-muted-foreground text-xl font-medium">异步任务完成后即可收到通知</h1>
 				<div className="text-muted-foreground mx-auto mt-2 max-w-[600px] text-sm font-normal">
-					Register webhook endpoints and Bifrost will send a signed notification whenever an async inference job completes or fails, so you
-					don't have to poll for results.
+					注册 Webhook 端点后，每当异步推理任务完成或失败，Bifrost 都会发送带签名的通知，无需轮询结果。
 				</div>
 				<div className="mx-auto mt-6 flex flex-row flex-wrap items-center justify-center gap-2">
 					<Button
@@ -30,10 +29,10 @@ export function WebhooksEmptyState({ onAddClick, canCreate }: WebhooksEmptyState
 							window.open(`${WEBHOOKS_DOCS_URL}?utm_source=bfd`, "_blank", "noopener,noreferrer");
 						}}
 					>
-						Read more <ArrowUpRight className="text-muted-foreground h-3 w-3" />
+						了解更多 <ArrowUpRight className="text-muted-foreground h-3 w-3" />
 					</Button>
 					<Button onClick={onAddClick} disabled={!canCreate} data-testid="create-webhook-btn">
-						Add Webhook Endpoint
+						添加 Webhook 端点
 					</Button>
 				</div>
 			</div>

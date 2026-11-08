@@ -67,10 +67,10 @@ export default function GovernanceCustomersPage() {
 		if (shownErrorsRef.current.has(errorKey)) return;
 		shownErrorsRef.current.add(errorKey);
 		if (teamsError && customersError) {
-			toast.error("Failed to load governance data.");
+			toast.error("加载治理数据失败。");
 		} else {
-			if (teamsError) toast.error(`Failed to load teams: ${getErrorMessage(teamsError)}`);
-			if (customersError) toast.error(`Failed to load customers: ${getErrorMessage(customersError)}`);
+			if (teamsError) toast.error(`加载团队失败：${getErrorMessage(teamsError)}`);
+			if (customersError) toast.error(`加载客户失败：${getErrorMessage(customersError)}`);
 		}
 	}, [teamsError, customersError]);
 

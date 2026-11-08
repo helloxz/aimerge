@@ -8,7 +8,7 @@ export default function ModelCatalogView() {
 	const hasAccess = useRbac(RbacResource.ModelProvider, RbacOperation.View);
 
 	if (!hasAccess) {
-		return <NoPermissionView entity="model catalog" />;
+		return <NoPermissionView entity="模型目录" />;
 	}
 
 	return (
@@ -16,10 +16,10 @@ export default function ModelCatalogView() {
 			<Tabs defaultValue="overview" className="flex min-h-0 grow flex-col gap-4">
 				<TabsList className="shrink-0">
 					<TabsTrigger value="overview" data-testid="model-catalog-tab-overview">
-						Overview
+						总览
 					</TabsTrigger>
 					<TabsTrigger value="attributes" data-testid="model-catalog-tab-attributes">
-						Models
+						模型
 					</TabsTrigger>
 				</TabsList>
 				<TabsContent value="overview" className="min-h-0 overflow-auto">

@@ -6,7 +6,7 @@ import DashboardPage from "./page";
 function RouteComponent() {
 	const hasDashboardAccess = useRbac(RbacResource.Dashboard, RbacOperation.View);
 	if (!hasDashboardAccess) {
-		return <NoPermissionView entity="dashboard" />;
+		return <NoPermissionView entity="仪表盘" />;
 	}
 	return <DashboardPage />;
 }

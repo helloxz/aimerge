@@ -93,7 +93,7 @@ export default function SessionsTable({
 			window.location.href = res.authorize_url;
 		} catch (err) {
 			setPendingActionRowId(null);
-			toast({ title: "Re-authentication failed", description: getErrorMessage(err), variant: "destructive" });
+			toast({ title: "重新认证失败", description: getErrorMessage(err), variant: "destructive" });
 		}
 	};
 
@@ -104,10 +104,10 @@ export default function SessionsTable({
 		setPendingActionRowId(row.id);
 		try {
 			await revoke(row.id).unwrap();
-			toast({ title: row.kind === "header" ? "Header values revoked" : "Session revoked" });
+			toast({ title: row.kind === "header" ? "请求头值已撤销" : "会话已撤销" });
 		} catch (err) {
 			toast({
-				title: row.kind === "header" ? "Failed to revoke header values" : "Failed to revoke session",
+				title: row.kind === "header" ? "撤销请求头值失败" : "撤销会话失败",
 				description: getErrorMessage(err),
 				variant: "destructive",
 			});
@@ -123,26 +123,24 @@ export default function SessionsTable({
 					<AlertDialogHeader>
 						{pendingDelete?.kind === "header" ? (
 							<>
-								<AlertDialogTitle>Revoke these stored header values?</AlertDialogTitle>
+								<AlertDialogTitle>撤销已存储的请求头值？</AlertDialogTitle>
 								<AlertDialogDescription>
-									Bifrost will remove the stored credential values for this binding. There is no upstream token to revoke; the user will
-									need to resubmit their header values to use this MCP again.
+									Bifrost 将删除此绑定已存储的凭据值。此处没有可撤销的上游令牌；用户需要重新提交请求头值才能再次使用此 MCP。
 								</AlertDialogDescription>
 							</>
 						) : (
 							<>
-								<AlertDialogTitle>Revoke this MCP session?</AlertDialogTitle>
+								<AlertDialogTitle>撤销此 MCP 会话？</AlertDialogTitle>
 								<AlertDialogDescription>
-									Bifrost will remove the stored credential for this binding. The upstream OAuth token is not revoked at the provider; it
-									stays detached and expires naturally. Anyone using this binding will need to re-authenticate to obtain a fresh token.
+									Bifrost 将删除此绑定已存储的凭据。上游 OAuth 令牌不会在提供商处撤销；它会保持脱离状态并自然过期。使用此绑定的任何人需要重新认证以获取新令牌。
 								</AlertDialogDescription>
 							</>
 						)}
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel data-testid="mcp-session-revoke-cancel">Cancel</AlertDialogCancel>
+						<AlertDialogCancel data-testid="mcp-session-revoke-cancel">取消</AlertDialogCancel>
 						<AlertDialogAction onClick={confirmRevoke} data-testid="mcp-session-revoke-confirm">
-							Revoke
+							撤销
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
@@ -150,9 +148,9 @@ export default function SessionsTable({
 
 			<div className="mb-4 flex items-center justify-between gap-4">
 				<div>
-					<h2 className="text-lg font-semibold tracking-tight">MCP Auth Sessions</h2>
+					<h2 className="text-lg font-semibold tracking-tight">MCP 认证会话</h2>
 					<p className="text-muted-foreground text-sm">
-						Per-user credentials stored for MCP servers (OAuth tokens and submitted headers), plus any pending authentication flows.
+						为 MCP 服务器存储的按用户凭据（OAuth 令牌与已提交的请求头），以及所有待处理的认证流程。
 					</p>
 				</div>
 			</div>
@@ -177,32 +175,32 @@ export default function SessionsTable({
 					<Table>
 						<TableHeader className="bg-muted sticky top-0 z-20">
 							<TableRow>
-								<TableHead>MCP server</TableHead>
+								<TableHead>MCP 服务器</TableHead>
 								<TableHead>
 									<HeaderWithTooltip
-										label="Type"
-										tooltip="OAuth: per-user OAuth credential, either a stored token from a completed sign-in, or a pending sign-in flow. Headers: per-user header values (API keys / signed tokens), either stored or pending submission."
+										label="类型"
+										tooltip="OAuth：按用户 OAuth 凭据，可以是已完成登录后存储的令牌，也可以是待处理的登录流程。请求头：按用户请求头值（API 密钥/签名令牌），可以是已存储的或待提交的。"
 									/>
 								</TableHead>
 								<TableHead>
 									<HeaderWithTooltip
-										label="Bound to"
-										tooltip="The identity this credential is keyed to: an end user (via SSO), a virtual key (shared by anyone using that VK), or a client-issued session ID (asserted via the x-bf-mcp-session-id header)."
+										label="绑定至"
+										tooltip="此凭据所绑定的身份：最终用户（通过 SSO）、虚拟密钥（使用该 VK 的任何人共享），或由客户端签发的会话 ID（通过 x-bf-mcp-session-id 请求头声明）。"
 									/>
 								</TableHead>
 								<TableHead>
 									<HeaderWithTooltip
-										label="Status"
-										tooltip="Active: credential valid and usable. Pending: OAuth flow in progress, user must complete sign-in. Needs re-auth: upstream credential expired or revoked at the provider; user must reconnect. Needs update: the admin changed the required header keys; user must resubmit. Orphaned: the user lost access to this MCP (e.g. an access profile change); credential is preserved and will become Active automatically if access is restored."
+										label="状态"
+										tooltip="活跃：凭据有效且可用。待处理：OAuth 流程进行中，用户需完成登录。需重新认证：上游凭据已过期或在提供商处被撤销，用户需重新连接。需更新：管理员更改了必需的请求头键，用户需重新提交。已孤立：用户已失去对此 MCP 的访问权限（例如访问配置变更）；凭据会被保留，访问恢复后将自动变为活跃。"
 									/>
 								</TableHead>
 								<TableHead>
 									<HeaderWithTooltip
-										label="Access token expiry"
-										tooltip="When the current access token expires. Bifrost auto-refreshes using the refresh token on the next request, so an active row past its expiry will silently mint a new token at use time. Header rows do not have an upstream expiry; their values stay valid until revoked or the schema changes."
+										label="访问令牌过期时间"
+										tooltip="当前访问令牌的过期时间。Bifrost 会在下次请求时使用刷新令牌自动刷新，因此已过期但仍活跃的行会在使用时静默签发新令牌。请求头行没有上游过期时间；其值在撤销或架构变更前一直有效。"
 									/>
 								</TableHead>
-								<TableHead>Created</TableHead>
+								<TableHead>创建时间</TableHead>
 								<TableHead className={`bg-muted sticky right-0 z-10 w-[56px] text-right ${PIN_SHADOW_RIGHT}`}></TableHead>
 							</TableRow>
 						</TableHeader>
@@ -211,11 +209,10 @@ export default function SessionsTable({
 								<TableRow>
 									<TableCell colSpan={7} className="h-24 text-center">
 										{hasActiveFilters ? (
-											<div className="text-muted-foreground text-sm">No sessions match these filters.</div>
+											<div className="text-muted-foreground text-sm">没有符合这些筛选条件的会话。</div>
 										) : (
 											<span className="text-muted-foreground text-sm">
-												No sessions yet. Sessions appear here when an inference request or MCP gateway call triggers per-user authentication
-												(OAuth or header submission).
+												暂无会话。当推理请求或 MCP 网关调用触发按用户认证（OAuth 或提交请求头）时，会话会显示在此处。
 											</span>
 										)}
 									</TableCell>
@@ -236,7 +233,7 @@ export default function SessionsTable({
 										<TableCell className="text-muted-foreground text-sm">
 											<div className="flex flex-col">
 												<span>{formatAccessExpiry(row)}</span>
-												{row.last_refreshed_at && <span className="text-xs">refreshed {formatRelativePast(row.last_refreshed_at)}</span>}
+												{row.last_refreshed_at && <span className="text-xs">刷新于 {formatRelativePast(row.last_refreshed_at)}</span>}
 											</div>
 										</TableCell>
 										<TableCell className="text-muted-foreground text-sm">{formatRelativePast(row.created_at)}</TableCell>
@@ -262,8 +259,8 @@ export default function SessionsTable({
 				{totalCount > 0 && (
 					<div className="flex shrink-0 items-center justify-between text-xs" data-testid="pagination">
 						<div className="text-muted-foreground flex items-center gap-2">
-							{(offset + 1).toLocaleString()}-{Math.min(offset + limit, totalCount).toLocaleString()} of {totalCount.toLocaleString()}{" "}
-							entries
+							第 {(offset + 1).toLocaleString()}-{Math.min(offset + limit, totalCount).toLocaleString()} 条，共 {totalCount.toLocaleString()}{" "}
+							条
 						</div>
 
 						<div className="flex items-center gap-2">
@@ -273,15 +270,15 @@ export default function SessionsTable({
 								onClick={() => onOffsetChange(Math.max(0, offset - limit))}
 								disabled={offset === 0}
 								data-testid="mcp-sessions-pagination-prev-btn"
-								aria-label="Previous page"
+								aria-label="上一页"
 							>
 								<ChevronLeft className="size-3" />
 							</Button>
 
 							<div className="flex items-center gap-1">
-								<span>Page</span>
+								<span>第</span>
 								<span>{Math.floor(offset / limit) + 1}</span>
-								<span>of {Math.ceil(totalCount / limit)}</span>
+								<span>/ {Math.ceil(totalCount / limit)} 页</span>
 							</div>
 
 							<Button
@@ -290,7 +287,7 @@ export default function SessionsTable({
 								onClick={() => onOffsetChange(offset + limit)}
 								disabled={offset + limit >= totalCount}
 								data-testid="mcp-sessions-pagination-next-btn"
-								aria-label="Next page"
+								aria-label="下一页"
 							>
 								<ChevronRight className="size-3" />
 							</Button>
@@ -344,19 +341,19 @@ function BindingCell({ row }: { row: MCPSessionRow }) {
 			</div>
 		);
 	}
-	return <span className="text-muted-foreground text-sm">Session-bound</span>;
+	return <span className="text-muted-foreground text-sm">绑定至会话</span>;
 }
 
 function TypeBadge({ authKind }: { authKind: string }) {
 	if (authKind === "headers") {
-		return <Badge variant="outline">Headers</Badge>;
+		return <Badge variant="outline">请求头</Badge>;
 	}
 	return <Badge variant="outline">OAuth</Badge>;
 }
 
 function StatusBadge({ status }: { status: string }) {
 	if (status === "pending") {
-		return <Badge variant="secondary">Pending</Badge>;
+		return <Badge variant="secondary">待处理</Badge>;
 	}
 	if (status === "orphaned") {
 		// Muted amber: distinct from destructive (red, action-required) and
@@ -364,12 +361,12 @@ function StatusBadge({ status }: { status: string }) {
 		// needed from you" — the auto-restore cascade handles it.
 		return (
 			<Badge variant="outline" className="border-amber-500 bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-200">
-				Orphaned
+				已孤立
 			</Badge>
 		);
 	}
 	if (status === "needs_reauth") {
-		return <Badge variant="destructive">Needs re-auth</Badge>;
+		return <Badge variant="destructive">需重新认证</Badge>;
 	}
 	if (status === "needs_update") {
 		// Outlined red: signals user action required, but visually distinct from
@@ -377,11 +374,11 @@ function StatusBadge({ status }: { status: string }) {
 		// Distinct copy so the row affordance ("Update values") matches.
 		return (
 			<Badge variant="outline" className="border-red-500 bg-red-100 text-red-900 dark:bg-red-900/30 dark:text-red-200">
-				Needs update
+				需更新
 			</Badge>
 		);
 	}
-	return <Badge>Active</Badge>;
+	return <Badge>活跃</Badge>;
 }
 
 interface RowActionsProps {
@@ -402,7 +399,7 @@ function RowActions({ row, reauthing, revoking, isPendingRow, onReauth, onRevoke
 					variant="ghost"
 					size="icon"
 					className="h-8 w-8"
-					aria-label="MCP session actions"
+					aria-label="MCP 会话操作"
 					data-testid={`mcp-session-row-actions-${row.id}`}
 					disabled={busy}
 				>
@@ -416,7 +413,7 @@ function RowActions({ row, reauthing, revoking, isPendingRow, onReauth, onRevoke
 						// MCP client will start a new flow. No action we can offer wires
 						// up to the existing flow row, so surface guidance instead.
 						<DropdownMenuItem disabled className="text-muted-foreground cursor-default text-xs">
-							Trigger a request to re-authenticate
+							发起请求以重新认证
 						</DropdownMenuItem>
 					) : (
 						<DropdownMenuItem
@@ -435,7 +432,7 @@ function RowActions({ row, reauthing, revoking, isPendingRow, onReauth, onRevoke
 							}}
 						>
 							<ExternalLink className="h-4 w-4" />
-							Complete authentication
+							完成认证
 						</DropdownMenuItem>
 					)
 				) : row.kind === "header" ? (
@@ -457,7 +454,7 @@ function RowActions({ row, reauthing, revoking, isPendingRow, onReauth, onRevoke
 								}}
 							>
 								<Pencil className="h-4 w-4" />
-								{row.status === "needs_update" ? "Update values" : "Edit values"}
+								{row.status === "needs_update" ? "更新值" : "编辑值"}
 							</DropdownMenuItem>
 						)}
 						<DropdownMenuItem
@@ -471,7 +468,7 @@ function RowActions({ row, reauthing, revoking, isPendingRow, onReauth, onRevoke
 							}}
 						>
 							<Trash2 className="h-4 w-4" />
-							Revoke
+							撤销
 						</DropdownMenuItem>
 					</>
 				) : (
@@ -492,7 +489,7 @@ function RowActions({ row, reauthing, revoking, isPendingRow, onReauth, onRevoke
 								}}
 							>
 								<RefreshCcw className="h-4 w-4" />
-								Re-authenticate
+								重新认证
 							</DropdownMenuItem>
 						)}
 						<DropdownMenuItem
@@ -506,7 +503,7 @@ function RowActions({ row, reauthing, revoking, isPendingRow, onReauth, onRevoke
 							}}
 						>
 							<Trash2 className="h-4 w-4" />
-							Revoke
+							撤销
 						</DropdownMenuItem>
 					</>
 				)}
@@ -520,13 +517,13 @@ function formatRelativePast(iso: string): string {
 		const t = new Date(iso).getTime();
 		if (Number.isNaN(t)) return iso;
 		const diffMs = Date.now() - t;
-		if (diffMs < 60_000) return "just now";
+		if (diffMs < 60_000) return "刚刚";
 		const mins = Math.floor(diffMs / 60_000);
-		if (mins < 60) return `${mins} min ago`;
+		if (mins < 60) return `${mins} 分钟前`;
 		const hours = Math.floor(diffMs / 3_600_000);
-		if (hours < 48) return `${hours}h ago`;
+		if (hours < 48) return `${hours} 小时前`;
 		const days = Math.floor(diffMs / 86_400_000);
-		return `${days}d ago`;
+		return `${days} 天前`;
 	} catch {
 		return iso;
 	}
@@ -553,19 +550,19 @@ function formatAccessExpiry(row: MCPSessionRow): string {
 			// expired (the refresh token itself is dead).
 			switch (row.status) {
 				case "active":
-					return "Refreshes on next use";
+					return "下次使用时刷新";
 				case "orphaned":
-					return "Refreshes when access is restored";
+					return "访问恢复后刷新";
 				default:
-					return "expired";
+					return "已过期";
 			}
 		}
 		const days = Math.floor(diffMs / 86_400_000);
-		if (days > 1) return `in ${days} days`;
+		if (days > 1) return `${days} 天后`;
 		const hours = Math.floor(diffMs / 3_600_000);
-		if (hours > 1) return `in ${hours} hours`;
+		if (hours > 1) return `${hours} 小时后`;
 		const mins = Math.floor(diffMs / 60_000);
-		return `in ${Math.max(mins, 1)} min`;
+		return `${Math.max(mins, 1)} 分钟后`;
 	} catch {
 		return row.expires_at;
 	}

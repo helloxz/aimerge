@@ -13,6 +13,7 @@ import { useGetCustomerQuery, useGetTeamQuery, useGetVirtualKeyQuery } from "@/l
 import { RoutingRule } from "@/lib/types/routingRules";
 import { getScopeLabel } from "@/lib/utils/labels";
 import { formatDistanceToNow } from "date-fns";
+import { zhCN } from "date-fns/locale";
 import { Check, Copy, GitMerge, Key } from "lucide-react";
 import { useMemo, useState } from "react";
 import { RuleGroupType, RuleType } from "react-querybuilder";
@@ -74,7 +75,7 @@ function CopyButton({ value, label, testId }: { value: string; label?: string; t
 			setCopied(true);
 			setTimeout(() => setCopied(false), 1500);
 		} catch {
-			toast.error("Failed to copy to clipboard");
+			toast.error("复制到剪贴板失败");
 		}
 	};
 
@@ -87,13 +88,13 @@ function CopyButton({ value, label, testId }: { value: string; label?: string; t
 					size="icon"
 					className="h-6 w-6 shrink-0"
 					onClick={handleCopy}
-					aria-label={copied ? `${label ?? "value"} copied` : `Copy ${label ?? "value"}`}
+					aria-label={copied ? `已复制${label ?? "值"}` : `复制${label ?? "值"}`}
 					data-testid={testId}
 				>
 					{copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
 				</Button>
 			</TooltipTrigger>
-			<TooltipContent>{copied ? "Copied!" : `Copy ${label ?? "value"}`}</TooltipContent>
+			<TooltipContent>{copied ? "已复制！" : `复制${label ?? "值"}`}</TooltipContent>
 		</Tooltip>
 	);
 }
@@ -129,12 +130,12 @@ function ConditionRow({ rule }: { rule: RuleType }) {
 				<Badge variant="outline" className="shrink-0 font-medium">
 					{isHeader && keyName ? (
 						<span className="flex items-center gap-1">
-							<span className="text-muted-foreground font-normal">header</span>
+							<span className="text-muted-foreground font-normal">请求头</span>
 							<span className="font-mono">{keyName}</span>
 						</span>
 					) : isParam && keyName ? (
 						<span className="flex items-center gap-1">
-							<span className="text-muted-foreground font-normal">param</span>
+							<span className="text-muted-foreground font-normal">参数</span>
 							<span className="font-mono">{keyName}</span>
 						</span>
 					) : (
@@ -175,7 +176,7 @@ function ConditionGroup({ group, depth = 0 }: { group: RuleGroupType; depth?: nu
 
 	return (
 		<div className="border-foreground/25 relative mx-3 my-1 rounded border border-dashed py-1">
-			<span className="bg-background text-muted-foreground absolute -top-2 right-2 rounded px-1 text-[10px] font-medium">Group</span>
+			<span className="bg-background text-muted-foreground absolute -top-2 right-2 rounded px-1 text-[10px] font-medium">分组</span>
 			{content}
 		</div>
 	);
@@ -184,7 +185,7 @@ function ConditionGroup({ group, depth = 0 }: { group: RuleGroupType; depth?: nu
 // ─── target card ─────────────────────────────────────────────────────────────
 
 function TargetCard({ target, total }: { target: RoutingRule["targets"][0]; index: number; total: number }) {
-	const providerLabel = target.provider ? getProviderLabel(target.provider) : "Incoming provider";
+	const providerLabel = target.provider ? getProviderLabel(target.provider) : "沿用请求的提供商";
 	const weightPercent = total > 0 ? Math.round(target.weight * 100) : 0;
 
 	return (
@@ -197,7 +198,7 @@ function TargetCard({ target, total }: { target: RoutingRule["targets"][0]; inde
 						{target.model ? (
 							<span className="text-muted-foreground font-mono text-xs">{target.model}</span>
 						) : (
-							<span className="text-muted-foreground text-xs">Incoming model</span>
+							<span className="text-muted-foreground text-xs">沿用请求的模型</span>
 						)}
 					</div>
 				</div>
@@ -210,15 +211,15 @@ function TargetCard({ target, total }: { target: RoutingRule["targets"][0]; inde
 							<span className="text-muted-foreground w-8 text-right font-mono text-xs">{weightPercent}%</span>
 						</div>
 					</TooltipTrigger>
-					<TooltipContent>Weight: {target.weight} (raw)</TooltipContent>
+					<TooltipContent>权重：{target.weight}（原始值）</TooltipContent>
 				</Tooltip>
 			</div>
 			{target.key_id && (
 				<div className="bg-muted/50 flex items-center gap-1.5 rounded-md px-2 py-1">
 					<Key className="text-muted-foreground h-3 w-3 shrink-0" />
-					<span className="text-muted-foreground text-xs">Pinned key:</span>
+					<span className="text-muted-foreground text-xs">已固定密钥：</span>
 					<code className="truncate font-mono text-xs">{target.key_id}</code>
-					<CopyButton value={target.key_id} label="key ID" testId="routing-rule-copy-key-id-btn" />
+					<CopyButton value={target.key_id} label="密钥 ID" testId="routing-rule-copy-key-id-btn" />
 				</div>
 			)}
 		</div>
@@ -232,8 +233,8 @@ function FallbackChain({ fallbacks }: { fallbacks: string[] }) {
 		<div className="flex flex-wrap items-center gap-y-2">
 			{fallbacks.map((fb, i) => {
 				const parts = fb.split("/");
-				const provider = parts[0] || "Incoming provider";
-				const model = parts.length > 1 ? parts.slice(1).join("/") : "Incoming model";
+				const provider = parts[0] || "沿用请求的提供商";
+				const model = parts.length > 1 ? parts.slice(1).join("/") : "沿用请求的模型";
 
 				return (
 					<div key={i} className="flex items-center">
@@ -276,17 +277,17 @@ export function RoutingRuleInfoSheet({ rule, open, onOpenChange, onNavigate, has
 							<div className="flex flex-col items-start gap-1">
 								<div className="flex w-full flex-wrap items-center gap-2">
 									<SheetTitle className="text-base">{rule.name}</SheetTitle>
-									<Badge variant={rule.enabled ? "default" : "secondary"}>{rule.enabled ? "Enabled" : "Disabled"}</Badge>
+									<Badge variant={rule.enabled ? "default" : "secondary"}>{rule.enabled ? "已启用" : "已停用"}</Badge>
 									{rule.chain_rule && (
 										<Tooltip>
 											<TooltipTrigger asChild>
 												<Badge variant="outline" className="cursor-default gap-1">
 													<GitMerge className="h-3 w-3" />
-													Chain Rule
+													链式规则
 												</Badge>
 											</TooltipTrigger>
 											<TooltipContent className="max-w-64">
-												After this rule matches, routing rules are re-evaluated using the resolved provider/model as the new context.
+												本条规则匹配后，将以解析出的提供商/模型作为新上下文重新评估路由规则。
 											</TooltipContent>
 										</Tooltip>
 									)}
@@ -299,24 +300,24 @@ export function RoutingRuleInfoSheet({ rule, open, onOpenChange, onNavigate, has
 								onNavigate={(dir) => onNavigate?.(dir)}
 								prevKeys={prevKeys}
 								nextKeys={nextKeys}
-								entityLabel="rule"
+								entityLabel="规则"
 							/>
 						</SheetHeader>
 
 						<div className="-mx-8 space-y-6 overflow-y-auto px-8 pb-8">
 							{/* Overview */}
 							<div className="space-y-3">
-								<h3 className="text-sm font-semibold">Overview</h3>
+								<h3 className="text-sm font-semibold">概览</h3>
 								<div className="grid gap-3">
 									<div className="grid grid-cols-3 items-center gap-4">
-										<span className="text-muted-foreground text-sm">Scope</span>
+										<span className="text-muted-foreground text-sm">范围</span>
 										<div className="col-span-2 flex items-center gap-1.5">
 											<Badge variant="secondary">{getScopeLabel(rule.scope)}</Badge>
 											{scopeName && <span className="text-sm">{scopeName}</span>}
 										</div>
 									</div>
 									<div className="grid grid-cols-3 items-center gap-4">
-										<span className="text-muted-foreground text-sm">Priority</span>
+										<span className="text-muted-foreground text-sm">优先级</span>
 										<div className="col-span-2">
 											<span className="bg-primary text-primary-foreground inline-block rounded px-2.5 py-0.5 text-xs font-medium">
 												{rule.priority}
@@ -330,20 +331,20 @@ export function RoutingRuleInfoSheet({ rule, open, onOpenChange, onNavigate, has
 
 							{/* Conditions */}
 							<div className="space-y-3">
-								<h3 className="text-sm font-semibold">Conditions</h3>
+								<h3 className="text-sm font-semibold">条件</h3>
 								{hasQuery ? (
 										<ConditionGroup group={rule.query!} />
 									) : hasCel ? (
-										<p className="text-muted-foreground text-sm">Defined as a CEL expression below</p>
+										<p className="text-muted-foreground text-sm">在下方的 CEL 表达式中定义</p>
 									) : (
-										<p className="text-muted-foreground text-sm">Matches all requests</p>
+										<p className="text-muted-foreground text-sm">匹配所有请求</p>
 									)}
 
 								{/* CEL expression */}
 								<div className="space-y-1.5">
 									<div className="flex items-center justify-between">
-										<span className="text-sm font-semibold">CEL Expression</span>
-										<CopyButton value={rule.cel_expression} label="expression" testId="routing-rule-copy-expression-btn" />
+										<span className="text-sm font-semibold">CEL 表达式</span>
+										<CopyButton value={rule.cel_expression} label="表达式" testId="routing-rule-copy-expression-btn" />
 									</div>
 									<code className="bg-muted/50 block w-full rounded-md border px-3 py-2 font-mono text-xs break-all">
 										{rule.cel_expression || <span className="text-muted-foreground italic">true</span>}
@@ -355,7 +356,7 @@ export function RoutingRuleInfoSheet({ rule, open, onOpenChange, onNavigate, has
 
 							{/* Targets */}
 							<div className="space-y-3">
-								<h3 className="text-sm font-semibold">Targets ({targets.length})</h3>
+								<h3 className="text-sm font-semibold">目标（{targets.length}）</h3>
 								{targets.length > 0 ? (
 									<div className="space-y-2">
 										{targets.map((target, i) => (
@@ -363,7 +364,7 @@ export function RoutingRuleInfoSheet({ rule, open, onOpenChange, onNavigate, has
 										))}
 									</div>
 								) : (
-									<p className="text-muted-foreground text-sm">No targets configured</p>
+									<p className="text-muted-foreground text-sm">未配置目标</p>
 								)}
 							</div>
 
@@ -371,11 +372,11 @@ export function RoutingRuleInfoSheet({ rule, open, onOpenChange, onNavigate, has
 
 							{/* Fallback Chain */}
 							<div className="space-y-3">
-								<h3 className="text-sm font-semibold">Fallback Chain</h3>
+								<h3 className="text-sm font-semibold">回退链</h3>
 								{fallbacks.length > 0 ? (
 									<FallbackChain fallbacks={fallbacks} />
 								) : (
-									<p className="text-muted-foreground text-sm">No fallbacks configured</p>
+									<p className="text-muted-foreground text-sm">未配置回退</p>
 								)}
 							</div>
 
@@ -384,18 +385,20 @@ export function RoutingRuleInfoSheet({ rule, open, onOpenChange, onNavigate, has
 							{/* Timestamps */}
 							<div className="grid grid-cols-2 gap-4">
 								<div>
-									<p className="text-muted-foreground mb-1 text-xs font-medium tracking-wider uppercase">Created</p>
+									<p className="text-muted-foreground mb-1 text-xs font-medium tracking-wider uppercase">创建时间</p>
 									<span className="text-sm">
 										{formatDistanceToNow(new Date(rule.created_at), {
 											addSuffix: true,
+											locale: zhCN,
 										})}
 									</span>
 								</div>
 								<div>
-									<p className="text-muted-foreground mb-1 text-xs font-medium tracking-wider uppercase">Last Updated</p>
+									<p className="text-muted-foreground mb-1 text-xs font-medium tracking-wider uppercase">最后更新</p>
 									<span className="text-sm">
 										{formatDistanceToNow(new Date(rule.updated_at), {
 											addSuffix: true,
+											locale: zhCN,
 										})}
 									</span>
 								</div>

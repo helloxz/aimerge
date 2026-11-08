@@ -71,10 +71,10 @@ export function VersionDetailDialog({
 	const handleShiftVersion = async () => {
 		try {
 			await shiftVersion({ id: skillId, version }).unwrap();
-			toast.success(`Shifted to version ${version}`);
+			toast.success(`已切换到版本 ${version}`);
 			onOpenChange(false);
 		} catch (err: unknown) {
-			toast.error("Failed to shift version", {
+			toast.error("切换版本失败", {
 				description: getErrorMessage(err),
 			});
 		}
@@ -88,7 +88,7 @@ export function VersionDetailDialog({
 			>
 				<div className="flex items-center justify-between border-b pr-2 pl-6">
 					<DialogHeader className="p-0">
-						<DialogTitle>Version {version}</DialogTitle>
+						<DialogTitle>版本 {version}</DialogTitle>
 					</DialogHeader>
 					<div className="flex items-center gap-1.5">
 						{downloadUrl && (
@@ -98,18 +98,18 @@ export function VersionDetailDialog({
 								className="h-8 w-8"
 								asChild
 								data-testid="skill-version-download-zip"
-								aria-label="Download ZIP"
+								aria-label="下载 ZIP"
 							>
 								<a href={downloadUrl} download>
 									<Download className="h-4 w-4" />
-									<span className="sr-only">Download ZIP</span>
+									<span className="sr-only">下载 ZIP</span>
 								</a>
 							</Button>
 						)}
 						<DialogClose asChild>
-							<Button variant="ghost" size="icon" className="h-8 w-8" data-testid="skill-version-dialog-close" aria-label="Close">
+							<Button variant="ghost" size="icon" className="h-8 w-8" data-testid="skill-version-dialog-close" aria-label="关闭">
 								<X className="h-4 w-4" />
-								<span className="sr-only">Close</span>
+								<span className="sr-only">关闭</span>
 							</Button>
 						</DialogClose>
 					</div>
@@ -138,7 +138,7 @@ export function VersionDetailDialog({
 													variant="secondary"
 													className="bg-emerald-100 text-xs text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400"
 												>
-													Serving
+														已发布
 												</Badge>
 											)}
 										</>
@@ -149,12 +149,12 @@ export function VersionDetailDialog({
 												{isShifting ? (
 													<>
 														<Loader2 className="h-3.5 w-3.5 animate-spin" />
-														Shifting...
+														切换中…
 													</>
 												) : (
 													<>
 														<RefreshCw className="h-3.5 w-3.5" />
-														Shift to this version
+														切换到此版本
 													</>
 												)}
 											</Button>
@@ -175,9 +175,9 @@ export function VersionDetailDialog({
 							</div>
 						</>
 					) : isError ? (
-						<p className="text-muted-foreground flex flex-1 items-center justify-center text-sm">Failed to load version</p>
+						<p className="text-muted-foreground flex flex-1 items-center justify-center text-sm">加载版本失败</p>
 					) : (
-						<p className="text-muted-foreground flex flex-1 items-center justify-center text-sm">Version data not found</p>
+						<p className="text-muted-foreground flex flex-1 items-center justify-center text-sm">未找到版本数据</p>
 					)}
 				</div>
 			</DialogContent>

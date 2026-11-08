@@ -7,7 +7,7 @@ function RouteComponent() {
 	const hasUserProvisioningAccess = useRbac(RbacResource.UserProvisioning, RbacOperation.View);
 	const childMatches = useChildMatches();
 	if (!hasUserProvisioningAccess) {
-		return <NoPermissionView entity="user provisioning" />;
+		return <NoPermissionView entity="用户预配" />;
 	}
 	return childMatches.length === 0 ? <SCIMPage /> : <Outlet />;
 }

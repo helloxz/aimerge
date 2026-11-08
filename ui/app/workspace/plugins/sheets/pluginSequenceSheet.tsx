@@ -62,7 +62,7 @@ function SortableBlock({ item, index }: { item: SequenceItem; index: number }) {
 				</div>
 			)}
 			<span className={cn("text-sm", isBuiltin && "text-muted-foreground font-medium")}>
-				{isBuiltin ? "Built-in Plugins" : item.plugin?.name}
+				{isBuiltin ? "内置插件" : item.plugin?.name}
 			</span>
 			{!isBuiltin && item.plugin?.status && (
 				<div
@@ -125,7 +125,7 @@ export default function PluginSequenceSheet({ open, onClose, plugins }: PluginSe
 					},
 				}).unwrap();
 			}
-			toast.success("Plugin sequence updated");
+			toast.success("插件顺序已更新");
 			onClose();
 		} catch (error) {
 			toast.error(getErrorMessage(error));
@@ -136,8 +136,8 @@ export default function PluginSequenceSheet({ open, onClose, plugins }: PluginSe
 		<Sheet open={open} onOpenChange={onClose}>
 			<SheetContent className="flex w-full flex-col overflow-x-hidden p-8">
 				<SheetHeader className="flex flex-col items-start p-0">
-					<SheetTitle>Edit Plugin Sequence</SheetTitle>
-					<SheetDescription>Drag plugins above or below the built-in plugins block to control execution order.</SheetDescription>
+					<SheetTitle>编辑插件顺序</SheetTitle>
+					<SheetDescription>将插件拖动到内置插件块的上方或下方，以控制执行顺序。</SheetDescription>
 				</SheetHeader>
 
 				<div className="mt-4 flex flex-1 flex-col gap-2">
@@ -167,16 +167,15 @@ export default function PluginSequenceSheet({ open, onClose, plugins }: PluginSe
 				<div className="flex flex-col gap-2">
 					<Alert variant="info">
 						<AlertDescription>
-							If your config.json file has plugin sequence configured, it will take precedence over the sequence configured in the UI after
-							restarting Bifrost.
+							如果你的 config.json 中配置了插件顺序，重启 Bifrost 后它将优先于在界面中配置的顺序。
 						</AlertDescription>
 					</Alert>
 					<div className="flex justify-end gap-2 pt-4">
 						<Button type="button" variant="outline" onClick={onClose} disabled={isLoading} data-testid="plugin-sequence-cancel-button">
-							Cancel
+							取消
 						</Button>
 						<Button onClick={handleSave} disabled={isLoading} isLoading={isLoading} data-testid="plugin-sequence-save-button" type="button">
-							Save Sequence
+							保存顺序
 						</Button>
 					</div>
 				</div>

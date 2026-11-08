@@ -83,7 +83,7 @@ export function McpHeaderView({
 				data-testid="mcp-logs-header-refresh-btn"
 			>
 				<RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-				Refresh
+				刷新
 			</Button>
 			<Button
 				variant={polling ? "default" : "outline"}
@@ -93,14 +93,14 @@ export function McpHeaderView({
 				data-testid="mcp-logs-header-live-btn"
 			>
 				{polling ? <Radio className="h-4 w-4 animate-pulse" /> : <Radio className="h-4 w-4" />}
-				Live
+				实时
 			</Button>
 			<div className="border-input flex h-7.5 flex-1 items-center gap-2 rounded-sm border">
 				<Search className="mr-0.5 ml-2 size-4" />
 				<Input
 					type="text"
 					className="!h-7 rounded-tl-none rounded-tr-sm rounded-br-sm rounded-bl-none border-none bg-slate-50 shadow-none outline-none focus-visible:ring-0 dark:bg-zinc-900"
-					placeholder="Search MCP logs"
+					placeholder="搜索 MCP 日志"
 					value={localSearch}
 					onChange={(e) => handleSearchChange(e.target.value)}
 				/>

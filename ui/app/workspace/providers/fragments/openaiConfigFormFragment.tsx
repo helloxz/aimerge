@@ -49,11 +49,11 @@ export function OpenAIConfigFormFragment({ provider }: OpenAIConfigFormFragmentP
 		)
 			.unwrap()
 			.then(() => {
-				toast.success("OpenAI configuration updated successfully");
+				toast.success("OpenAI 配置已更新");
 				form.reset(data);
 			})
 			.catch((err) => {
-				toast.error("Failed to update OpenAI configuration", {
+				toast.error("更新 OpenAI 配置失败", {
 					description: getErrorMessage(err),
 				});
 			});
@@ -70,11 +70,10 @@ export function OpenAIConfigFormFragment({ provider }: OpenAIConfigFormFragmentP
 							<FormItem>
 								<div className="flex items-center justify-between space-x-2">
 									<div className="space-y-0.5">
-										<FormLabel>Disable Store</FormLabel>
+										<FormLabel>禁用存储</FormLabel>
 										<p className="text-muted-foreground text-xs">
-											With the Responses API, store defaults to true, and when it is on, the generated response is stored for later
-											retrieval via API. OpenAI exposes endpoints to retrieve and delete stored responses, so your response IDs become
-											durable server-side objects instead of one-shot IDs.
+											在 Responses API 中，store 默认为 true；开启后，生成的响应会被存储，以便之后通过 API 检索。OpenAI 提供了检索和删除
+											已存储响应的端点，因此你的响应 ID 会成为服务端持久对象，而不再是一次性 ID。
 										</p>
 									</div>
 									<FormControl>
@@ -102,7 +101,7 @@ export function OpenAIConfigFormFragment({ provider }: OpenAIConfigFormFragmentP
 						disabled={!form.formState.isDirty || !form.formState.isValid || !hasUpdateProviderAccess || isUpdatingProvider}
 						isLoading={isUpdatingProvider}
 					>
-						Save OpenAI Configuration
+						保存 OpenAI 配置
 					</Button>
 				</div>
 			</form>

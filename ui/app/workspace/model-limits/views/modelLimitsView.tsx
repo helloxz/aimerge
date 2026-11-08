@@ -58,7 +58,7 @@ export default function ModelLimitsView() {
 	// Handle query errors
 	useEffect(() => {
 		if (modelConfigsError) {
-			toast.error(`Failed to load model configs: ${getErrorMessage(modelConfigsError)}`);
+			toast.error(`加载模型配置失败：${getErrorMessage(modelConfigsError)}`);
 		}
 	}, [modelConfigsError]);
 

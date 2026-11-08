@@ -7,7 +7,7 @@ function RouteComponent() {
 	const hasAccess = useRbac(RbacResource.CircuitBreaker, RbacOperation.View);
 	const childMatches = useChildMatches();
 	if (!hasAccess) {
-		return <NoPermissionView entity="circuit breaker" />;
+		return <NoPermissionView entity="熔断" />;
 	}
 	return childMatches.length === 0 ? <CircuitBreakerPage /> : <Outlet />;
 }

@@ -60,7 +60,7 @@ function TeamActionsMenu({
 						variant="ghost"
 						size="icon"
 						className="h-8 w-8"
-						aria-label={`Team actions for ${team.name}`}
+						aria-label={`${team.name} 的团队操作`}
 						data-testid={`team-actions-btn-${team.name}`}
 					>
 						<MoreHorizontal className="h-4 w-4" />
@@ -78,12 +78,12 @@ function TeamActionsMenu({
 						}}
 					>
 						<Edit className="h-4 w-4" />
-						Edit
+						编辑
 					</DropdownMenuItem>
 					<DropdownMenuItem asChild className="cursor-pointer" data-testid={`team-view-logs-btn-${team.name}`}>
 						<Link to="/workspace/logs" search={{ team_ids: [team.id] }} onClick={() => setIsOpen(false)}>
 							<ScrollText className="h-4 w-4" />
-							View logs
+							查看日志
 						</Link>
 					</DropdownMenuItem>
 					<DropdownMenuItem
@@ -98,23 +98,22 @@ function TeamActionsMenu({
 						}}
 					>
 						<Trash2 className="h-4 w-4" />
-						Delete
+						删除
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
 			<AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Delete Team</AlertDialogTitle>
+						<AlertDialogTitle>删除团队</AlertDialogTitle>
 						<AlertDialogDescription>
-							Are you sure you want to delete &quot;{team.name}&quot;? This will also unassign any virtual keys from this team. This action
-							cannot be undone.
+							确定要删除「{team.name}」吗？此操作还会解除该团队下所有虚拟密钥的分配关系，且无法撤销。
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogCancel>取消</AlertDialogCancel>
 						<AlertDialogAction onClick={() => onDelete(team.id)} disabled={isDeleting} className="bg-red-600 hover:bg-red-700">
-							{isDeleting ? "Deleting..." : "Delete"}
+							{isDeleting ? "删除中..." : "删除"}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
@@ -174,7 +173,7 @@ export default function TeamsTable({
 	const handleDelete = async (teamId: string) => {
 		try {
 			await deleteTeam(teamId).unwrap();
-			toast.success("Team deleted successfully");
+			toast.success("团队删除成功");
 		} catch (error) {
 			toast.error(getErrorMessage(error));
 		}
@@ -197,7 +196,7 @@ export default function TeamsTable({
 	// via a correlated subquery, so neither needs a client-side join.
 	const getCustomerName = (team: Team) => {
 		if (!team.customer_id) return "-";
-		return team.customer?.name ?? "Unknown Customer";
+		return team.customer?.name ?? "未知客户";
 	};
 
 	const hasActiveFilters = debouncedSearch;
@@ -222,12 +221,12 @@ export default function TeamsTable({
 				<div className="flex grow flex-col overflow-y-auto">
 					<div className="mb-4 flex items-center justify-between">
 						<div>
-							<h2 className="text-lg font-semibold">Teams</h2>
-							<p className="text-muted-foreground text-sm">Organize users into teams with shared budgets and access controls.</p>
+							<h2 className="text-lg font-semibold">团队</h2>
+							<p className="text-muted-foreground text-sm">将用户组织为团队，共享预算与访问控制。</p>
 						</div>
 						<Button data-testid="create-team-btn" onClick={handleAddTeam} disabled={!hasCreateAccess}>
 							<Plus className="h-4 w-4" />
-							Add Team
+							添加团队
 						</Button>
 					</div>
 
@@ -235,8 +234,8 @@ export default function TeamsTable({
 						<div className="relative max-w-sm flex-1">
 							<Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
 							<Input
-								aria-label="Search teams by name"
-								placeholder="Search by name..."
+								aria-label="按名称搜索团队"
+								placeholder="按名称搜索..."
 								value={search}
 								onChange={(e) => onSearchChange(e.target.value)}
 								className="pl-9"
@@ -249,11 +248,11 @@ export default function TeamsTable({
 						<Table className="min-w-[1100px]" containerClassName="h-full">
 							<TableHeader className="bg-background sticky top-0">
 								<TableRow>
-									<TableHead>Name</TableHead>
-									<TableHead>Customer</TableHead>
-									<TableHead>Budget</TableHead>
-									<TableHead>Rate Limit</TableHead>
-									<TableHead>Virtual Keys</TableHead>
+									<TableHead>名称</TableHead>
+									<TableHead>客户</TableHead>
+									<TableHead>预算</TableHead>
+									<TableHead>速率限制</TableHead>
+									<TableHead>虚拟密钥</TableHead>
 									<TableHead className={`bg-muted sticky right-0 z-10 w-[56px] text-right ${PIN_SHADOW_RIGHT}`}></TableHead>
 								</TableRow>
 							</TableHeader>
@@ -261,7 +260,7 @@ export default function TeamsTable({
 								{teams.length === 0 ? (
 									<TableRow>
 										<TableCell colSpan={6} className="h-24 text-center">
-											<span className="text-muted-foreground text-sm">No matching teams found.</span>
+											<span className="text-muted-foreground text-sm">未找到匹配的团队。</span>
 										</TableCell>
 									</TableRow>
 								) : (
@@ -305,7 +304,7 @@ export default function TeamsTable({
 														<span className="truncate font-medium">{team.name}</span>
 														{isExhausted && (
 															<Badge variant="destructive" className="w-fit text-xs">
-																Limit Reached
+																已达上限
 															</Badge>
 														)}
 													</div>
@@ -346,7 +345,7 @@ export default function TeamsTable({
 																			<p className="font-medium">
 																				{formatCurrency(b.current_usage)} / {formatCurrency(b.max_limit)}
 																			</p>
-																			<p className="text-primary-foreground/80 text-xs">Resets {formatResetDuration(b.reset_duration)}</p>
+																			<p className="text-primary-foreground/80 text-xs">重置周期：{formatResetDuration(b.reset_duration)}</p>
 																		</TooltipContent>
 																	</Tooltip>
 																);
@@ -364,7 +363,7 @@ export default function TeamsTable({
 																	<TooltipTrigger asChild>
 																		<div className="space-y-1.5">
 																			<div className="flex items-center justify-between gap-4 text-xs">
-																				<span className="font-medium">{team.rate_limit.token_max_limit.toLocaleString()} tokens</span>
+																				<span className="font-medium">{team.rate_limit.token_max_limit.toLocaleString()} 个 Token</span>
 																				<span className="text-muted-foreground">
 																					{formatResetDuration(team.rate_limit.token_reset_duration || "1h")}
 																				</span>
@@ -385,10 +384,10 @@ export default function TeamsTable({
 																	<TooltipContent>
 																		<p className="font-medium">
 																			{team.rate_limit.token_current_usage.toLocaleString()} /{" "}
-																			{team.rate_limit.token_max_limit.toLocaleString()} tokens
+																			{team.rate_limit.token_max_limit.toLocaleString()} 个 Token
 																		</p>
 																		<p className="text-primary-foreground/80 text-xs">
-																			Resets {formatResetDuration(team.rate_limit.token_reset_duration || "1h")}
+																			重置周期：{formatResetDuration(team.rate_limit.token_reset_duration || "1h")}
 																		</p>
 																	</TooltipContent>
 																</Tooltip>
@@ -398,7 +397,7 @@ export default function TeamsTable({
 																	<TooltipTrigger asChild>
 																		<div className="space-y-1.5">
 																			<div className="flex items-center justify-between gap-4 text-xs">
-																				<span className="font-medium">{team.rate_limit.request_max_limit.toLocaleString()} req</span>
+																				<span className="font-medium">{team.rate_limit.request_max_limit.toLocaleString()} 次请求</span>
 																				<span className="text-muted-foreground">
 																					{formatResetDuration(team.rate_limit.request_reset_duration || "1h")}
 																				</span>
@@ -419,10 +418,10 @@ export default function TeamsTable({
 																	<TooltipContent>
 																		<p className="font-medium">
 																			{team.rate_limit.request_current_usage.toLocaleString()} /{" "}
-																			{team.rate_limit.request_max_limit.toLocaleString()} requests
+																			{team.rate_limit.request_max_limit.toLocaleString()} 次请求
 																		</p>
 																		<p className="text-primary-foreground/80 text-xs">
-																			Resets {formatResetDuration(team.rate_limit.request_reset_duration || "1h")}
+																			重置周期：{formatResetDuration(team.rate_limit.request_reset_duration || "1h")}
 																		</p>
 																	</TooltipContent>
 																</Tooltip>
@@ -436,7 +435,7 @@ export default function TeamsTable({
 													{vkCount > 0 ? (
 														<div className="flex items-center gap-2">
 															<Badge variant="outline" className="text-xs">
-																{vkCount} {vkCount === 1 ? "key" : "keys"}
+																{vkCount} 个密钥
 															</Badge>
 														</div>
 													) : (
@@ -467,8 +466,8 @@ export default function TeamsTable({
 					{totalCount > 0 && (
 						<div className="flex shrink-0 items-center justify-between text-xs" data-testid="pagination">
 							<div className="text-muted-foreground flex items-center gap-2">
-								{(offset + 1).toLocaleString()}-{Math.min(offset + limit, totalCount).toLocaleString()} of {totalCount.toLocaleString()}{" "}
-								entries
+								{(offset + 1).toLocaleString()}-{Math.min(offset + limit, totalCount).toLocaleString()} / 共 {totalCount.toLocaleString()}{" "}
+								条
 							</div>
 
 							<div className="flex items-center gap-2">
@@ -478,15 +477,15 @@ export default function TeamsTable({
 									onClick={() => onOffsetChange(Math.max(0, offset - limit))}
 									disabled={offset === 0}
 									data-testid="teams-pagination-prev-btn"
-									aria-label="Previous page"
+									aria-label="上一页"
 								>
 									<ChevronLeft className="size-3" />
 								</Button>
 
 								<div className="flex items-center gap-1">
-									<span>Page</span>
+									<span>第</span>
 									<span>{Math.floor(offset / limit) + 1}</span>
-									<span>of {Math.ceil(totalCount / limit)}</span>
+									<span>页，共 {Math.ceil(totalCount / limit)} 页</span>
 								</div>
 
 								<Button
@@ -495,7 +494,7 @@ export default function TeamsTable({
 									onClick={() => onOffsetChange(offset + limit)}
 									disabled={offset + limit >= totalCount}
 									data-testid="teams-pagination-next-btn"
-									aria-label="Next page"
+									aria-label="下一页"
 								>
 									<ChevronRight className="size-3" />
 								</Button>

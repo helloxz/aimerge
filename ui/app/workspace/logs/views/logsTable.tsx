@@ -200,12 +200,12 @@ export function LogsDataTable({
 									{loading ? (
 										<>
 											<RefreshCw className="h-4 w-4 animate-spin" />
-											Loading logs...
+											正在加载日志…
 										</>
 									) : polling ? (
 										<>
 											<RefreshCw className="h-4 w-4 animate-spin" />
-											Waiting for new logs...
+											正在等待新的日志…
 										</>
 									) : (
 										<Button
@@ -216,7 +216,7 @@ export function LogsDataTable({
 											variant={"ghost"}
 										>
 											{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-											Refresh
+											刷新
 										</Button>
 									)}
 								</div>
@@ -255,7 +255,7 @@ export function LogsDataTable({
 						) : loading ? null : (
 							<TableRow>
 								<TableCell colSpan={columns.length} className="h-24 text-center">
-									No results found. Try adjusting your filters and/or time range.
+									未找到结果，请尝试调整筛选条件和/或时间范围。
 								</TableCell>
 							</TableRow>
 						)}
@@ -266,12 +266,12 @@ export function LogsDataTable({
 			{/* Pagination Footer */}
 			<div className="flex shrink-0 items-center justify-between text-xs" data-testid="pagination">
 				<div className="text-muted-foreground flex items-center gap-2">
-					{startItem.toLocaleString()}-{endItem.toLocaleString()} of {totalItems.toLocaleString()} entries
+					{startItem.toLocaleString()}-{endItem.toLocaleString()}，共 {totalItems.toLocaleString()} 条
 				</div>
 
 				<div className="flex items-center gap-3">
 					<div className="flex items-center gap-1.5">
-						<span className="text-muted-foreground">Rows per page</span>
+						<span className="text-muted-foreground">每页行数</span>
 						<ComboboxSelect
 							options={pageSizeOptions}
 							value={String(pageSizePref)}
@@ -290,15 +290,15 @@ export function LogsDataTable({
 							onClick={() => goToPage(currentPage - 1)}
 							disabled={currentPage <= 1}
 							data-testid="prev-page"
-							aria-label="Previous page"
+							aria-label="上一页"
 						>
 							<ChevronLeft className="size-3" />
 						</Button>
 
 						<div className="flex items-center gap-1">
-							<span>Page</span>
+							<span>第</span>
 							<span>{currentPage}</span>
-							<span>of {totalPages}</span>
+							<span>/ {totalPages} 页</span>
 						</div>
 
 						<Button
@@ -307,7 +307,7 @@ export function LogsDataTable({
 							onClick={() => goToPage(currentPage + 1)}
 							disabled={totalPages === 0 || currentPage >= totalPages}
 							data-testid="next-page"
-							aria-label="Next page"
+							aria-label="下一页"
 						>
 							<ChevronRight className="size-3" />
 						</Button>

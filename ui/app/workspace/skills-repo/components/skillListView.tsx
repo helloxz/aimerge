@@ -84,11 +84,11 @@ function MarketplacePopover() {
 			.then(() => {
 				setCopiedKey(key);
 				setOpen(false);
-				toast.success("Copied to clipboard");
+				toast.success("已复制到剪贴板");
 				setTimeout(() => setCopiedKey(null), 2000);
 			})
 			.catch(() => {
-				toast.error("Failed to copy to clipboard");
+				toast.error("复制到剪贴板失败");
 			});
 	};
 
@@ -97,12 +97,12 @@ function MarketplacePopover() {
 			<PopoverTrigger asChild>
 				<Button variant="outline" size="sm">
 					<Package className="h-3.5 w-3.5" />
-					Register as Marketplace
+					注册为市场
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent align="end" className="w-auto max-w-md p-0">
 				<div className="border-b px-3 py-2">
-					<p className="text-muted-foreground text-xs font-medium">Copy CLI command to register this repository</p>
+					<p className="text-muted-foreground text-xs font-medium">复制 CLI 命令以注册此仓库</p>
 				</div>
 				<div className="py-1">
 					{items.map((item) => (
@@ -110,7 +110,7 @@ function MarketplacePopover() {
 							key={item.key}
 							data-testid={`skill-copy-marketplace-${item.key}`}
 							className="hover:bg-muted/50 flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-left transition-colors"
-							aria-label={`Copy ${item.label} command`}
+							aria-label={`复制 ${item.label} 命令`}
 							onClick={() => handleCopy(item.key, item.command)}
 						>
 							<div className="min-w-0 flex-1">
@@ -158,7 +158,7 @@ function SortableHeader({
 			onClick={() => onToggle(column)}
 			className="!px-0"
 			data-testid={`skill-sort-${column}`}
-			aria-label={`Sort by ${label}`}
+			aria-label={`按 ${label} 排序`}
 		>
 			{label}
 			<Icon className={cn("h-4 w-4", isActive && "text-foreground")} />
@@ -202,7 +202,7 @@ function SkillActionsMenu({
 			link.click();
 			document.body.removeChild(link);
 		} catch {
-			toast.error("Failed to download skill");
+			toast.error("下载技能失败");
 		} finally {
 			if (url) URL.revokeObjectURL(url);
 			setIsDownloading(false);
@@ -218,7 +218,7 @@ function SkillActionsMenu({
 						size="icon"
 						className="h-8 w-8"
 						data-testid={`skill-actions-menu-${skill.name}`}
-						aria-label={`Actions for ${skill.name}`}
+						aria-label={`${skill.name} 的操作`}
 					>
 						<MoreHorizontal className="h-4 w-4" />
 					</Button>
@@ -235,7 +235,7 @@ function SkillActionsMenu({
 						}}
 					>
 						{isDownloading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-						{isDownloading ? "Downloading..." : "Download ZIP"}
+						{isDownloading ? "下载中…" : "下载 ZIP"}
 					</DropdownMenuItem>
 					<DropdownMenuItem
 						variant="destructive"
@@ -249,7 +249,7 @@ function SkillActionsMenu({
 						}}
 					>
 						<Trash2 className="h-4 w-4" />
-						Delete
+						删除
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
@@ -257,20 +257,20 @@ function SkillActionsMenu({
 			<AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Delete {skill.name}?</AlertDialogTitle>
+						<AlertDialogTitle>删除 {skill.name}？</AlertDialogTitle>
 						<AlertDialogDescription>
-							This action cannot be undone. The skill, its files, and version history will be permanently deleted.
+							此操作无法撤销。该技能、它的文件以及版本历史都将被永久删除。
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogCancel>取消</AlertDialogCancel>
 						<AlertDialogAction data-testid="skill-delete-confirm-btn" onClick={() => onDelete(skill.id)} disabled={isDeleting}>
 							{isDeleting ? (
 								<>
-									<Loader2 className="h-3.5 w-3.5 animate-spin" /> Deleting...
+									<Loader2 className="h-3.5 w-3.5 animate-spin" /> 删除中…
 								</>
 							) : (
-								"Delete skill"
+								"删除技能"
 							)}
 						</AlertDialogAction>
 					</AlertDialogFooter>
@@ -335,9 +335,9 @@ export function SkillsListView({
 	const handleDeleteSkill = async (id: string) => {
 		try {
 			await deleteSkill(id).unwrap();
-			toast.success("Skill deleted");
+			toast.success("技能已删除");
 		} catch (err: unknown) {
-			toast.error("Failed to delete skill", {
+			toast.error("删除技能失败", {
 				description: getErrorMessage(err),
 			});
 		}
@@ -346,10 +346,10 @@ export function SkillsListView({
 	const handleBumpAllSkillsVersion = async (bump: AllSkillsVersionBump) => {
 		try {
 			const result = await bumpAllSkillsVersion({ bump }).unwrap();
-			toast.success(`All-skills version bumped to ${result.version}`);
+			toast.success(`所有技能版本已升级至 ${result.version}`);
 			refetchAllSkillsVersion();
 		} catch (err: unknown) {
-			toast.error("Failed to bump all-skills version", {
+			toast.error("升级所有技能版本失败", {
 				description: getErrorMessage(err),
 			});
 		}
@@ -362,9 +362,9 @@ export function SkillsListView({
 	if (isError) {
 		return (
 			<div className="flex flex-col items-center justify-center gap-3 py-20">
-				<p className="text-muted-foreground text-sm">Failed to load skills</p>
+				<p className="text-muted-foreground text-sm">加载技能失败</p>
 				<Button variant="outline" size="sm" onClick={refetch}>
-					Retry
+					重试
 				</Button>
 			</div>
 		);
@@ -378,25 +378,25 @@ export function SkillsListView({
 					<BookOpenText className="h-24 w-24" strokeWidth={1} />
 				</div>
 				<div className="flex flex-col gap-1">
-					<h1 className="text-muted-foreground text-xl font-medium">Create, version, and share Agent Skills from Bifrost</h1>
+					<h1 className="text-muted-foreground text-xl font-medium">在 Bifrost 中创建、版本化并共享 Agent Skills</h1>
 					<div className="text-muted-foreground mx-auto mt-2 max-w-xl text-sm font-normal">
-						Manage SKILL.md instructions and supporting files in one place, publish immutable versions, and expose them as installable
-						plugins for Claude Code, Codex, and other skill-aware clients.
+						在一处集中管理 SKILL.md 指令和配套文件，发布不可变的版本，并以可安装插件的形式提供给 Claude Code、Codex
+						以及其他支持技能的客户端。
 					</div>
 					<div className="mx-auto mt-6 flex flex-row flex-wrap items-center justify-center gap-2">
 						<Button
 							variant="outline"
-							aria-label="Read more about skills (opens in new tab)"
+							aria-label="深入了解技能（在新标签页打开）"
 							data-testid="skills-button-read-more"
 							onClick={() => {
 								window.open(`${SKILLS_REPOSITORY_DOCS_URL}?utm_source=bfd`, "_blank", "noopener,noreferrer");
 							}}
 						>
-							Read more <ArrowUpRight className="text-muted-foreground h-3 w-3" />
+							了解更多 <ArrowUpRight className="text-muted-foreground h-3 w-3" />
 						</Button>
 						{hasCreateAccess && (
-							<Button aria-label="Create your first skill" data-testid="skill-create-btn" onClick={onCreateNew}>
-								Create Skill
+							<Button aria-label="创建你的第一个技能" data-testid="skill-create-btn" onClick={onCreateNew}>
+								创建技能
 							</Button>
 						)}
 					</div>
@@ -411,10 +411,10 @@ export function SkillsListView({
 			<div className="mb-4 flex shrink-0 items-center justify-between">
 				<div>
 					<div className="flex items-center gap-2">
-						<h2 className="text-lg font-semibold">Skills Repository</h2>
-						<Badge aria-label="Skills Repository is in beta">Beta</Badge>
+						<h2 className="text-lg font-semibold">技能仓库</h2>
+						<Badge aria-label="技能仓库目前为 Beta 版本">Beta</Badge>
 					</div>
-					<p className="text-muted-foreground text-sm">Manage Agent Skills for distribution to AI coding assistants</p>
+					<p className="text-muted-foreground text-sm">管理可分发给 AI 编码助手的 Agent Skills</p>
 				</div>
 				<div className="flex items-center gap-2">
 					{isGitAvailable ? (
@@ -425,14 +425,13 @@ export function SkillsListView({
 								<span tabIndex={0}>
 									<Button variant="outline" size="sm" disabled>
 										<Package className="h-3.5 w-3.5" />
-										Register as Marketplace
+										注册为市场
 									</Button>
 								</span>
 							</TooltipTrigger>
 							<TooltipContent side="bottom">
 								<p className="max-w-xs text-xs">
-									Git is not available on the server. Install git and restart Bifrost to enable marketplace registration for Claude Code and
-									Codex.
+									服务器上未提供 Git。安装 git 并重启 Bifrost 后即可为 Claude Code 和 Codex 启用市场注册。
 								</p>
 							</TooltipContent>
 						</Tooltip>
@@ -456,7 +455,7 @@ export function SkillsListView({
 								document.body.removeChild(link);
 								URL.revokeObjectURL(url);
 							} catch {
-								toast.error("Failed to download skills");
+								toast.error("下载技能失败");
 							} finally {
 								setIsDownloadingAll(false);
 							}
@@ -464,12 +463,12 @@ export function SkillsListView({
 						disabled={!skills?.length || isDownloadingAll}
 					>
 						{isDownloadingAll ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-						{isDownloadingAll ? "Downloading..." : "Download All Skills"}
+						{isDownloadingAll ? "下载中…" : "下载全部技能"}
 					</Button>
 					{hasCreateAccess && (
 						<Button data-testid="skill-create-btn" onClick={onCreateNew} size="sm">
 							<Plus className="h-4 w-4" />
-							New Skill
+							新建技能
 						</Button>
 					)}
 				</div>
@@ -481,8 +480,8 @@ export function SkillsListView({
 					<Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
 					<Input
 						data-testid="skill-search-input"
-						aria-label="Search skills by name"
-						placeholder="Search skills..."
+						aria-label="按名称搜索技能"
+						placeholder="搜索技能..."
 						value={search}
 						onChange={(e) => {
 							setSearch(e.target.value);
@@ -497,11 +496,10 @@ export function SkillsListView({
 							<Info className="text-muted-foreground h-3.5 w-3.5 cursor-help" />
 						</TooltipTrigger>
 						<TooltipContent side="bottom" className="max-w-xs text-xs">
-							When registered as a marketplace, an "all-skills" plugin is available that installs every skill in this repository at once.
-							Its version bumps automatically on changes; use the dropdown to bump manually if needed.
+							注册为市场后，会提供一个 "all-skills" 插件，可一次性安装此仓库中的所有技能。它的版本会随变更自动升级；如有需要，可使用下拉菜单手动升级。
 						</TooltipContent>
 					</Tooltip>
-					<span className="text-muted-foreground whitespace-nowrap">all-skills version</span>
+					<span className="text-muted-foreground whitespace-nowrap">all-skills 版本</span>
 					{hasEditAccess ? (
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
@@ -530,7 +528,7 @@ export function SkillsListView({
 										disabled={isBumpingAllSkillsVersion}
 										onSelect={() => handleBumpAllSkillsVersion(bump)}
 									>
-										Bump {bump}
+										升级 {bump}
 									</DropdownMenuItem>
 								))}
 							</DropdownMenuContent>
@@ -549,16 +547,16 @@ export function SkillsListView({
 					<TableHeader className="bg-muted sticky top-0 z-20">
 						<TableRow className="hover:bg-transparent">
 							<TableHead className="w-60">
-								<SortableHeader column="name" label="Name" sortBy={sortBy} order={sortOrder} onToggle={toggleSort} />
+								<SortableHeader column="name" label="名称" sortBy={sortBy} order={sortOrder} onToggle={toggleSort} />
 							</TableHead>
-							<TableHead>Description</TableHead>
-							<TableHead className="w-36">Version</TableHead>
-							<TableHead className="w-36">Files</TableHead>
+							<TableHead>描述</TableHead>
+							<TableHead className="w-36">版本</TableHead>
+							<TableHead className="w-36">文件</TableHead>
 							<TableHead className="w-44">
-								<SortableHeader column="updated_at" label="Updated" sortBy={sortBy} order={sortOrder} onToggle={toggleSort} />
+								<SortableHeader column="updated_at" label="更新时间" sortBy={sortBy} order={sortOrder} onToggle={toggleSort} />
 							</TableHead>
 							<TableHead className={`bg-muted sticky right-0 z-30 w-14 text-right ${PIN_SHADOW_RIGHT}`}>
-								<span className="sr-only">Actions</span>
+								<span className="sr-only">操作</span>
 							</TableHead>
 						</TableRow>
 					</TableHeader>
@@ -568,11 +566,11 @@ export function SkillsListView({
 								<TableCell colSpan={6} className="py-12 text-center">
 									<div className="flex flex-col items-center gap-2">
 										<FileText className="text-muted-foreground h-8 w-8" />
-										<p className="text-muted-foreground text-sm">{search ? "No skills match your search" : "No skills created yet"}</p>
+										<p className="text-muted-foreground text-sm">{search ? "没有匹配的技能" : "尚未创建任何技能"}</p>
 										{!search && hasCreateAccess && (
 											<Button variant="outline" size="sm" onClick={onCreateNew} className="mt-2">
 												<Plus className="h-3.5 w-3.5" />
-												Create your first skill
+												创建你的第一个技能
 											</Button>
 										)}
 									</div>
@@ -613,7 +611,7 @@ export function SkillsListView({
 										</TableCell>
 										<TableCell>
 											<span className="text-muted-foreground text-xs">
-												<span className="text-foreground">{fileCount}</span> files
+												<span className="text-foreground">{fileCount}</span> 个文件
 											</span>
 										</TableCell>
 										<TableCell className="text-muted-foreground text-sm">{formatDateShort(skill.updated_at)}</TableCell>
@@ -642,7 +640,7 @@ export function SkillsListView({
 			{total > 0 && (
 				<div className="flex shrink-0 items-center justify-between text-xs">
 					<div className="text-muted-foreground flex items-center gap-2">
-						{(offset + 1).toLocaleString()}-{Math.min(offset + PAGE_SIZE, total).toLocaleString()} of {total.toLocaleString()} entries
+						{(offset + 1).toLocaleString()}-{Math.min(offset + PAGE_SIZE, total).toLocaleString()} / 共 {total.toLocaleString()} 项
 					</div>
 					<div className="flex items-center gap-2">
 						<Button
@@ -651,14 +649,14 @@ export function SkillsListView({
 							data-testid="skill-pagination-prev"
 							onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))}
 							disabled={offset === 0 || isFetching}
-							aria-label="Previous page"
+							aria-label="上一页"
 						>
 							<ChevronLeft className="size-3" />
 						</Button>
 						<div className="flex items-center gap-1">
-							<span>Page</span>
+							<span>第</span>
 							<span>{Math.floor(offset / PAGE_SIZE) + 1}</span>
-							<span>of {Math.ceil(total / PAGE_SIZE)}</span>
+							<span>页，共 {Math.ceil(total / PAGE_SIZE)} 页</span>
 						</div>
 						<Button
 							variant="ghost"
@@ -666,7 +664,7 @@ export function SkillsListView({
 							data-testid="skill-pagination-next"
 							onClick={() => setOffset(offset + PAGE_SIZE)}
 							disabled={offset + PAGE_SIZE >= total || isFetching}
-							aria-label="Next page"
+							aria-label="下一页"
 						>
 							<ChevronRight className="size-3" />
 						</Button>

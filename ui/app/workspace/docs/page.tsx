@@ -6,70 +6,78 @@ import { BookOpen, Code, ExternalLink, FileText, GitBranch, Play, Shield, Users,
 
 const docSections = [
 	{
-		title: "Quick Start",
-		description: "Get Bifrost running in under 30 seconds",
+		title: "快速开始",
+		slug: "quick-start",
+		description: "30 秒内启动 Bifrost",
 		icon: Play,
 		url: "https://github.com/maximhq/bifrost/tree/main/docs/quickstart",
-		badge: "Popular",
-		items: ["HTTP Transport Setup", "Go Package Usage", "Docker Guide"],
+		badge: "热门",
+		items: ["HTTP 传输层配置", "Go 包用法", "Docker 指南"],
 	},
 	{
-		title: "Architecture",
-		description: "Deep dive into Bifrost's design and performance",
+		title: "架构",
+		slug: "architecture",
+		description: "深入解析 Bifrost 的设计与性能",
 		icon: GitBranch,
 		url: "https://github.com/maximhq/bifrost/tree/main/docs/architecture",
-		items: ["System Overview", "Request Flow", "Concurrency Model", "Design Decisions"],
+		items: ["系统总览", "请求流程", "并发模型", "设计取舍"],
 	},
 	{
-		title: "Usage Guides",
-		description: "Complete API reference and configuration guides",
+		title: "使用指南",
+		slug: "usage-guides",
+		description: "完整的 API 参考与配置指南",
 		icon: BookOpen,
 		url: "https://github.com/maximhq/bifrost/tree/main/docs/usage",
-		badge: "Comprehensive",
-		items: ["Providers Setup", "Key Management", "Error Handling", "Memory & Networking"],
+		badge: "全面",
+		items: ["提供商配置", "密钥管理", "错误处理", "内存与网络"],
 	},
 	{
-		title: "Contributing",
-		description: "Help improve Bifrost for everyone",
+		title: "参与贡献",
+		slug: "contributing",
+		description: "帮助改进 Bifrost，惠及所有人",
 		icon: Users,
 		url: "https://github.com/maximhq/bifrost/tree/main/docs/contributing",
-		items: ["Contributing Guide", "Adding Providers", "Plugin Development", "Code Conventions"],
+		items: ["贡献指南", "新增提供商", "插件开发", "代码规范"],
 	},
 	{
-		title: "Integration Examples",
-		description: "Practical examples and testing code",
+		title: "集成示例",
+		slug: "integration-examples",
+		description: "实用示例与测试代码",
 		icon: Code,
 		url: "https://github.com/maximhq/bifrost/tree/main/docs/usage/http-transport/integrations",
-		items: ["OpenAI Integration", "Anthropic Integration", "GenAI Integration", "Migration Guides"],
+		items: ["OpenAI 集成", "Anthropic 集成", "GenAI 集成", "迁移指南"],
 	},
 	{
-		title: "Benchmarks",
-		description: "Performance metrics and guides",
+		title: "基准测试",
+		slug: "benchmarks",
+		description: "性能指标与调优指南",
 		icon: Zap,
 		url: "https://github.com/maximhq/bifrost/blob/main/docs/benchmarks.md",
-		items: ["5K RPS Test Results", "Performance Metrics", "Configuration Tuning", "Hardware Comparisons"],
+		items: ["5K RPS 测试结果", "性能指标", "配置调优", "硬件对比"],
 	},
 ];
 
 const featuredDocs = [
 	{
-		title: "MCP Documentation",
-		description: "Comprehensive guide to Model Context Protocol integration",
-		content: "Learn how to build sophisticated AI agents with MCP support, tool calling, and external integrations.",
+		title: "MCP 文档",
+		slug: "mcp-documentation",
+		description: "Model Context Protocol 集成的完整指南",
+		content: "了解如何借助 MCP 支持、工具调用和外部集成构建复杂的 AI 智能体。",
 		href: "https://github.com/maximhq/bifrost/blob/main/docs/mcp.md",
 		icon: FileText,
-		buttonText: "View MCP Guide",
+		buttonText: "查看 MCP 指南",
 		borderColor: "border-primary/20",
 		backgroundColor: "bg-primary/5",
 		iconColor: "text-primary",
 	},
 	{
-		title: "Governance Plugin",
-		description: "Complete access control, budgets, and rate limiting guide",
-		content: "Master Virtual Keys, hierarchical budgets, rate limiting, and usage tracking for secure AI infrastructure.",
+		title: "治理插件",
+		slug: "governance-plugin",
+		description: "完整的访问控制、预算与速率限制指南",
+		content: "掌握虚拟密钥、层级预算、速率限制与用量追踪，构建安全的 AI 基础设施。",
 		href: "https://github.com/maximhq/bifrost/blob/main/docs/governance.md",
 		icon: Shield,
-		buttonText: "View Governance Guide",
+		buttonText: "查看治理指南",
 		borderColor: "border-green-200 dark:border-green-800",
 		backgroundColor: "bg-green-50 dark:bg-green-950/20",
 		iconColor: "text-green-600",
@@ -85,11 +93,11 @@ export default function DocsPage() {
 					<div className="space-y-4 text-center">
 						<div className="bg-primary/10 text-primary inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm">
 							<BookOpen className="h-4 w-4" />
-							<span className="font-semibold">Documentation</span>
+							<span className="font-semibold">文档</span>
 						</div>
-						<GradientHeader title="Power Up Your Bifrost Stack" />
+						<GradientHeader title="让你的 Bifrost 更强大" />
 						<p className="text-muted-foreground mx-auto max-w-2xl text-lg">
-							Everything you need to know about building production AI applications with Bifrost
+							使用 Bifrost 构建生产级 AI 应用所需的一切知识
 						</p>
 						<div className="flex justify-center gap-4">
 							<Button asChild>
@@ -100,7 +108,7 @@ export default function DocsPage() {
 									data-testid="docs-view-full-documentation-link"
 								>
 									<ExternalLink className="mr-2 h-4 w-4" />
-									View Full Documentation
+									查看完整文档
 								</a>
 							</Button>
 							<Button variant="outline" asChild>
@@ -111,7 +119,7 @@ export default function DocsPage() {
 									data-testid="docs-quick-start-guide-link"
 								>
 									<Play className="mr-2 h-4 w-4" />
-									Quick Start Guide
+									快速开始指南
 								</a>
 							</Button>
 						</div>
@@ -154,9 +162,9 @@ export default function DocsPage() {
 												target="_blank"
 												rel="noopener noreferrer"
 												className="flex items-center justify-center gap-2"
-												data-testid={`docs-read-more-${section.title.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`}
+												data-testid={`docs-read-more-${section.slug}`}
 											>
-												Read More
+												了解更多
 												<ExternalLink className="h-4 w-4" />
 											</a>
 										</Button>
@@ -184,7 +192,7 @@ export default function DocsPage() {
 											href={doc.href}
 											target="_blank"
 											rel="noopener noreferrer"
-											data-testid={`docs-featured-${doc.title.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}`}
+											data-testid={`docs-featured-${doc.slug}`}
 										>
 											<doc.icon className="mr-2 h-4 w-4" />
 											{doc.buttonText}

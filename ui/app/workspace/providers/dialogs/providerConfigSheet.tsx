@@ -28,41 +28,41 @@ const availableTabs = (hasCustomProviderConfig: boolean, hasGovernanceAccess: bo
 	if (hasCustomProviderConfig) {
 		tabs.push({
 			id: "api-structure",
-			label: "API Structure",
+			label: "API 结构",
 		});
 	}
 	tabs.push({
 		id: "network",
-		label: "Network",
+		label: "网络",
 	});
 	tabs.push({
 		id: "proxy",
-		label: "Proxy",
+		label: "代理",
 	});
 	tabs.push({
 		id: "performance",
-		label: "Performance",
+		label: "性能",
 	});
 	if (hasGovernanceAccess) {
 		tabs.push({
 			id: "governance",
-			label: "Governance",
+			label: "治理",
 		});
 	}
 	if (isAnthropicFamily) {
 		tabs.push({
 			id: "beta-headers",
-			label: "Beta Headers",
+			label: "Beta 请求头",
 		});
 	}
 	tabs.push({
 		id: "debugging",
-		label: "Debugging",
+		label: "调试",
 	});
 	if (isOpenAI) {
 		tabs.push({
 			id: "openai-config",
-			label: "OpenAI Config",
+			label: "OpenAI 配置",
 		});
 	}
 	return tabs;
@@ -103,7 +103,7 @@ export default function ProviderConfigSheet({ show, onCancel, provider }: Props)
 							<div className="flex items-center">
 								<Provider provider={provider.name} size={24} className="mt-0" />
 							</div>
-							Provider configuration
+							提供商配置
 						</div>
 					</SheetTitle>
 				</SheetHeader>

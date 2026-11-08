@@ -407,19 +407,21 @@ export default function LogsPage() {
 	const statCards = useMemo(
 		() => [
 			{
-				title: "Total Requests",
+				id: "total-requests",
+				title: "总请求数",
 				value: <NumberFlow value={stats?.total_requests ?? 0} format={COMPACT_NUMBER_FORMAT} />,
 				icon: <BarChart className="size-4" />,
 			},
 			{
-				title: "Success Rate",
+				id: "success-rate",
+				title: "成功率",
 				value: <NumberFlow value={stats?.success_rate ?? 0} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} suffix="%" />,
 				icon: <CheckCircle className="size-4" />,
-				description:
-					"Success rate as perceived by the system. Each fallback counts as a separate attempt. Retries on the same request are counted as one attempt.",
+				description: "系统视角的成功率。每次回退都算作一次独立尝试，同一请求的重试计为一次尝试。",
 			},
 			{
-				title: "User Success Rate",
+				id: "user-success-rate",
+				title: "用户成功率",
 				value: (
 					<NumberFlow
 						value={stats?.user_facing_success_rate ?? 0}
@@ -428,31 +430,34 @@ export default function LogsPage() {
 					/>
 				),
 				icon: <CheckCircle className="size-4" />,
-				description: "Success rate as perceived by the end user. It includes fallback chains as one request.",
+				description: "终端用户视角的成功率，将回退链路计为一个请求。",
 			},
 			{
-				title: "Avg Latency",
+				id: "avg-latency",
+				title: "平均延迟",
 				value: (
 					<NumberFlow value={stats?.average_latency ?? 0} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} suffix="ms" />
 				),
 				icon: <Clock className="size-4" />,
 			},
 			{
-				title: "Total Tokens",
+				id: "total-tokens",
+				title: "总 Token 数",
 				value: <NumberFlow value={stats?.total_tokens ?? 0} format={COMPACT_NUMBER_FORMAT} />,
 				icon: <Hash className="size-4" />,
 				subValue: (
 					<>
 						<NumberFlow value={stats?.prompt_tokens ?? 0} format={COMPACT_NUMBER_FORMAT} />
-						<span> in / </span>
+						<span> 输入 / </span>
 						<NumberFlow value={stats?.completion_tokens ?? 0} format={COMPACT_NUMBER_FORMAT} />
-						<span> out</span>
+						<span> 输出</span>
 					</>
 				),
-				description: "Total tokens used, split into input (prompt) and output (completion) tokens.",
+				description: "使用的总 Token 数，分为输入（prompt）与输出（completion）Token。",
 			},
 			{
-				title: "Total Cost",
+				id: "total-cost",
+				title: "总费用",
 				value: (
 					<NumberFlow
 						value={stats?.total_cost ?? 0}
@@ -488,20 +493,20 @@ export default function LogsPage() {
 
 	const COLUMN_LABELS: Record<string, string> = useMemo(
 		() => ({
-			timestamp: "Time",
-			request_type: "Type",
-			input: "Message",
-			provider: "Provider",
-			model: "Model",
-			latency: "Latency",
-			tokens: "Tokens",
-			cost: "Cost",
-			virtual_key: "Virtual Key",
-			routing_rule: "Routing Rule",
-			team: "Team",
-			customer: "Customer",
-			user: "User",
-			business_unit: "Business Unit",
+			timestamp: "时间",
+			request_type: "类型",
+			input: "消息",
+			provider: "提供商",
+			model: "模型",
+			latency: "延迟",
+			tokens: "Token",
+			cost: "费用",
+			virtual_key: "虚拟密钥",
+			routing_rule: "路由规则",
+			team: "团队",
+			customer: "客户",
+			user: "用户",
+			business_unit: "业务单元",
 		}),
 		[],
 	);
@@ -652,7 +657,7 @@ export default function LogsPage() {
 						</div>
 						<div className="grid shrink-0 grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
 							{statCards.map((card) => (
-								<Card key={card.title} className="py-4 shadow-none">
+								<Card key={card.id} className="py-4 shadow-none">
 									<CardContent
 										className={`flex items-center justify-between px-4 transition-opacity duration-200 ${statsIsFetching ? "opacity-50" : "opacity-100"}`}
 									>
@@ -664,8 +669,8 @@ export default function LogsPage() {
 														<TooltipTrigger asChild>
 															<button
 																type="button"
-																aria-label={`${card.title} info`}
-																data-testid={`logs-metric-info-${card.title.toLowerCase().replace(/\s+/g, "-")}`}
+																aria-label={`${card.title} 说明`}
+																data-testid={`logs-metric-info-${card.id}`}
 																className="inline-flex items-center"
 															>
 																<Info className="size-3 cursor-help" />

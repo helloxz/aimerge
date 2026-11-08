@@ -90,7 +90,7 @@ export default function AttributeSheet({ model, onClose }: AttributeSheetProps) 
 
 	const handleSubmit = async () => {
 		if (!hasUpdateAccess) {
-			toast.error("You don't have permission to perform this action");
+			toast.error("你没有执行此操作的权限");
 			return;
 		}
 
@@ -99,18 +99,18 @@ export default function AttributeSheet({ model, onClose }: AttributeSheetProps) 
 		const cleaned = extraRows.map((r) => ({ key: r.key.trim(), value: r.value })).filter((r) => r.key !== "" || r.value !== "");
 		const missingKey = cleaned.find((r) => r.key === "");
 		if (missingKey) {
-			toast.error("Attribute rows must have a key");
+			toast.error("属性行必须填写键");
 			return;
 		}
 		const dupKey = cleaned.find((r, i) => cleaned.findIndex((other) => other.key === r.key) !== i);
 		if (dupKey) {
-			toast.error(`Duplicate attribute key: ${dupKey.key}`);
+			toast.error(`属性键重复：${dupKey.key}`);
 			return;
 		}
 		// "description" is the special-cased field above — disallow it as an extra row.
 		const reservedClash = cleaned.find((r) => r.key === "description");
 		if (reservedClash) {
-			toast.error("Use the Description field instead of a 'description' attribute row");
+			toast.error("请使用“描述”字段，而不是名为 description 的属性行");
 			return;
 		}
 
@@ -127,7 +127,7 @@ export default function AttributeSheet({ model, onClose }: AttributeSheetProps) 
 					additional_attributes: Object.keys(attributes).length > 0 ? attributes : undefined,
 				},
 			]).unwrap();
-			toast.success("Attributes saved");
+			toast.success("属性已保存");
 			handleClose();
 		} catch (err) {
 			toast.error(getErrorMessage(err));
@@ -147,10 +147,9 @@ export default function AttributeSheet({ model, onClose }: AttributeSheetProps) 
 				data-testid="model-catalog-attribute-sheet"
 			>
 				<SheetHeader className="flex flex-col items-start p-0 px-8 py-4" headerClassName="mb-0 sticky -top-4 bg-card z-10">
-					<SheetTitle>Edit Model Attributes</SheetTitle>
+					<SheetTitle>编辑模型属性</SheetTitle>
 					<SheetDescription>
-						Update the description and other attributes for this model. These attributes are stored on the pricing row and preserved across
-						the pricing sync.
+						更新此模型的描述与其他属性。这些属性存储在定价记录上，并会在定价同步后保留。
 					</SheetDescription>
 				</SheetHeader>
 
@@ -159,14 +158,14 @@ export default function AttributeSheet({ model, onClose }: AttributeSheetProps) 
 						{/* Read-only provider / model header */}
 						<div className="grid grid-cols-2 gap-4">
 							<div>
-								<Label className="text-sm font-medium">Provider</Label>
+								<Label className="text-sm font-medium">提供商</Label>
 								<div className="bg-muted/30 mt-2 flex items-center gap-2 rounded-sm border px-3 py-2 text-sm">
 									<RenderProviderIcon provider={model.provider as KnownProvider} size="sm" className="h-4 w-4" />
 									<span>{ProviderLabels[model.provider as ProviderName] || model.provider}</span>
 								</div>
 							</div>
 							<div>
-								<Label className="text-sm font-medium">Model</Label>
+								<Label className="text-sm font-medium">模型</Label>
 								<div className="bg-muted/30 mt-2 rounded-sm border px-3 py-2 font-mono text-sm">{model.name}</div>
 							</div>
 						</div>
@@ -176,7 +175,7 @@ export default function AttributeSheet({ model, onClose }: AttributeSheetProps) 
 						{/* Pricing */}
 						<div className="space-y-3">
 							<div className="flex items-center justify-between gap-3">
-								<Label className="text-sm font-medium">Pricing</Label>
+								<Label className="text-sm font-medium">价格</Label>
 								{canOpenPricingSource ? (
 									<a
 										href={pricingSourceUrl}
@@ -185,7 +184,7 @@ export default function AttributeSheet({ model, onClose }: AttributeSheetProps) 
 										className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-xs"
 										data-testid="model-catalog-pricing-source-link"
 									>
-										Source
+										来源
 										<ExternalLink className="h-3 w-3" />
 									</a>
 								) : (
@@ -196,25 +195,25 @@ export default function AttributeSheet({ model, onClose }: AttributeSheetProps) 
 							</div>
 							<div className="grid grid-cols-2 gap-4">
 								<div className="bg-muted/30 rounded-sm border px-3 py-2">
-									<p className="text-muted-foreground text-xs">Input</p>
+									<p className="text-muted-foreground text-xs">输入</p>
 									<p className="mt-1 font-mono text-sm" data-testid="model-catalog-input-cost">
 										{formatTokenPriceFull(model.input_cost_per_token)}
 									</p>
 								</div>
 								<div className="bg-muted/30 rounded-sm border px-3 py-2">
-									<p className="text-muted-foreground text-xs">Output</p>
+									<p className="text-muted-foreground text-xs">输出</p>
 									<p className="mt-1 font-mono text-sm" data-testid="model-catalog-output-cost">
 										{formatTokenPriceFull(model.output_cost_per_token)}
 									</p>
 								</div>
 								<div className="bg-muted/30 rounded-sm border px-3 py-2">
-									<p className="text-muted-foreground text-xs">Cache Write</p>
+									<p className="text-muted-foreground text-xs">缓存写入</p>
 									<p className="mt-1 font-mono text-sm" data-testid="model-catalog-cache-write-cost">
 										{formatTokenPriceFull(model.cache_creation_input_token_cost)}
 									</p>
 								</div>
 								<div className="bg-muted/30 rounded-sm border px-3 py-2">
-									<p className="text-muted-foreground text-xs">Cache Read</p>
+									<p className="text-muted-foreground text-xs">缓存读取</p>
 									<p className="mt-1 font-mono text-sm" data-testid="model-catalog-cache-read-cost">
 										{formatTokenPriceFull(model.cache_read_input_token_cost)}
 									</p>
@@ -226,13 +225,13 @@ export default function AttributeSheet({ model, onClose }: AttributeSheetProps) 
 
 						{/* Description */}
 						<div>
-							<Label className="text-sm font-medium">Description</Label>
+							<Label className="text-sm font-medium">描述</Label>
 							<Textarea
 								className="mt-2"
 								value={description}
 								onChange={(e) => setDescription(e.target.value)}
 								rows={4}
-								placeholder="A short description of this model, shown anywhere additional_attributes.description is consumed."
+								placeholder="此模型的简短描述，会在使用 additional_attributes.description 的地方展示。"
 								data-testid="model-catalog-description-textarea"
 							/>
 						</div>
@@ -242,15 +241,15 @@ export default function AttributeSheet({ model, onClose }: AttributeSheetProps) 
 						{/* Other attributes */}
 						<div className="space-y-3">
 							<div className="flex items-center justify-between">
-								<Label className="text-sm font-medium">Other Attributes</Label>
+								<Label className="text-sm font-medium">其他属性</Label>
 								<Button type="button" variant="outline" size="sm" onClick={handleAddRow} data-testid="model-catalog-add-attribute-row">
 									<Plus className="mr-1 h-3 w-3" />
-									Add
+									添加
 								</Button>
 							</div>
 							{extraRows.length === 0 ? (
 								<p className="text-muted-foreground text-xs">
-									No additional attributes. Add a key-value pair for anything beyond description.
+									暂无其他属性。除描述外，可添加键值对。
 								</p>
 							) : (
 								<div className="space-y-2">
@@ -259,14 +258,14 @@ export default function AttributeSheet({ model, onClose }: AttributeSheetProps) 
 											<Input
 												value={row.key}
 												onChange={(e) => handleRowChange(row.id, "key", e.target.value)}
-												placeholder="key"
+												placeholder="键"
 												className="flex-1"
 												data-testid={`model-catalog-attribute-key-${i}`}
 											/>
 											<Input
 												value={row.value}
 												onChange={(e) => handleRowChange(row.id, "value", e.target.value)}
-												placeholder="value"
+												placeholder="值"
 												className="flex-1"
 												data-testid={`model-catalog-attribute-value-${i}`}
 											/>
@@ -288,9 +287,9 @@ export default function AttributeSheet({ model, onClose }: AttributeSheetProps) 
 
 					<div className="bg-card sticky bottom-0 shrink-0 border-t px-8 py-4">
 						<div className="flex items-center justify-end gap-3">
-							{!hasUpdateAccess && <p className="text-destructive text-sm">You don't have permission to perform this action</p>}
+							{!hasUpdateAccess && <p className="text-destructive text-sm">你没有执行此操作的权限</p>}
 							<Button type="button" variant="outline" onClick={handleClose} data-testid="model-catalog-attribute-cancel">
-								Cancel
+								取消
 							</Button>
 							<Button
 								type="button"
@@ -298,7 +297,7 @@ export default function AttributeSheet({ model, onClose }: AttributeSheetProps) 
 								disabled={isLoading || !isDirty || !hasUpdateAccess}
 								data-testid="model-catalog-attribute-submit"
 							>
-								{isLoading ? "Saving..." : "Save Changes"}
+								{isLoading ? "保存中…" : "保存更改"}
 							</Button>
 						</div>
 					</div>

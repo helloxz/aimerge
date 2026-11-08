@@ -19,7 +19,7 @@ export default function FeatureFlagsView() {
 	async function handleToggle(flag: FeatureFlagStatus, checked: boolean) {
 		try {
 			await updateFeatureFlag({ id: flag.id, enabled: checked }).unwrap();
-			toast.success(`${flag.display_name || flag.id} ${checked ? "enabled" : "disabled"}`);
+			toast.success(`${flag.display_name || flag.id} ${checked ? "已启用" : "已停用"}`);
 		} catch (err) {
 			toast.error(getErrorMessage(err));
 		}
@@ -28,23 +28,23 @@ export default function FeatureFlagsView() {
 	return (
 		<div className="w-full space-y-4">
 			<div>
-				<h2 className="text-lg font-semibold tracking-tight">Feature Flags</h2>
+				<h2 className="text-lg font-semibold tracking-tight">功能开关</h2>
 				<p className="text-muted-foreground text-sm">
-					Toggle in-process feature flags. Flags are declared in code; values can also be set via{" "}
-					<code className="text-xs">config.json</code> or Helm, in which case they appear here as locked.
+					切换进程内的功能开关。开关在代码中声明；也可以通过{" "}
+					<code className="text-xs">config.json</code> 或 Helm 设置，此时它们会在此处显示为锁定状态。
 				</p>
 			</div>
 
-			{isLoading && <p className="text-muted-foreground text-sm">Loading feature flags...</p>}
-			{isError && <p className="text-sm text-red-500">Failed to load feature flags: {getErrorMessage(error)}</p>}
+			{isLoading && <p className="text-muted-foreground text-sm">正在加载功能开关…</p>}
+			{isError && <p className="text-sm text-red-500">加载功能开关失败：{getErrorMessage(error)}</p>}
 
 			{!isLoading && !isError && (
 				<div className="overflow-auto rounded-sm border">
 					<Table data-testid="feature-flags-table">
 						<TableHeader>
 							<TableRow className="bg-muted/50">
-								<TableHead className="font-semibold">Flag</TableHead>
-								<TableHead className="w-px text-right font-semibold">Enabled</TableHead>
+								<TableHead className="font-semibold">开关</TableHead>
+								<TableHead className="w-px text-right font-semibold">已启用</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -52,7 +52,7 @@ export default function FeatureFlagsView() {
 								<TableRow data-testid="feature-flags-table-empty-state">
 									<TableCell colSpan={2} className="h-24 text-center">
 										<span className="text-muted-foreground text-sm">
-											No feature flags found. Flags are declared in code via <code className="text-xs">featureflags.Register(...)</code>.
+											未找到功能开关。开关需在代码中通过 <code className="text-xs">featureflags.Register(...)</code> 声明。
 										</span>
 									</TableCell>
 								</TableRow>
@@ -94,7 +94,7 @@ function FeatureFlagRow({ flag, canUpdate, onToggle }: FeatureFlagRowProps) {
 					{flag.description && <p className="text-muted-foreground text-sm">{flag.description}</p>}
 					{!flag.registered && (
 						<p className="text-muted-foreground text-xs">
-							No code currently reads this flag. The override is stored but inert until a Register() call is added.
+							当前没有代码读取该开关。覆盖值会被保存，但在添加 Register() 调用之前不会生效。
 						</p>
 					)}
 				</div>
@@ -126,10 +126,10 @@ function LockedBadge() {
 			<TooltipTrigger asChild>
 				<Badge variant="secondary" className="flex items-center gap-1 text-xs">
 					<Lock className="size-3" />
-					Locked
+					已锁定
 				</Badge>
 			</TooltipTrigger>
-			<TooltipContent>Value is pinned by config.json or Helm; edit your config to change it.</TooltipContent>
+			<TooltipContent>该值由 config.json 或 Helm 固定，如需修改请编辑配置。</TooltipContent>
 		</Tooltip>
 	);
 }
@@ -140,10 +140,10 @@ function EnterpriseBadge() {
 			<TooltipTrigger asChild>
 				<Badge variant="secondary" className="flex items-center gap-1 text-xs">
 					<Crown className="size-3" />
-					Enterprise
+					企业版
 				</Badge>
 			</TooltipTrigger>
-			<TooltipContent>This flag gates an enterprise-only feature. Upgrade to enable it.</TooltipContent>
+			<TooltipContent>该开关控制一项仅企业版可用的功能，升级后可启用。</TooltipContent>
 		</Tooltip>
 	);
 }
@@ -153,10 +153,10 @@ function UnregisteredBadge() {
 		<Tooltip>
 			<TooltipTrigger asChild>
 				<Badge variant="destructive" className="text-xs">
-					Unregistered
+					未注册
 				</Badge>
 			</TooltipTrigger>
-			<TooltipContent>This id has no code registration. Restore the Register() call or clean up the stale value.</TooltipContent>
+			<TooltipContent>该 ID 没有对应的代码注册。请恢复 Register() 调用或清理该过期值。</TooltipContent>
 		</Tooltip>
 	);
 }

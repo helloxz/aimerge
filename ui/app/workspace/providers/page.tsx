@@ -91,8 +91,8 @@ export default function Providers() {
 					);
 					return;
 				}
-				toast.error("Something went wrong", {
-					description: `We encountered an error while getting provider config: ${getErrorMessage(err)}`,
+				toast.error("出错了", {
+					description: `获取提供商配置时出错：${getErrorMessage(err)}`,
 				});
 			});
 	}, [provider, isLoadingProviders]);
@@ -129,7 +129,7 @@ export default function Providers() {
 				setProvider(name);
 				return;
 			}
-			toast.error("Failed to add provider", {
+			toast.error("添加提供商失败", {
 				description: getErrorMessage(err),
 			});
 		}
@@ -198,7 +198,7 @@ export default function Providers() {
 							{/* Configured Providers (standard with keys + custom) */}
 							{configuredProviders.length > 0 && (
 								<div className="mb-4">
-									<div className="text-muted-foreground mb-2 text-xs font-medium">Configured Providers</div>
+									<div className="text-muted-foreground mb-2 text-xs font-medium">已配置的提供商</div>
 									{configuredProviders.map((p) => {
 										const isCustom = !ProviderNames.includes(p.name as KnownProvider);
 										const label = isCustom ? p.name : ProviderLabels[p.name as keyof typeof ProviderLabels];
@@ -233,7 +233,7 @@ export default function Providers() {
 												<ProviderStatusBadge status={p.provider_status} />
 												{isCustom && (
 													<Badge variant="secondary" className="text-muted-foreground ml-auto shrink-0 px-1.5 py-0.5 text-[10px] font-bold">
-														CUSTOM
+														自定义
 													</Badge>
 												)}
 											</div>
@@ -263,7 +263,7 @@ export default function Providers() {
 			)}
 			{!selectedProvider && (
 				<div className="bg-muted/10 flex w-full items-center justify-center rounded-md" style={{ maxHeight: "calc(100vh - 300px)" }}>
-					<div className="text-muted-foreground text-sm">Select a provider</div>
+					<div className="text-muted-foreground text-sm">请选择提供商</div>
 				</div>
 			)}
 			{!isLoadingProvider && selectedProvider && (
@@ -279,7 +279,7 @@ function ProviderStatusBadge({ status }: { status: ProviderStatus }) {
 			<TooltipTrigger>
 				<AlertCircle className="h-3 w-3" />
 			</TooltipTrigger>
-			<TooltipContent>{status === "error" ? "Provider could not be initialized" : "Provider is deleted"}</TooltipContent>
+			<TooltipContent>{status === "error" ? "提供商无法初始化" : "提供商已删除"}</TooltipContent>
 		</Tooltip>
 	) : null;
 }
@@ -301,7 +301,7 @@ function KeyDiscoveryFailedBadge({
 			<TooltipTrigger>
 				<AlertCircle className="h-3 w-3" />
 			</TooltipTrigger>
-			<TooltipContent>{provider.description || "Provider model discovery failed."}</TooltipContent>
+			<TooltipContent>{provider.description || "提供商模型发现失败。"}</TooltipContent>
 		</Tooltip>
 	);
 }

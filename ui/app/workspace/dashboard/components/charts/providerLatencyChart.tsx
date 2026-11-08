@@ -61,7 +61,7 @@ function SingleProviderTooltip({ active, payload }: any) {
 				<div className="flex items-center justify-between gap-4">
 					<span className="flex items-center gap-1.5">
 						<span className="h-2 w-2 rounded-full" style={{ backgroundColor: LATENCY_COLORS.avg }} />
-						<span className="text-zinc-600 dark:text-zinc-400">Avg</span>
+						<span className="text-zinc-600 dark:text-zinc-400">平均</span>
 					</span>
 					<span className="font-medium">{formatLatency(data.avg_latency)}</span>
 				</div>
@@ -87,7 +87,7 @@ function SingleProviderTooltip({ active, payload }: any) {
 					<span className="font-medium">{formatLatency(data.p99_latency)}</span>
 				</div>
 				<div className="flex items-center justify-between gap-4 border-t border-zinc-200 pt-1 dark:border-zinc-700">
-					<span className="text-zinc-600 dark:text-zinc-400">Requests</span>
+					<span className="text-zinc-600 dark:text-zinc-400">请求数</span>
 					<span className="font-medium">{data.total_requests?.toLocaleString() || 0}</span>
 				</div>
 			</div>
@@ -135,7 +135,7 @@ function ProviderLatencyChartImpl({ data, chartType, startTime, endTime, selecte
 	}, [data, selectedProvider]);
 
 	if (!data?.buckets || chartData.length === 0) {
-		return <div className="text-muted-foreground flex h-full items-center justify-center text-sm">No data available</div>;
+		return <div className="text-muted-foreground flex h-full items-center justify-center text-sm">暂无数据</div>;
 	}
 
 	const commonProps = {

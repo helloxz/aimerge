@@ -150,7 +150,7 @@ export default function MCPClientSheet({
 
 	const toolOptions = useMemo(
 		() => [
-			{ value: "*", label: "Allow All Tools", description: "Allow all current and future tools" },
+			{ value: "*", label: "允许所有工具", description: "允许当前及未来的所有工具" },
 			...allToolNames.map((n) => ({ value: n, label: n })),
 		],
 		[allToolNames],
@@ -268,8 +268,8 @@ export default function MCPClientSheet({
 		try {
 			if (mcpClient.config.auth_type === "per_user_headers" && (!data.per_user_header_keys || data.per_user_header_keys.length === 0)) {
 				toast({
-					title: "Header keys required",
-					description: "Declare at least one header name users must supply.",
+					title: "需要请求头键名",
+					description: "请至少声明一个用户必须提供的请求头名称。",
 					variant: "destructive",
 				});
 				return;
@@ -324,13 +324,13 @@ export default function MCPClientSheet({
 			}
 
 			toast({
-				title: "Success",
-				description: "MCP client updated successfully",
+				title: "成功",
+				description: "MCP 客户端已更新",
 			});
 			onSubmitSuccess();
 		} catch (error) {
 			toast({
-				title: "Error",
+				title: "错误",
 				description: getErrorMessage(error),
 				variant: "destructive",
 			});
@@ -452,7 +452,7 @@ export default function MCPClientSheet({
 									{mcpClient.config.name}
 									<Badge className={MCP_STATUS_COLORS[mcpClient.state]}>{mcpClient.state}</Badge>
 								</SheetTitle>
-								<SheetDescription>MCP server configuration and available tools</SheetDescription>
+								<SheetDescription>MCP 服务器配置与可用工具</SheetDescription>
 							</div>
 							<SheetNavigationButtons
 								hasPrev={hasPrev}
@@ -460,7 +460,7 @@ export default function MCPClientSheet({
 								onNavigate={handleNavigate}
 								prevKeys={prevKeys}
 								nextKeys={nextKeys}
-								entityLabel="server"
+								entityLabel="服务器"
 							/>
 						</div>
 					</SheetHeader>
@@ -469,14 +469,14 @@ export default function MCPClientSheet({
 							<div className="gap-6 space-y-6 px-8">
 								{/* Name and Header Section */}
 								<div className="space-y-4">
-									<h3 className="font-semibold">Basic Information</h3>
+									<h3 className="font-semibold">基本信息</h3>
 									<FormField
 										control={form.control}
 										name="name"
 										render={({ field }) => (
 											<FormItem className="flex flex-col gap-3">
 												<div className="flex items-center gap-2">
-													<FormLabel>Name</FormLabel>
+													<FormLabel>名称</FormLabel>
 													<TooltipProvider>
 														<Tooltip>
 															<TooltipTrigger asChild>
@@ -484,9 +484,8 @@ export default function MCPClientSheet({
 															</TooltipTrigger>
 															<TooltipContent className="max-w-xs">
 																<p>
-																	Use a descriptive, meaningful name that clearly identifies the server. For example, use "google_drive"
-																	instead of "gdrive", or "hacker_news" instead of "hn". This name is used as the Python module name in code
-																	mode.
+																	请使用能清晰标识服务器、具有描述性的名称。例如使用 "google_drive" 而不是 "gdrive"，或使用 "hacker_news"
+																	而不是 "hn"。此名称在代码模式下会作为 Python 模块名使用。
 																</p>
 															</TooltipContent>
 														</Tooltip>
@@ -494,7 +493,7 @@ export default function MCPClientSheet({
 												</div>
 												<div>
 													<FormControl>
-														<Input placeholder="Client name" {...field} value={field.value || ""} />
+														<Input placeholder="客户端名称" {...field} value={field.value || ""} />
 													</FormControl>
 													<FormMessage />
 												</div>
@@ -505,7 +504,7 @@ export default function MCPClientSheet({
 								    can't be changed after create — surface them here for
 								    visibility without exposing edit controls. */}
 									<div className="flex flex-col gap-2">
-										<div className="text-sm font-medium">Connection</div>
+										<div className="text-sm font-medium">连接</div>
 										<div className="bg-muted/40 text-muted-foreground rounded-md border px-3 py-2 text-sm">
 											<span className="text-foreground font-mono text-xs uppercase">
 												{mcpClient.config.connection_type === "stdio"
@@ -529,7 +528,7 @@ export default function MCPClientSheet({
 										mcpClient.config.stdio_config?.envs &&
 										mcpClient.config.stdio_config.envs.length > 0 && (
 											<div className="space-y-2">
-												<div className="text-sm font-medium">Environment Variables</div>
+												<div className="text-sm font-medium">环境变量</div>
 												<HeadersTable
 													value={Object.fromEntries(
 														mcpClient.config.stdio_config.envs.map((env) => {
@@ -551,7 +550,7 @@ export default function MCPClientSheet({
 										render={({ field }) => (
 											<FormItem className="flex items-center justify-between rounded-lg border p-4">
 												<div className="flex items-center gap-2">
-													<FormLabel>Code Mode Server</FormLabel>
+													<FormLabel>代码模式服务器</FormLabel>
 													<TooltipProvider>
 														<Tooltip>
 															<TooltipTrigger asChild>
@@ -561,13 +560,13 @@ export default function MCPClientSheet({
 																	rel="noopener noreferrer"
 																	data-testid="code-mode-link-help"
 																	className="text-muted-foreground hover:text-foreground focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none"
-																	aria-label="Learn more about Code Mode"
+																	aria-label="了解代码模式的更多信息"
 																>
 																	<Info className="h-4 w-4 cursor-help" />
 																</a>
 															</TooltipTrigger>
 															<TooltipContent>
-																<p>Click to learn more about Code Mode</p>
+																<p>点击了解代码模式的更多信息</p>
 															</TooltipContent>
 														</Tooltip>
 													</TooltipProvider>
@@ -585,7 +584,7 @@ export default function MCPClientSheet({
 										render={({ field }) => (
 											<FormItem className="flex items-center justify-between rounded-lg border p-4">
 												<div className="flex items-center gap-2">
-													<FormLabel>Ping Available for Health Check</FormLabel>
+													<FormLabel>健康检查使用 Ping</FormLabel>
 													<TooltipProvider>
 														<Tooltip>
 															<TooltipTrigger asChild>
@@ -593,8 +592,8 @@ export default function MCPClientSheet({
 															</TooltipTrigger>
 															<TooltipContent className="max-w-xs">
 																<p>
-																	Enable to use lightweight ping method for health checks. Disable if your MCP server doesn't support ping -
-																	will use listTools instead.
+																	启用后将使用轻量的 ping 方式进行健康检查。如果您的 MCP 服务器不支持 ping，请关闭此选项——此时将改用
+																	listTools。
 																</p>
 															</TooltipContent>
 														</Tooltip>
@@ -612,7 +611,7 @@ export default function MCPClientSheet({
 										render={({ field }) => (
 											<FormItem className="flex items-center justify-between rounded-lg border p-4">
 												<div className="flex items-center gap-2">
-													<FormLabel>Allow on All Virtual Keys</FormLabel>
+													<FormLabel>允许在全部虚拟密钥上使用</FormLabel>
 													<TooltipProvider>
 														<Tooltip>
 															<TooltipTrigger asChild>
@@ -620,9 +619,8 @@ export default function MCPClientSheet({
 															</TooltipTrigger>
 															<TooltipContent className="max-w-xs">
 																<p>
-																	When enabled, this MCP server is accessible to all virtual keys without requiring explicit per-key
-																	assignment. All tools are allowed by default. If a virtual key has an explicit MCP config for this server,
-																	that config takes precedence and overrides this behaviour.
+																	启用后，所有虚拟密钥无需显式分配即可访问此 MCP 服务器。默认允许所有工具。如果某个虚拟密钥为此服务器配置了显式的 MCP
+																	配置，该配置将优先生效并覆盖此行为。
 																</p>
 															</TooltipContent>
 														</Tooltip>
@@ -644,7 +642,7 @@ export default function MCPClientSheet({
 										render={({ field }) => (
 											<FormItem className="flex items-center justify-between rounded-lg border p-4">
 												<div className="flex items-center gap-2">
-													<FormLabel>Disable Client</FormLabel>
+													<FormLabel>停用客户端</FormLabel>
 													<TooltipProvider>
 														<Tooltip>
 															<TooltipTrigger asChild>
@@ -652,8 +650,7 @@ export default function MCPClientSheet({
 															</TooltipTrigger>
 															<TooltipContent className="max-w-xs">
 																<p>
-																	When enabled, the client's connection, health monitor, and tool syncer are shut down. Tools from this
-																	client will not be available for inference until it is re-enabled.
+																	启用后，该客户端的连接、健康监控和工具同步都会停止。在重新启用之前，此客户端的工具将无法用于推理。
 																</p>
 															</TooltipContent>
 														</Tooltip>
@@ -678,7 +675,7 @@ export default function MCPClientSheet({
 										<Accordion type="single" collapsible className="w-full">
 											<AccordionItem value="tls-config" className="border-b-0">
 												<AccordionTrigger className="py-0" data-testid="tls-config-trigger">
-													<span className="text-sm font-medium">TLS / Certificate</span>
+													<span className="text-sm font-medium">TLS 证书</span>
 												</AccordionTrigger>
 												<AccordionContent className="space-y-4 pt-4 pb-0">
 													<FormField
@@ -687,10 +684,9 @@ export default function MCPClientSheet({
 														render={({ field }) => (
 															<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
 																<div className="space-y-0.5">
-																	<FormLabel>Skip TLS verification</FormLabel>
+																	<FormLabel>跳过 TLS 验证</FormLabel>
 																	<p className="text-muted-foreground text-sm">
-																		Disable TLS certificate verification. Use only in trusted isolated environments. Takes priority over CA
-																		certificate.
+																		禁用 TLS 证书验证。仅在受信任的隔离环境中使用。此选项的优先级高于 CA 证书。
 																	</p>
 																</div>
 																<FormControl>
@@ -709,7 +705,7 @@ export default function MCPClientSheet({
 														name="tls_config.ca_cert_pem"
 														render={({ field }) => (
 															<FormItem>
-																<FormLabel>CA Certificate (PEM) (Optional)</FormLabel>
+																<FormLabel>CA 证书（PEM）（可选）</FormLabel>
 																<FormControl>
 																	<SecretVarInput
 																		variant="textarea"
@@ -725,7 +721,7 @@ export default function MCPClientSheet({
 																	/>
 																</FormControl>
 																<p className="text-muted-foreground text-sm">
-																	PEM-encoded CA certificate to trust for MCP server connections (e.g. self-signed or private CA).
+																	用于信任 MCP 服务器连接的 PEM 编码 CA 证书（例如自签名或私有 CA）。
 																</p>
 																<FormMessage />
 															</FormItem>
@@ -745,7 +741,7 @@ export default function MCPClientSheet({
 													<div className="flex flex-col items-start gap-0.5">
 														<div className="flex items-start gap-2">
 															<div>
-																<FormLabel>Tool Sync Interval (minutes)</FormLabel>
+																<FormLabel>工具同步间隔（分钟）</FormLabel>
 															</div>
 															<TooltipProvider>
 																<Tooltip>
@@ -754,14 +750,13 @@ export default function MCPClientSheet({
 																	</TooltipTrigger>
 																	<TooltipContent className="max-w-xs">
 																		<p>
-																			Override the global tool sync interval for this server. Leave empty to use global setting. Set to -1
-																			to disable sync for this server.
+																			覆盖此服务器的全局工具同步间隔。留空则使用全局设置。设为 -1 可禁用此服务器的同步。
 																		</p>
 																	</TooltipContent>
 																</Tooltip>
 															</TooltipProvider>
 														</div>
-														<div>{isUsingGlobal && <p className="text-muted-foreground text-xs">Using global setting</p>}</div>
+														<div>{isUsingGlobal && <p className="text-muted-foreground text-xs">正在使用全局设置</p>}</div>
 													</div>
 													<FormControl>
 														<Input
@@ -790,7 +785,7 @@ export default function MCPClientSheet({
 													<div className="flex flex-col items-start gap-0.5">
 														<div className="flex items-start gap-2">
 															<div>
-																<FormLabel>Tool Execution Timeout (seconds)</FormLabel>
+																<FormLabel>工具执行超时（秒）</FormLabel>
 															</div>
 															<TooltipProvider>
 																<Tooltip>
@@ -799,14 +794,13 @@ export default function MCPClientSheet({
 																	</TooltipTrigger>
 																	<TooltipContent className="max-w-xs">
 																		<p>
-																			Override the global tool execution timeout for this server. Leave empty or set to 0 to use
-																			the global setting.
+																			覆盖此服务器的全局工具执行超时。留空或设为 0 则使用全局设置。
 																		</p>
 																	</TooltipContent>
 																</Tooltip>
 															</TooltipProvider>
 														</div>
-														<div>{isUsingGlobal && <p className="text-muted-foreground text-xs">Using global setting</p>}</div>
+														<div>{isUsingGlobal && <p className="text-muted-foreground text-xs">正在使用全局设置</p>}</div>
 													</div>
 													<FormControl>
 														<Input
@@ -841,9 +835,9 @@ export default function MCPClientSheet({
 													<HeadersTable
 														value={field.value || {}}
 														onChange={field.onChange}
-														keyPlaceholder="Header name"
-														valuePlaceholder="Header value"
-														label="Headers"
+														keyPlaceholder="请求头名称"
+														valuePlaceholder="请求头值"
+														label="请求头"
 														useSecretVarInput
 													/>
 												</FormControl>
@@ -859,7 +853,7 @@ export default function MCPClientSheet({
 												<FormItem className="space-y-1">
 													<div className="space-y-0.5">
 														<div className="flex items-center gap-2">
-															<FormLabel>Required Headers</FormLabel>
+															<FormLabel>必需的请求头</FormLabel>
 															<TooltipProvider>
 																<Tooltip>
 																	<TooltipTrigger asChild>
@@ -867,16 +861,15 @@ export default function MCPClientSheet({
 																	</TooltipTrigger>
 																	<TooltipContent className="max-w-xs">
 																		<p>
-																			Changing this list marks existing per-user header submissions as needing an update, so callers
-																			resubmit values on next use.
+																			修改此列表会将现有的按用户请求头提交标记为需要更新，调用方在下次使用时会重新提交值。
 																		</p>
 																	</TooltipContent>
 																</Tooltip>
 															</TooltipProvider>
 														</div>
 														<p className="text-muted-foreground text-sm">
-															Comma-separated list of header names each caller must supply when they first use this server (e.g.{" "}
-															<code>X-API-Key, X-Tenant-ID</code>). Values are submitted per user, not stored on this server config.
+															以逗号分隔的请求头名称列表，每位调用方在首次使用此服务器时必须提供（例如{" "}
+															<code>X-API-Key, X-Tenant-ID</code>）。这些值按用户提交，不会存储在此服务器配置中。
 														</p>
 													</div>
 													<FormControl>
@@ -910,14 +903,14 @@ export default function MCPClientSheet({
 										render={({ field }) => (
 											<FormItem className="flex flex-col gap-2">
 												<div className="flex items-center gap-2">
-													<FormLabel>Allowed Extra Headers</FormLabel>
+													<FormLabel>允许的额外请求头</FormLabel>
 													<TooltipProvider>
 														<Tooltip>
 															<TooltipTrigger asChild>
 																<Info className="text-muted-foreground h-4 w-4 cursor-help" />
 															</TooltipTrigger>
 															<TooltipContent className="max-w-xs">
-																<p>Allowlist of headers that callers can forward to this MCP server at request time.</p>
+																<p>调用方可在请求时转发到此 MCP 服务器的请求头允许列表。</p>
 															</TooltipContent>
 														</Tooltip>
 													</TooltipProvider>
@@ -925,7 +918,7 @@ export default function MCPClientSheet({
 												<FormControl>
 													<Input
 														data-testid="mcpclient-input-allowed-extra-headers"
-														placeholder="*, or: authorization, x-user-id"
+														placeholder="*，或：authorization, x-user-id"
 														name={field.name}
 														ref={field.ref}
 														value={allowedExtraHeadersRaw}
@@ -945,7 +938,7 @@ export default function MCPClientSheet({
 													/>
 												</FormControl>
 												<p className="text-muted-foreground text-xs">
-													Comma-separated header names, or <code>*</code> to allow all. Leave empty to block all extra headers.
+													以逗号分隔的请求头名称，或用 <code>*</code> 允许全部。留空则阻止所有额外请求头。
 												</p>
 												<FormMessage />
 											</FormItem>
@@ -954,15 +947,15 @@ export default function MCPClientSheet({
 								</div>
 								{supportsOAuthCredentialUpdate ? (
 									<div className="space-y-4">
-										<h3 className="font-semibold">OAuth Credentials</h3>
+										<h3 className="font-semibold">OAuth 凭据</h3>
 										{isDisabled ? (
 											<div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
 												<Info className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
-												<p>OAuth credentials cannot be rotated while the client is disabled. Re-enable the client to update credentials.</p>
+												<p>客户端停用期间无法轮换 OAuth 凭据。请先重新启用客户端再更新凭据。</p>
 											</div>
 										) : (
 											<p className="text-muted-foreground text-sm">
-												Update OAuth client credentials only. Connection type, auth type, and connection URL cannot be changed.
+												仅可更新 OAuth 客户端凭据。连接类型、认证类型和连接 URL 无法更改。
 											</p>
 										)}
 										<div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -971,18 +964,18 @@ export default function MCPClientSheet({
 												name="oauth_config.client_id"
 												render={({ field }) => (
 													<FormItem className="flex flex-col gap-2">
-														<FormLabel>Client ID</FormLabel>
+														<FormLabel>客户端 ID</FormLabel>
 														<FormControl>
 															<SecretVarInput
 																data-testid="mcpclient-input-oauth-client-id"
-																placeholder="Enter new OAuth client ID"
+																placeholder="输入新的 OAuth 客户端 ID"
 																disabled={isDisabled}
 																value={field.value}
 																onChange={field.onChange}
 															/>
 														</FormControl>
 														{!isDisabled && (
-															<p className="text-muted-foreground text-xs">Leave empty to keep existing credentials unchanged.</p>
+															<p className="text-muted-foreground text-xs">留空则保持现有凭据不变。</p>
 														)}
 														<FormMessage />
 													</FormItem>
@@ -993,11 +986,11 @@ export default function MCPClientSheet({
 												name="oauth_config.client_secret"
 												render={({ field }) => (
 													<FormItem className="flex flex-col gap-2">
-														<FormLabel>Client Secret</FormLabel>
+														<FormLabel>客户端密钥</FormLabel>
 														<FormControl>
 															<SecretVarInput
 																data-testid="mcpclient-input-oauth-client-secret"
-																placeholder="Enter new OAuth client secret"
+																placeholder="输入新的 OAuth 客户端密钥"
 																disabled={isDisabled}
 																hideValueWhenEnv
 																maskNonEnvValue
@@ -1015,7 +1008,7 @@ export default function MCPClientSheet({
 								{/* Tools Section */}
 								<div className="space-y-4 pb-10">
 									<div className="flex items-center justify-between">
-										<h3 className="font-semibold">Available Tools ({mcpClient.tools?.length || 0})</h3>
+										<h3 className="font-semibold">可用工具（{mcpClient.tools?.length || 0}）</h3>
 										{mcpClient.tools && mcpClient.tools.length > 0 && (
 											<div className="flex items-center gap-4">
 												{/* Enable All */}
@@ -1034,7 +1027,7 @@ export default function MCPClientSheet({
 																<FormControl>
 																	<div className="flex items-center gap-2">
 																		<span className="text-muted-foreground text-sm">
-																			{isAllEnabled ? "All enabled" : isNoneEnabled ? "None enabled" : `${currentTools.length} enabled`}
+																			{isAllEnabled ? "全部已启用" : isNoneEnabled ? "均未启用" : `已启用 ${currentTools.length} 个`}
 																		</span>
 																		<TriStateCheckbox
 																			allIds={allToolNames}
@@ -1084,10 +1077,10 @@ export default function MCPClientSheet({
 																	<div className="flex items-center gap-2">
 																		<span className="text-muted-foreground text-sm">
 																			{isAllAutoExecute
-																				? "All auto-execute"
+																				? "全部自动执行"
 																				: isNoneAutoExecute
-																					? "None auto-execute"
-																					: `${autoExecuteCount} auto-execute`}
+																					? "均不自动执行"
+																					: `${autoExecuteCount} 个自动执行`}
 																		</span>
 																		<TriStateCheckbox
 																			allIds={enabledToolNames}
@@ -1119,11 +1112,11 @@ export default function MCPClientSheet({
 												<TableHeader>
 													<TableRow>
 														<TableHead className="w-10"></TableHead>
-														<TableHead className="max-w-[300px]">Tool Name</TableHead>
-														<TableHead className="w-24 text-center">Enabled</TableHead>
+														<TableHead className="max-w-[300px]">工具名称</TableHead>
+														<TableHead className="w-24 text-center">已启用</TableHead>
 														<TableHead className="w-28 text-center">
 															<div className="flex items-center justify-center gap-1.5">
-																<span>Auto-execute</span>
+																<span>自动执行</span>
 																<TooltipProvider>
 																	<Tooltip>
 																		<TooltipTrigger asChild>
@@ -1131,7 +1124,7 @@ export default function MCPClientSheet({
 																				href="https://docs.getbifrost.ai/mcp/agent-mode"
 																				target="_blank"
 																				rel="noopener noreferrer"
-																				aria-label="Learn more about Auto-execute and Agent Mode"
+																				aria-label="了解自动执行与 Agent 模式的更多信息"
 																				className="text-muted-foreground hover:text-foreground focus-visible:ring-ring inline-flex rounded focus-visible:ring-2 focus-visible:outline-none"
 																			>
 																				<Info className="h-3.5 w-3.5 cursor-help" />
@@ -1139,16 +1132,15 @@ export default function MCPClientSheet({
 																		</TooltipTrigger>
 																		<TooltipContent className="max-w-xs">
 																			<p>
-																				Applies only when Bifrost runs the LLM loop in Agent Mode. In MCP Gateway mode, the connected client
-																				(Claude Desktop, Cursor, etc.) controls tool approval and this setting is ignored. Click to learn
-																				more.
+																				仅在 Bifrost 以 Agent 模式运行 LLM 循环时生效。在 MCP 网关模式下，由已连接的客户端（Claude
+																				Desktop、Cursor 等）控制工具审批，此设置将被忽略。点击了解更多。
 																			</p>
 																		</TooltipContent>
 																	</Tooltip>
 																</TooltipProvider>
 															</div>
 														</TableHead>
-														<TableHead className="w-32 text-center">Cost (USD)</TableHead>
+														<TableHead className="w-32 text-center">费用（USD）</TableHead>
 													</TableRow>
 												</TableHeader>
 												<TableBody>
@@ -1252,7 +1244,7 @@ export default function MCPClientSheet({
 																	<tr>
 																		<td colSpan={5} className="p-0">
 																			<div className="bg-muted/30 border-b px-4 py-3">
-																				<div className="text-muted-foreground mb-2 text-xs font-medium">Parameters Schema</div>
+																				<div className="text-muted-foreground mb-2 text-xs font-medium">参数结构</div>
 																				{tool.parameters ? (
 																					<CodeEditor
 																						className="z-0 w-full rounded-sm border"
@@ -1270,7 +1262,7 @@ export default function MCPClientSheet({
 																						}}
 																					/>
 																				) : (
-																					<div className="text-muted-foreground text-sm">No parameters defined</div>
+																					<div className="text-muted-foreground text-sm">未定义参数</div>
 																				)}
 																			</div>
 																		</td>
@@ -1284,7 +1276,7 @@ export default function MCPClientSheet({
 										</div>
 									) : (
 										<div className="text-muted-foreground rounded-sm border p-6 text-center">
-											<p className="text-sm">No tools available</p>
+											<p className="text-sm">暂无可用工具</p>
 										</div>
 									)}
 
@@ -1293,14 +1285,14 @@ export default function MCPClientSheet({
 											<div className="flex flex-col gap-2">
 												<div className="flex items-center justify-between">
 													<div className="flex items-center gap-2">
-														<div className="text-md font-semibold">Virtual Key Access</div>
+														<div className="text-md font-semibold">虚拟密钥访问</div>
 														<TooltipProvider>
 															<Tooltip>
 																<TooltipTrigger asChild>
 																	<Info className="text-muted-foreground h-4 w-4 cursor-help" />
 																</TooltipTrigger>
 																<TooltipContent className="max-w-xs">
-																	<p>Control which virtual keys can use this MCP server and which specific tools they can call.</p>
+																	<p>控制哪些虚拟密钥可以使用此 MCP 服务器，以及它们可以调用哪些具体工具。</p>
 																</TooltipContent>
 															</Tooltip>
 														</TooltipProvider>
@@ -1318,7 +1310,7 @@ export default function MCPClientSheet({
 																data-testid="mcpclient-virtualkey-add-trigger"
 															>
 																<Plus className="h-4 w-4" />
-																Add Virtual Key
+																添加虚拟密钥
 															</Button>
 														}
 													/>
@@ -1326,8 +1318,8 @@ export default function MCPClientSheet({
 												{form.watch("allow_on_all_virtual_keys") && (
 													<p className="text-muted-foreground flex items-center gap-1 text-xs">
 														<Info className="h-3 w-3 shrink-0" />
-														Configuring access for a virtual key here overrides the{" "}
-														<span className="font-medium">Allow on All Virtual Keys</span>&nbsp;setting for that key.
+														在此为某个虚拟密钥配置访问权限，会覆盖该密钥的{" "}
+														<span className="font-medium">允许在全部虚拟密钥上使用</span>&nbsp;设置。
 													</p>
 												)}
 											</div>
@@ -1337,8 +1329,8 @@ export default function MCPClientSheet({
 													<Table>
 														<TableHeader>
 															<TableRow>
-																<TableHead>Virtual Key</TableHead>
-																<TableHead>Allowed Tools</TableHead>
+																<TableHead>虚拟密钥</TableHead>
+																<TableHead>允许的工具</TableHead>
 																<TableHead className="w-12"></TableHead>
 															</TableRow>
 														</TableHeader>
@@ -1367,10 +1359,10 @@ export default function MCPClientSheet({
 																			}}
 																			placeholder={
 																				vc.tools_to_execute.includes("*")
-																					? "All tools allowed"
+																					? "允许所有工具"
 																					: vc.tools_to_execute.length === 0
-																						? "No tools allowed"
-																						: "Select tools..."
+																						? "不允许任何工具"
+																						: "选择工具..."
 																			}
 																			maxCount={3}
 																			className="bg-background dark:bg-input/30 border-input text-foreground hover:bg-accent hover:text-accent-foreground rounded-sm font-normal"
@@ -1395,11 +1387,11 @@ export default function MCPClientSheet({
 												</div>
 											) : form.watch("allow_on_all_virtual_keys") ? (
 												<div className="text-muted-foreground rounded-sm border p-6 text-center">
-													<p className="text-sm">All virtual keys can access this MCP server unless a key has an explicit override.</p>
+													<p className="text-sm">所有虚拟密钥都可以访问此 MCP 服务器，除非某个密钥设置了显式覆盖。</p>
 												</div>
 											) : (
 												<div className="text-muted-foreground rounded-sm border p-6 text-center">
-													<p className="text-sm">No virtual keys have access to this MCP server</p>
+													<p className="text-sm">没有虚拟密钥可访问此 MCP 服务器</p>
 												</div>
 											)}
 										</div>
@@ -1409,14 +1401,14 @@ export default function MCPClientSheet({
 
 							<div className="bg-card sticky bottom-0 z-10 flex justify-end gap-2 border-t px-8 py-4">
 								<Button type="button" variant="outline" onClick={onClose}>
-									Cancel
+									取消
 								</Button>
 								<Button
 									type="submit"
 									disabled={isUpdating || (!form.formState.isDirty && !vkConfigsDirty) || !hasUpdateMCPClientAccess}
 									isLoading={isUpdating}
 								>
-									Save Changes
+									保存更改
 								</Button>
 							</div>
 						</form>
@@ -1427,12 +1419,12 @@ export default function MCPClientSheet({
 						open={!!oauthFlow}
 						onClose={() => setOauthFlow(null)}
 						onSuccess={() => {
-							toast({ title: "Success", description: "MCP client OAuth credentials updated successfully" });
+							toast({ title: "成功", description: "MCP 客户端 OAuth 凭据已更新" });
 							onSubmitSuccess();
 							onClose();
 						}}
 						onError={(error) => {
-							toast({ title: "Error", description: error, variant: "destructive" });
+							toast({ title: "错误", description: error, variant: "destructive" });
 						}}
 						authorizeUrl={oauthFlow.authorizeUrl}
 						oauthConfigId={oauthFlow.oauthConfigId}
@@ -1444,13 +1436,13 @@ export default function MCPClientSheet({
 			<AlertDialog open={!!pendingNavDirection} onOpenChange={(open) => !open && setPendingNavDirection(null)}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Unsaved Changes</AlertDialogTitle>
+						<AlertDialogTitle>未保存的更改</AlertDialogTitle>
 						<AlertDialogDescription>
-							You have unsaved changes. Are you sure you want to navigate away? Your changes will be lost.
+							您有未保存的更改。确定要离开吗？更改将丢失。
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel onClick={() => setPendingNavDirection(null)}>Cancel</AlertDialogCancel>
+						<AlertDialogCancel onClick={() => setPendingNavDirection(null)}>取消</AlertDialogCancel>
 						<AlertDialogAction
 							onClick={() => {
 								const dir = pendingNavDirection;
@@ -1458,7 +1450,7 @@ export default function MCPClientSheet({
 								if (dir) onNavigate?.(dir);
 							}}
 						>
-							Discard Changes
+							放弃更改
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>

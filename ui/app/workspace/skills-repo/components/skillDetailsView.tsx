@@ -110,7 +110,7 @@ export function SkillDetailView({
 		if (!form.runValidation()) return;
 		const bumpErr = validateVersionBump(form.version, highestVersion);
 		if (bumpErr) {
-			toast.error("Invalid version", { description: bumpErr });
+			toast.error("版本无效", { description: bumpErr });
 			return;
 		}
 
@@ -120,10 +120,10 @@ export function SkillDetailView({
 				id: skillId,
 				data: { ...payload, serve },
 			}).unwrap();
-			toast.success(serve ? "Skill saved and now serving this version" : "Version saved successfully");
+			toast.success(serve ? "技能已保存，当前正在提供此版本" : "版本已保存");
 			setIsEditing(false);
 		} catch (err: unknown) {
-			toast.error("Failed to update skill", {
+			toast.error("更新技能失败", {
 				description: getErrorMessage(err),
 			});
 		}
@@ -132,10 +132,10 @@ export function SkillDetailView({
 	const handleDelete = async () => {
 		try {
 			await deleteSkill(skillId).unwrap();
-			toast.success("Skill deleted");
+			toast.success("技能已删除");
 			onBack();
 		} catch (err: unknown) {
-			toast.error("Failed to delete skill", {
+			toast.error("删除技能失败", {
 				description: getErrorMessage(err),
 			});
 		}
@@ -154,10 +154,10 @@ export function SkillDetailView({
 	if (!skill) {
 		return (
 			<div className="flex w-full flex-1 flex-col items-center justify-center p-4">
-				<p className="text-muted-foreground text-sm">Skill not found</p>
+				<p className="text-muted-foreground text-sm">未找到技能</p>
 				<Button variant="outline" size="sm" className="mt-3" onClick={onBack}>
 					<ArrowLeft className="h-3.5 w-3.5" />
-					Back to list
+					返回列表
 				</Button>
 			</div>
 		);
@@ -211,7 +211,7 @@ export function SkillDetailView({
 									dropdownTrigger={{
 										className: "bg-transparent",
 										dataTestId: "skill-versions-popover-trigger",
-										"aria-label": `Versions for ${skill.name}`,
+										"aria-label": `${skill.name} 的版本`,
 									}}
 									button={{
 										dataTestId: "skill-add-version-btn",
@@ -237,11 +237,11 @@ export function SkillDetailView({
 									}}
 								>
 									<Plus className="h-3.5 w-3.5" />
-									Add New Version
+									添加新版本
 								</SplitButton>
 								<DropdownMenu>
 									<DropdownMenuTrigger asChild>
-										<Button variant="ghost" size="icon" className="h-8 w-8" aria-label={`Actions for ${skill.name}`}>
+										<Button variant="ghost" size="icon" className="h-8 w-8" aria-label={`${skill.name} 的操作`}>
 											<MoreHorizontal className="h-4 w-4" />
 										</Button>
 									</DropdownMenuTrigger>
@@ -249,7 +249,7 @@ export function SkillDetailView({
 										<DropdownMenuItem className="cursor-pointer" asChild>
 											<a href={`${getApiBaseUrl()}/skills/serve/${encodeURIComponent(skill.name)}/download.zip`} download>
 												<Download className="h-4 w-4" />
-												Download ZIP
+												下载 ZIP
 											</a>
 										</DropdownMenuItem>
 										{hasDeleteAccess && (
@@ -263,7 +263,7 @@ export function SkillDetailView({
 												}}
 											>
 												<Trash2 className="h-4 w-4" />
-												Delete
+												删除
 											</DropdownMenuItem>
 										)}
 									</DropdownMenuContent>
@@ -271,20 +271,20 @@ export function SkillDetailView({
 								<AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
 									<AlertDialogContent>
 										<AlertDialogHeader>
-											<AlertDialogTitle>Delete {skill.name}?</AlertDialogTitle>
+											<AlertDialogTitle>删除 {skill.name}？</AlertDialogTitle>
 											<AlertDialogDescription>
-												This action cannot be undone. The skill, its files, and version history will be permanently deleted.
+												此操作无法撤销。该技能、它的文件以及版本历史都将被永久删除。
 											</AlertDialogDescription>
 										</AlertDialogHeader>
 										<AlertDialogFooter>
-											<AlertDialogCancel>Cancel</AlertDialogCancel>
+											<AlertDialogCancel>取消</AlertDialogCancel>
 											<AlertDialogAction onClick={handleDelete} disabled={isDeleting}>
 												{isDeleting ? (
 													<>
-														<Loader2 className="h-3.5 w-3.5 animate-spin" /> Deleting...
+														<Loader2 className="h-3.5 w-3.5 animate-spin" /> 删除中…
 													</>
 												) : (
-													"Delete skill"
+													"删除技能"
 												)}
 											</AlertDialogAction>
 										</AlertDialogFooter>

@@ -35,7 +35,7 @@ export const createMCPColumns = (
 		accessorKey: "timestamp",
 		header: ({ column }) => (
 			<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-				Time
+				时间
 				<ArrowUpDown className="ml-2 h-4 w-4" />
 			</Button>
 		),
@@ -43,12 +43,12 @@ export const createMCPColumns = (
 		cell: ({ row }) => {
 			const timestamp = row.original.timestamp;
 			const date = new Date(timestamp);
-			return <div className="truncate text-xs">{isValid(date) ? format(date, "yyyy-MM-dd hh:mm:ss aa (XXX)") : "Invalid date"}</div>;
+			return <div className="truncate text-xs">{isValid(date) ? format(date, "yyyy-MM-dd HH:mm:ss (XXX)") : "无效日期"}</div>;
 		},
 	},
 	{
 		accessorKey: "tool_name",
-		header: "Tool Name",
+		header: "工具名称",
 		size: 300,
 		cell: ({ row }) => {
 			const toolName = row.getValue("tool_name") as string;
@@ -57,7 +57,7 @@ export const createMCPColumns = (
 	},
 	{
 		accessorKey: "server_label",
-		header: "Server",
+		header: "服务器",
 		size: 150,
 		cell: ({ row }) => {
 			const serverLabel = row.getValue("server_label") as string;
@@ -74,7 +74,7 @@ export const createMCPColumns = (
 		accessorKey: "latency",
 		header: ({ column }) => (
 			<Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-				Latency
+				延迟
 				<ArrowUpDown className="ml-2 h-4 w-4" />
 			</Button>
 		),
@@ -88,7 +88,7 @@ export const createMCPColumns = (
 	},
 	{
 		accessorKey: "cost",
-		header: "Cost",
+		header: "费用",
 		size: 120,
 		cell: ({ row }) => {
 			const cost = row.original.cost;
@@ -98,7 +98,7 @@ export const createMCPColumns = (
 	},
 	{
 		id: "virtual_key",
-		header: "Virtual Key",
+		header: "虚拟密钥",
 		size: 170,
 		cell: ({ row }) => {
 			const value = row.original.virtual_key?.name ?? row.original.virtual_key_name ?? row.original.virtual_key_id;
@@ -117,7 +117,7 @@ export const createMCPColumns = (
 							<div className="flex justify-center">
 								<DropdownMenu>
 									<DropdownMenuTrigger asChild onClick={(event) => event.stopPropagation()}>
-										<Button variant="ghost" size="icon" data-testid="log-actions-btn" aria-label="Log actions" className="h-7 w-7">
+										<Button variant="ghost" size="icon" data-testid="log-actions-btn" aria-label="日志操作" className="h-7 w-7">
 											<MoreHorizontal className="h-4 w-4" />
 										</Button>
 									</DropdownMenuTrigger>
@@ -132,7 +132,7 @@ export const createMCPColumns = (
 											}}
 										>
 											<Trash2 className="h-4 w-4" />
-											Delete
+											删除
 										</DropdownMenuItem>
 									</DropdownMenuContent>
 								</DropdownMenu>

@@ -6,7 +6,7 @@ import RBACRedirectPage from "./page";
 function RouteComponent() {
 	const hasRbacAccess = useRbac(RbacResource.RBAC, RbacOperation.View);
 	if (!hasRbacAccess) {
-		return <NoPermissionView entity="roles and permissions" />;
+		return <NoPermissionView entity="角色与权限" />;
 	}
 	return <RBACRedirectPage />;
 }

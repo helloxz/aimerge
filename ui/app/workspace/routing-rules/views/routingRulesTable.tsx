@@ -53,7 +53,7 @@ function RoutingRuleActionsMenu({
 					variant="ghost"
 					size="icon"
 					className="h-8 w-8"
-					aria-label={`Actions for routing rule ${rule.name}`}
+					aria-label={`路由规则 ${rule.name} 的操作`}
 					data-testid={`routing-rule-actions-${rule.id}-btn`}
 				>
 					<MoreHorizontal className="h-4 w-4" />
@@ -71,7 +71,7 @@ function RoutingRuleActionsMenu({
 					}}
 				>
 					<Edit className="h-4 w-4" />
-					Edit
+					编辑
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					variant="destructive"
@@ -85,7 +85,7 @@ function RoutingRuleActionsMenu({
 					}}
 				>
 					<Trash2 className="h-4 w-4" />
-					Delete
+					删除
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
@@ -132,7 +132,7 @@ export function RoutingRulesTable({
 
 		try {
 			await deleteRoutingRule(deleteRuleId).unwrap();
-			toast.success("Routing rule deleted successfully");
+			toast.success("路由规则已删除");
 			setDeleteRuleId(null);
 		} catch (error: unknown) {
 			toast.error(getErrorMessage(error));
@@ -145,13 +145,13 @@ export function RoutingRulesTable({
 				<Table>
 					<TableHeader>
 						<TableRow>
-							<TableHead>Name</TableHead>
-							<TableHead>Targets</TableHead>
-							<TableHead>Scope</TableHead>
-							<TableHead className="text-right">Priority</TableHead>
-							<TableHead>Expression</TableHead>
-							<TableHead>Enabled</TableHead>
-							<TableHead className="text-right">Actions</TableHead>
+							<TableHead>名称</TableHead>
+							<TableHead>目标</TableHead>
+							<TableHead>范围</TableHead>
+							<TableHead className="text-right">优先级</TableHead>
+							<TableHead>表达式</TableHead>
+							<TableHead>启用</TableHead>
+							<TableHead className="text-right">操作</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -178,8 +178,8 @@ export function RoutingRulesTable({
 				<div className="relative max-w-sm flex-1">
 					<Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
 					<Input
-						aria-label="Search routing rules by name"
-						placeholder="Search by name..."
+						aria-label="按名称搜索路由规则"
+						placeholder="按名称搜索…"
 						value={search}
 						onChange={(e) => onSearchChange(e.target.value)}
 						className="pl-9"
@@ -192,14 +192,14 @@ export function RoutingRulesTable({
 				<Table containerClassName="h-full overflow-auto">
 					<TableHeader className="bg-muted sticky top-0 z-10">
 						<TableRow className="bg-muted/50">
-							<TableHead className="font-semibold">Name</TableHead>
-							<TableHead className="font-semibold">Targets</TableHead>
-							<TableHead className="font-semibold">Scope</TableHead>
-							<TableHead className="text-right font-semibold">Priority</TableHead>
-							<TableHead className="font-semibold">Expression</TableHead>
-							<TableHead className="font-semibold">Status</TableHead>
+							<TableHead className="font-semibold">名称</TableHead>
+							<TableHead className="font-semibold">目标</TableHead>
+							<TableHead className="font-semibold">范围</TableHead>
+							<TableHead className="text-right font-semibold">优先级</TableHead>
+							<TableHead className="font-semibold">表达式</TableHead>
+							<TableHead className="font-semibold">状态</TableHead>
 							<TableHead className={`bg-muted sticky right-0 z-30 w-[50px] text-right font-semibold ${PIN_SHADOW_RIGHT}`}>
-								Actions
+								操作
 							</TableHead>
 						</TableRow>
 					</TableHeader>
@@ -207,7 +207,7 @@ export function RoutingRulesTable({
 						{sortedRules.length === 0 ? (
 							<TableRow>
 								<TableCell colSpan={7} className="h-24 text-center">
-									<span className="text-muted-foreground text-sm">No matching routing rules found.</span>
+									<span className="text-muted-foreground text-sm">未找到匹配的路由规则。</span>
 								</TableCell>
 							</TableRow>
 						) : (
@@ -254,10 +254,10 @@ export function RoutingRulesTable({
 												})
 													.unwrap()
 													.then(() => {
-														toast.success(`Rule ${checked ? "enabled" : "disabled"} successfully`);
+														toast.success(`规则已${checked ? "启用" : "停用"}`);
 													})
 													.catch((err) => {
-														toast.error("Failed to update rule", {
+														toast.error("更新规则失败", {
 															description: getErrorMessage(err),
 														});
 													});
@@ -289,7 +289,7 @@ export function RoutingRulesTable({
 			{totalCount > 0 && (
 				<div className="flex shrink-0 items-center justify-between text-xs" data-testid="pagination">
 					<div className="text-muted-foreground flex items-center gap-2">
-						{(offset + 1).toLocaleString()}-{Math.min(offset + limit, totalCount).toLocaleString()} of {totalCount.toLocaleString()} entries
+						第 {(offset + 1).toLocaleString()}-{Math.min(offset + limit, totalCount).toLocaleString()} 条，共 {totalCount.toLocaleString()} 条
 					</div>
 
 					<div className="flex items-center gap-2">
@@ -299,15 +299,14 @@ export function RoutingRulesTable({
 							onClick={() => onOffsetChange(Math.max(0, offset - limit))}
 							disabled={offset === 0}
 							data-testid="routing-rules-pagination-prev-btn"
-							aria-label="Previous page"
+							aria-label="上一页"
 						>
 							<ChevronLeft className="size-3" />
 						</Button>
 
 						<div className="flex items-center gap-1">
-							<span>Page</span>
-							<span>{Math.floor(offset / limit) + 1}</span>
-							<span>of {Math.ceil(totalCount / limit)}</span>
+							<span>第 {Math.floor(offset / limit) + 1} 页</span>
+							<span>共 {Math.ceil(totalCount / limit)} 页</span>
 						</div>
 
 						<Button
@@ -316,7 +315,7 @@ export function RoutingRulesTable({
 							onClick={() => onOffsetChange(offset + limit)}
 							disabled={offset + limit >= totalCount}
 							data-testid="routing-rules-pagination-next-btn"
-							aria-label="Next page"
+							aria-label="下一页"
 						>
 							<ChevronRight className="size-3" />
 						</Button>
@@ -327,15 +326,15 @@ export function RoutingRulesTable({
 			<AlertDialog open={!!deleteRuleId} onOpenChange={(open) => !open && setDeleteRuleId(null)}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Delete Routing Rule</AlertDialogTitle>
+						<AlertDialogTitle>删除路由规则</AlertDialogTitle>
 						<AlertDialogDescription>
-							Are you sure you want to delete &quot;{ruleToDelete?.name}&quot;? This action cannot be undone.
+							确定要删除“{ruleToDelete?.name}”吗？此操作无法撤销。
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+						<AlertDialogCancel disabled={isDeleting}>取消</AlertDialogCancel>
 						<AlertDialogAction onClick={handleDelete} disabled={isDeleting} className="bg-destructive hover:bg-destructive/90">
-							{isDeleting ? "Deleting..." : "Delete"}
+							{isDeleting ? "删除中…" : "删除"}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
@@ -350,7 +349,7 @@ function TargetsSummary({ targets }: { targets: RoutingTarget[] }) {
 	}
 
 	const first = targets[0];
-	const label = [first.provider ? getProviderLabel(first.provider) : "Any", first.model || "Any model"].join(" / ");
+	const label = [first.provider ? getProviderLabel(first.provider) : "任意", first.model || "任意模型"].join(" / ");
 
 	return (
 		<div className="flex flex-col gap-1">
@@ -360,7 +359,7 @@ function TargetsSummary({ targets }: { targets: RoutingTarget[] }) {
 			</div>
 			{targets.length > 1 && (
 				<span className="text-muted-foreground text-xs">
-					+{targets.length - 1} more target{targets.length > 2 ? "s" : ""}
+					另有 {targets.length - 1} 个目标
 				</span>
 			)}
 		</div>

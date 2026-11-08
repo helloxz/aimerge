@@ -70,7 +70,7 @@ export default function PricingConfigView() {
 					model_parameters_url: data.model_parameters_url,
 				},
 			}).unwrap();
-			toast.success("Pricing configuration updated successfully.");
+			toast.success("定价配置已更新。");
 			reset(data);
 		} catch (error) {
 			toast.error(getErrorMessage(error));
@@ -80,7 +80,7 @@ export default function PricingConfigView() {
 	const handleForceSync = async () => {
 		try {
 			await forcePricingSync().unwrap();
-			toast.success("Pricing synced successfully.");
+			toast.success("定价数据已同步。");
 		} catch (error) {
 			toast.error(getErrorMessage(error));
 		}
@@ -90,16 +90,16 @@ export default function PricingConfigView() {
 		<div className="mx-auto w-full max-w-7xl space-y-4" data-testid="pricing-config-view">
 			<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 				<div>
-					<h2 className="text-lg font-semibold tracking-tight">Pricing Configuration</h2>
-					<p className="text-muted-foreground text-sm">Configure custom pricing datasheet and sync intervals.</p>
+					<h2 className="text-lg font-semibold tracking-tight">定价配置</h2>
+					<p className="text-muted-foreground text-sm">配置自定义定价数据表和同步间隔。</p>
 				</div>
 
 				<div className="space-y-4">
 					{/* Pricing Datasheet URL */}
 					<div className="space-y-2 rounded-sm border p-4">
 						<div className="space-y-0.5">
-							<Label htmlFor="pricing-datasheet-url">Pricing Datasheet URL</Label>
-							<p className="text-muted-foreground text-sm">URL to a custom pricing datasheet. Leave empty to use default pricing.</p>
+							<Label htmlFor="pricing-datasheet-url">定价数据表 URL</Label>
+							<p className="text-muted-foreground text-sm">自定义定价数据表的 URL。留空则使用默认定价。</p>
 						</div>
 						<Input
 							id="pricing-datasheet-url"
@@ -109,12 +109,12 @@ export default function PricingConfigView() {
 							{...register("pricing_datasheet_url", {
 								pattern: {
 									value: /^(https?:\/\/)?((localhost|(\d{1,3}\.){3}\d{1,3})(:\d+)?|([\da-z\.-]+)\.([a-z\.]{2,6}))([\/\w \.-]*)*\/?$/,
-									message: "Please enter a valid URL.",
+									message: "请输入有效的 URL。",
 								},
 								validate: {
 									checkIfHttp: (value) => {
 										if (!value) return true; // Allow empty
-										return value.startsWith("http://") || value.startsWith("https://") || "URL must start with http:// or https://";
+										return value.startsWith("http://") || value.startsWith("https://") || "URL 必须以 http:// 或 https:// 开头";
 									},
 								},
 							})}
@@ -126,8 +126,8 @@ export default function PricingConfigView() {
 					{/* Model Parameters URL */}
 					<div className="space-y-2 rounded-sm border p-4">
 						<div className="space-y-0.5">
-							<Label htmlFor="model-parameters-url">Model Parameters URL</Label>
-							<p className="text-muted-foreground text-sm">URL to a custom model parameters datasheet. Leave empty to use default.</p>
+							<Label htmlFor="model-parameters-url">模型参数 URL</Label>
+							<p className="text-muted-foreground text-sm">自定义模型参数数据表的 URL。留空则使用默认值。</p>
 						</div>
 						<Input
 							id="model-parameters-url"
@@ -137,12 +137,12 @@ export default function PricingConfigView() {
 							{...register("model_parameters_url", {
 								pattern: {
 									value: /^(https?:\/\/)?((localhost|(\d{1,3}\.){3}\d{1,3})(:\d+)?|([\da-z\.-]+)\.([a-z\.]{2,6}))([\/\w \.-]*)*\/?$/,
-									message: "Please enter a valid URL.",
+									message: "请输入有效的 URL。",
 								},
 								validate: {
 									checkIfHttp: (value) => {
 										if (!value) return true;
-										return value.startsWith("http://") || value.startsWith("https://") || "URL must start with http:// or https://";
+										return value.startsWith("http://") || value.startsWith("https://") || "URL 必须以 http:// 或 https:// 开头";
 									},
 								},
 							})}
@@ -155,22 +155,22 @@ export default function PricingConfigView() {
 					<div className="space-y-2 rounded-sm border p-4">
 						<div className="space-y-2">
 							<div className="space-y-0.5">
-								<Label htmlFor="pricing-sync-interval">Pricing Sync Interval (hours)</Label>
-								<p className="text-muted-foreground text-sm">How often to sync pricing data from the datasheet URL.</p>
+								<Label htmlFor="pricing-sync-interval">定价同步间隔（小时）</Label>
+								<p className="text-muted-foreground text-sm">从数据表 URL 同步定价数据的频率。</p>
 							</div>
 							<Input
 								id="pricing-sync-interval"
 								type="number"
 								className={errors.pricing_sync_interval_hours ? "border-destructive" : ""}
 								{...register("pricing_sync_interval_hours", {
-									required: "Pricing sync interval is required",
+									required: "同步间隔为必填项",
 									min: {
 										value: 1,
-										message: "Sync interval must be at least 1 hour",
+										message: "同步间隔至少为 1 小时",
 									},
 									max: {
 										value: 8760,
-										message: "Sync interval cannot exceed 8760 hours (1 year)",
+										message: "同步间隔不能超过 8760 小时（1 年）",
 									},
 									valueAsNumber: true,
 								})}
@@ -189,10 +189,10 @@ export default function PricingConfigView() {
 						disabled={isForceSyncing || !hasSettingsUpdateAccess}
 						data-testid="pricing-force-sync-btn"
 					>
-						{isForceSyncing ? "Syncing..." : "Force Sync Now"}
+						{isForceSyncing ? "同步中…" : "立即同步"}
 					</Button>
 					<Button type="submit" disabled={!hasChanges || isLoading || !hasSettingsUpdateAccess} data-testid="pricing-save-btn">
-						{isLoading ? "Saving..." : "Save Changes"}
+						{isLoading ? "保存中…" : "保存更改"}
 					</Button>
 				</div>
 			</form>

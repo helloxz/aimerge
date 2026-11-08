@@ -6,7 +6,7 @@ import PluginsPage from "./page";
 function RouteComponent() {
 	const hasPluginsAccess = useRbac(RbacResource.Plugins, RbacOperation.View);
 	if (!hasPluginsAccess) {
-		return <NoPermissionView entity="plugins" />;
+		return <NoPermissionView entity="插件" />;
 	}
 	return <PluginsPage />;
 }

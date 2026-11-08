@@ -55,7 +55,7 @@ function CustomerActionsMenu({ customer, canUpdate, canDelete, onEdit, onDelete 
 					variant="ghost"
 					size="icon"
 					className="h-8 w-8"
-					aria-label={`Customer actions ${customer.name}`}
+					aria-label={`${customer.name} 的客户操作`}
 					data-testid={`customer-actions-btn-${customer.id}`}
 					onClick={(e) => e.stopPropagation()}
 					onPointerDown={(e) => e.stopPropagation()}
@@ -77,7 +77,7 @@ function CustomerActionsMenu({ customer, canUpdate, canDelete, onEdit, onDelete 
 					onPointerDown={(e) => e.stopPropagation()}
 				>
 					<Edit className="h-4 w-4" />
-					Edit
+					编辑
 				</DropdownMenuItem>
 				<DropdownMenuItem asChild className="cursor-pointer" data-testid={`customer-button-view-logs-${customer.id}`}>
 					<Link
@@ -90,7 +90,7 @@ function CustomerActionsMenu({ customer, canUpdate, canDelete, onEdit, onDelete 
 						onPointerDown={(e) => e.stopPropagation()}
 					>
 						<ScrollText className="h-4 w-4" />
-						View logs
+						查看日志
 					</Link>
 				</DropdownMenuItem>
 				<DropdownMenuItem
@@ -106,7 +106,7 @@ function CustomerActionsMenu({ customer, canUpdate, canDelete, onEdit, onDelete 
 					onPointerDown={(e) => e.stopPropagation()}
 				>
 					<Trash2 className="h-4 w-4" />
-					Delete
+					删除
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
@@ -152,7 +152,7 @@ export default function CustomersTable({
 	const handleDelete = async (customerId: string) => {
 		try {
 			await deleteCustomer(customerId).unwrap();
-			toast.success("Customer deleted successfully");
+			toast.success("客户删除成功");
 		} catch (error) {
 			toast.error(getErrorMessage(error));
 		} finally {
@@ -225,12 +225,12 @@ export default function CustomersTable({
 				<div className="flex grow flex-col">
 					<div className="mb-4 flex items-center justify-between">
 						<div>
-							<h2 className="text-lg font-semibold">Customers</h2>
-							<p className="text-muted-foreground text-sm">Manage customer accounts with their own teams, budgets, and access controls.</p>
+							<h2 className="text-lg font-semibold">客户</h2>
+							<p className="text-muted-foreground text-sm">管理客户账户及其独立的团队、预算和访问控制。</p>
 						</div>
 						<Button data-testid="customer-button-create" onClick={handleAddCustomer} disabled={!hasCreateAccess}>
 							<Plus className="h-4 w-4" />
-							Add Customer
+							添加客户
 						</Button>
 					</div>
 
@@ -238,8 +238,8 @@ export default function CustomersTable({
 						<div className="relative max-w-sm flex-1">
 							<Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
 							<Input
-								aria-label="Search customers by name"
-								placeholder="Search by name..."
+								aria-label="按名称搜索客户"
+								placeholder="按名称搜索..."
 								value={search}
 								onChange={(e) => onSearchChange(e.target.value)}
 								className="pl-9"
@@ -252,11 +252,11 @@ export default function CustomersTable({
 						<Table className="min-w-[1100px]">
 							<TableHeader>
 								<TableRow>
-									<TableHead>Name</TableHead>
-									<TableHead>Teams</TableHead>
-									<TableHead>Budget</TableHead>
-									<TableHead>Rate Limit</TableHead>
-									<TableHead>Virtual Keys</TableHead>
+									<TableHead>名称</TableHead>
+									<TableHead>团队</TableHead>
+									<TableHead>预算</TableHead>
+									<TableHead>速率限制</TableHead>
+									<TableHead>虚拟密钥</TableHead>
 									<TableHead className={`bg-muted ${ACTIONS_COLUMN_CLASS}`}></TableHead>
 								</TableRow>
 							</TableHeader>
@@ -264,7 +264,7 @@ export default function CustomersTable({
 								{customers.length === 0 ? (
 									<TableRow>
 										<TableCell colSpan={6} className="h-24 text-center">
-											<span className="text-muted-foreground text-sm">No matching customers found.</span>
+											<span className="text-muted-foreground text-sm">未找到匹配的客户。</span>
 										</TableCell>
 									</TableRow>
 								) : (
@@ -321,7 +321,7 @@ export default function CustomersTable({
 														<span className="truncate font-medium">{customer.name}</span>
 														{isExhausted && (
 															<Badge variant="destructive" className="w-fit text-xs">
-																Limit Reached
+																已达上限
 															</Badge>
 														)}
 													</div>
@@ -332,7 +332,7 @@ export default function CustomersTable({
 															<Tooltip>
 																<TooltipTrigger>
 																	<Badge variant="outline" className="text-xs">
-																		{customerTeams.length} {customerTeams.length === 1 ? "team" : "teams"}
+																		{customerTeams.length} 个团队
 																	</Badge>
 																</TooltipTrigger>
 																<TooltipContent>{customerTeams.map((team) => team.name).join(", ")}</TooltipContent>
@@ -376,7 +376,7 @@ export default function CustomersTable({
 																				{formatCurrency(budget.current_usage)} / {formatCurrency(budget.max_limit)}
 																			</p>
 																			<p className="text-primary-foreground/80 text-xs">
-																				Resets {formatResetDuration(budget.reset_duration)}
+																				重置周期：{formatResetDuration(budget.reset_duration)}
 																			</p>
 																		</TooltipContent>
 																	</Tooltip>
@@ -395,7 +395,7 @@ export default function CustomersTable({
 																	<TooltipTrigger asChild>
 																		<div className="space-y-1.5">
 																			<div className="flex items-center justify-between gap-4 text-xs">
-																				<span className="font-medium">{customer.rate_limit.token_max_limit.toLocaleString()} tokens</span>
+																				<span className="font-medium">{customer.rate_limit.token_max_limit.toLocaleString()} 个 Token</span>
 																				<span className="text-muted-foreground">
 																					{formatResetDuration(customer.rate_limit.token_reset_duration || "1h")}
 																				</span>
@@ -416,10 +416,10 @@ export default function CustomersTable({
 																	<TooltipContent>
 																		<p className="font-medium">
 																			{customer.rate_limit.token_current_usage.toLocaleString()} /{" "}
-																			{customer.rate_limit.token_max_limit.toLocaleString()} tokens
+																			{customer.rate_limit.token_max_limit.toLocaleString()} 个 Token
 																		</p>
 																		<p className="text-primary-foreground/80 text-xs">
-																			Resets {formatResetDuration(customer.rate_limit.token_reset_duration || "1h")}
+																			重置周期：{formatResetDuration(customer.rate_limit.token_reset_duration || "1h")}
 																		</p>
 																	</TooltipContent>
 																</Tooltip>
@@ -429,7 +429,7 @@ export default function CustomersTable({
 																	<TooltipTrigger asChild>
 																		<div className="space-y-1.5">
 																			<div className="flex items-center justify-between gap-4 text-xs">
-																				<span className="font-medium">{customer.rate_limit.request_max_limit.toLocaleString()} req</span>
+																				<span className="font-medium">{customer.rate_limit.request_max_limit.toLocaleString()} 次请求</span>
 																				<span className="text-muted-foreground">
 																					{formatResetDuration(customer.rate_limit.request_reset_duration || "1h")}
 																				</span>
@@ -450,10 +450,10 @@ export default function CustomersTable({
 																	<TooltipContent>
 																		<p className="font-medium">
 																			{customer.rate_limit.request_current_usage.toLocaleString()} /{" "}
-																			{customer.rate_limit.request_max_limit.toLocaleString()} requests
+																			{customer.rate_limit.request_max_limit.toLocaleString()} 次请求
 																		</p>
 																		<p className="text-primary-foreground/80 text-xs">
-																			Resets {formatResetDuration(customer.rate_limit.request_reset_duration || "1h")}
+																			重置周期：{formatResetDuration(customer.rate_limit.request_reset_duration || "1h")}
 																		</p>
 																	</TooltipContent>
 																</Tooltip>
@@ -466,7 +466,7 @@ export default function CustomersTable({
 												<TableCell>
 													{vkCount > 0 ? (
 														<Badge variant="outline" className="text-xs">
-															{vkCount} {vkCount === 1 ? "key" : "keys"}
+															{vkCount} 个密钥
 														</Badge>
 													) : (
 														<span className="text-muted-foreground text-sm">-</span>
@@ -499,8 +499,8 @@ export default function CustomersTable({
 					{totalCount > 0 && (
 						<div className="flex shrink-0 items-center justify-between text-xs" data-testid="pagination">
 							<div className="text-muted-foreground flex items-center gap-2">
-								{(offset + 1).toLocaleString()}-{Math.min(offset + limit, totalCount).toLocaleString()} of {totalCount.toLocaleString()}{" "}
-								entries
+								{(offset + 1).toLocaleString()}-{Math.min(offset + limit, totalCount).toLocaleString()} / 共 {totalCount.toLocaleString()}{" "}
+								条
 							</div>
 
 							<div className="flex items-center gap-2">
@@ -510,15 +510,15 @@ export default function CustomersTable({
 									onClick={() => onOffsetChange(Math.max(0, offset - limit))}
 									disabled={offset === 0}
 									data-testid="customers-pagination-prev-btn"
-									aria-label="Previous page"
+									aria-label="上一页"
 								>
 									<ChevronLeft className="size-3" />
 								</Button>
 
 								<div className="flex items-center gap-1">
-									<span>Page</span>
+									<span>第</span>
 									<span>{Math.floor(offset / limit) + 1}</span>
-									<span>of {Math.ceil(totalCount / limit)}</span>
+									<span>页，共 {Math.ceil(totalCount / limit)} 页</span>
 								</div>
 
 								<Button
@@ -527,7 +527,7 @@ export default function CustomersTable({
 									onClick={() => onOffsetChange(offset + limit)}
 									disabled={offset + limit >= totalCount}
 									data-testid="customers-pagination-next-btn"
-									aria-label="Next page"
+									aria-label="下一页"
 								>
 									<ChevronRight className="size-3" />
 								</Button>
@@ -539,21 +539,20 @@ export default function CustomersTable({
 				<AlertDialog open={!!confirmDeleteCustomer} onOpenChange={(open) => !open && setConfirmDeleteCustomer(null)}>
 					<AlertDialogContent>
 						<AlertDialogHeader>
-							<AlertDialogTitle>Delete Customer</AlertDialogTitle>
+							<AlertDialogTitle>删除客户</AlertDialogTitle>
 							<AlertDialogDescription>
-								Are you sure you want to delete &quot;{confirmDeleteCustomer?.name}&quot;? This will also delete all associated teams and
-								unassign any virtual keys. This action cannot be undone.
+								确定要删除「{confirmDeleteCustomer?.name}」吗？此操作还会删除所有关联团队，并解除相关虚拟密钥的分配，且无法撤销。
 							</AlertDialogDescription>
 						</AlertDialogHeader>
 						<AlertDialogFooter>
-							<AlertDialogCancel data-testid="customer-button-delete-cancel">Cancel</AlertDialogCancel>
+							<AlertDialogCancel data-testid="customer-button-delete-cancel">取消</AlertDialogCancel>
 							<AlertDialogAction
 								data-testid="customer-button-delete-confirm"
 								onClick={() => confirmDeleteCustomer && handleDelete(confirmDeleteCustomer.id)}
 								disabled={isDeleting}
 								className="bg-red-600 hover:bg-red-700"
 							>
-								{isDeleting ? "Deleting..." : "Delete"}
+								{isDeleting ? "删除中..." : "删除"}
 							</AlertDialogAction>
 						</AlertDialogFooter>
 					</AlertDialogContent>

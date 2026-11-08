@@ -38,10 +38,10 @@ export default function OtelView({ onDelete, isDeleting }: OtelViewProps) {
 				.unwrap()
 				.then(() => {
 					resolve();
-					toast.success("OTEL configuration updated successfully");
+					toast.success("OTEL 配置已更新");
 				})
 				.catch((err) => {
-					toast.error("Failed to update OTEL configuration", {
+					toast.error("更新 OTEL 配置失败", {
 						description: getErrorMessage(err),
 					});
 					reject(err);
@@ -61,7 +61,7 @@ export default function OtelView({ onDelete, isDeleting }: OtelViewProps) {
 						data-testid="otel-configure-tracing-button"
 					>
 						<Activity className="h-4 w-4" />
-						Configure Plugin Tracing
+						配置插件追踪
 					</Button>
 				</div>
 				<OtelFormFragment onSave={handleOtelConfigSave} currentConfig={currentConfig} onDelete={onDelete} isDeleting={isDeleting} />
@@ -70,7 +70,7 @@ export default function OtelView({ onDelete, isDeleting }: OtelViewProps) {
 				open={isTracingSheetOpen}
 				onClose={() => setIsTracingSheetOpen(false)}
 				pluginName="otel"
-				destination="the OTEL collector"
+				destination="OTEL 采集器"
 			/>
 		</div>
 	);

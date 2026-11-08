@@ -70,12 +70,12 @@ export function MaximFormFragment({ initialConfig, onSave, onDelete, isDeleting 
 							name="maxim_config.api_key"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>API Key</FormLabel>
+									<FormLabel>API 密钥</FormLabel>
 									<FormControl>
 										<div className="relative">
 											<Input
 												type={showApiKey ? "text" : "password"}
-												placeholder="Enter your Maxim API key"
+												placeholder="输入你的 Maxim API 密钥"
 												disabled={!hasMaximAccess}
 												{...field}
 												className="pr-10"
@@ -102,9 +102,9 @@ export function MaximFormFragment({ initialConfig, onSave, onDelete, isDeleting 
 							name="maxim_config.log_repo_id"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Log Repository ID (Optional)</FormLabel>
+									<FormLabel>日志仓库 ID（可选）</FormLabel>
 									<FormControl>
-										<Input placeholder="Enter log repository ID" disabled={!hasMaximAccess} {...field} value={field.value ?? ""} />
+										<Input placeholder="输入日志仓库 ID" disabled={!hasMaximAccess} {...field} value={field.value ?? ""} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -117,13 +117,13 @@ export function MaximFormFragment({ initialConfig, onSave, onDelete, isDeleting 
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>
-										Request Headers <span className="text-muted-foreground font-normal">(Optional)</span>
+										请求头 <span className="text-muted-foreground font-normal">（可选）</span>
 									</FormLabel>
 									<FormDescription>
-										Comma-separated list of request headers to capture and attach as trace tags. Supports exact names and wildcard patterns
-										(e.g. <code className="text-xs">x-custom-*</code> captures all headers with that prefix,{" "}
-										<code className="text-xs">*</code> captures all headers; note that <code className="text-xs">*</code> will capture
-										sensitive headers like Authorization).
+										要捕获并附加为追踪标签的请求头列表，以逗号分隔。支持精确名称和通配符模式（例如{" "}
+										<code className="text-xs">x-custom-*</code> 会捕获所有具有该前缀的请求头，
+										<code className="text-xs">*</code> 会捕获所有请求头；注意 <code className="text-xs">*</code> 也会捕获
+										Authorization 等敏感请求头）。
 									</FormDescription>
 									<FormControl>
 										<RequestHeadersTextarea
@@ -149,7 +149,7 @@ export function MaximFormFragment({ initialConfig, onSave, onDelete, isDeleting 
 						name="enabled"
 						render={({ field }) => (
 							<FormItem className="flex items-center gap-2 py-2">
-								<FormLabel className="text-muted-foreground text-sm font-medium">Enabled</FormLabel>
+								<FormLabel className="text-muted-foreground text-sm font-medium">启用</FormLabel>
 								<FormControl>
 									<Switch
 										checked={field.value}
@@ -168,8 +168,8 @@ export function MaximFormFragment({ initialConfig, onSave, onDelete, isDeleting 
 								variant="outline"
 								onClick={onDelete}
 								disabled={isDeleting}
-								title="Delete connector"
-								aria-label="Delete connector"
+								title="删除连接器"
+								aria-label="删除连接器"
 							>
 								<Trash2 className="size-4" />
 							</Button>
@@ -189,23 +189,23 @@ export function MaximFormFragment({ initialConfig, onSave, onDelete, isDeleting 
 							}}
 							disabled={!hasMaximAccess || isLoading || !form.formState.isDirty}
 						>
-							Reset
+							重置
 						</Button>
 						<TooltipProvider>
 							<Tooltip>
 								<TooltipTrigger asChild>
 									<Button type="submit" disabled={!hasMaximAccess || !form.formState.isDirty} isLoading={isSaving}>
-										Save Maxim Configuration
+										保存 Maxim 配置
 									</Button>
 								</TooltipTrigger>
 								{!form.formState.isDirty && (
 									<TooltipContent>
 										<p>
 											{!form.formState.isDirty
-												? "No changes made and validation errors present"
+												? "未做任何更改，且存在校验错误"
 												: !form.formState.isDirty
-													? "No changes made"
-													: "Please fix validation errors"}
+													? "未做任何更改"
+													: "请先修复校验错误"}
 										</p>
 									</TooltipContent>
 								)}

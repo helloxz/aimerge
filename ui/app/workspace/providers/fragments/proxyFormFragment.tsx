@@ -72,11 +72,11 @@ export function ProxyFormFragment({ provider }: ProxyFormFragmentProps) {
 		)
 			.unwrap()
 			.then(() => {
-				toast.success("Provider configuration updated successfully");
+				toast.success("提供商配置已更新");
 				form.reset(data);
 			})
 			.catch((err) => {
-				toast.error("Failed to update provider configuration", {
+				toast.error("更新提供商配置失败", {
 					description: getErrorMessage(err),
 				});
 			});
@@ -89,8 +89,8 @@ export function ProxyFormFragment({ provider }: ProxyFormFragmentProps) {
 				<Alert>
 					<Info className="h-4 w-4" />
 					<AlertDescription>
-						Applies to HTTP requests and WebSocket-based Realtime/Responses connections. WebRTC-based Realtime
-						sessions use a separate media path not covered by this proxy.
+						适用于 HTTP 请求以及基于 WebSocket 的 Realtime/Responses 连接。基于 WebRTC 的 Realtime
+						会话使用独立的媒体通道，不受此代理影响。
 					</AlertDescription>
 				</Alert>
 				<div className="space-y-4">
@@ -100,7 +100,7 @@ export function ProxyFormFragment({ provider }: ProxyFormFragmentProps) {
 							name="proxy_config.type"
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Proxy Type</FormLabel>
+									<FormLabel>代理类型</FormLabel>
 									<Select
 										onValueChange={field.onChange}
 										value={field.value === "none" ? "" : field.value}
@@ -108,13 +108,13 @@ export function ProxyFormFragment({ provider }: ProxyFormFragmentProps) {
 									>
 										<FormControl>
 											<SelectTrigger className="w-48">
-												<SelectValue placeholder="Select type" />
+												<SelectValue placeholder="选择类型" />
 											</SelectTrigger>
 										</FormControl>
 										<SelectContent>
 											<SelectItem value="http">HTTP</SelectItem>
 											<SelectItem value="socks5">SOCKS5</SelectItem>
-											<SelectItem value="environment">Environment</SelectItem>
+											<SelectItem value="environment">环境变量</SelectItem>
 										</SelectContent>
 									</Select>
 									<FormMessage />
@@ -134,7 +134,7 @@ export function ProxyFormFragment({ provider }: ProxyFormFragmentProps) {
 									name="proxy_config.url"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Proxy URL</FormLabel>
+											<FormLabel>代理 URL</FormLabel>
 											<FormControl>
 												<SecretVarInput
 													placeholder="http://proxy.example.com or env.OPENAI_PROXY_URL"
@@ -154,7 +154,7 @@ export function ProxyFormFragment({ provider }: ProxyFormFragmentProps) {
 										name="proxy_config.username"
 										render={({ field }) => (
 											<FormItem>
-												<FormLabel>Username</FormLabel>
+												<FormLabel>用户名</FormLabel>
 												<FormControl>
 													<SecretVarInput
 														placeholder="Proxy username or env.OPENAI_PROXY_USERNAME"
@@ -173,7 +173,7 @@ export function ProxyFormFragment({ provider }: ProxyFormFragmentProps) {
 										name="proxy_config.password"
 										render={({ field }) => (
 											<FormItem>
-												<FormLabel>Password</FormLabel>
+												<FormLabel>密码</FormLabel>
 												<FormControl>
 													<SecretVarInput
 														type="password"
@@ -196,7 +196,7 @@ export function ProxyFormFragment({ provider }: ProxyFormFragmentProps) {
 									name="proxy_config.ca_cert_pem"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>CA Certificate (PEM) (Optional)</FormLabel>
+											<FormLabel>CA 证书（PEM）（可选）</FormLabel>
 											<FormControl>
 												<SecretVarInput
 													variant="textarea"
@@ -212,8 +212,8 @@ export function ProxyFormFragment({ provider }: ProxyFormFragmentProps) {
 												/>
 											</FormControl>
 											<FormDescription>
-												PEM-encoded CA certificate to trust for TLS connections through SSL-intercepting proxies. You can also use
-												<code> env.YOUR_PROXY_CA_CERT_VAR</code>.
+												信任的 PEM 编码 CA 证书，用于通过 SSL 拦截代理的 TLS 连接。你也可以使用
+												<code> env.YOUR_PROXY_CA_CERT_VAR</code>。
 											</FormDescription>
 											<FormMessage />
 										</FormItem>
@@ -234,14 +234,14 @@ export function ProxyFormFragment({ provider }: ProxyFormFragmentProps) {
 						}}
 						disabled={!hasUpdateProviderAccess || isUpdatingProvider || !provider.proxy_config || provider.proxy_config.type === "none"}
 					>
-						Remove configuration
+						移除配置
 					</Button>
 					<Button
 						type="submit"
 						disabled={!form.formState.isDirty || !hasUpdateProviderAccess || isUpdatingProvider}
 						isLoading={isUpdatingProvider}
 					>
-						Save Proxy Configuration
+						保存代理配置
 					</Button>
 				</div>
 			</form>

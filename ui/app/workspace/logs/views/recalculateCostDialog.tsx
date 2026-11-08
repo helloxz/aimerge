@@ -50,58 +50,55 @@ export function RecalculateCostDialog({ open, onOpenChange, filters, totalLogs, 
 				}}
 			>
 				<DialogHeader className="pb-2">
-					<DialogTitle>Recalculate costs</DialogTitle>
-					<DialogDescription>
-						The current time window and filters will be applied. Choose which logs to recompute cost for.
-					</DialogDescription>
+					<DialogTitle>重新计算费用</DialogTitle>
+					<DialogDescription>将应用当前的时间窗口和筛选条件。请选择要重新计算费用的日志。</DialogDescription>
 				</DialogHeader>
 
 				<div className="flex flex-col gap-2">
 					<RecalculateModeOption
 						selected={mode === "missing"}
 						onSelect={() => selectMode("missing")}
-						title="Missing cost only"
-						description="Only recompute logs that don't have a cost yet."
+						title="仅缺失费用的日志"
+						description="仅重新计算尚无费用的日志。"
 					/>
 					<RecalculateModeOption
 						selected={mode === "all"}
 						onSelect={() => selectMode("all")}
-						title="All selected logs"
-						description="Recompute cost for every log matching the current filters."
+						title="全部所选日志"
+						description="重新计算符合当前筛选条件的全部日志的费用。"
 					/>
 				</div>
 
 				<p className="text-muted-foreground text-xs">
 					{mode === "all" ? (
 						<>
-							<span className="text-foreground font-medium">{formatCompactNumber(totalLogs)}</span> logs match the current filters and will be
-							recalculated.
+							<span className="text-foreground font-medium">{formatCompactNumber(totalLogs)}</span> 条日志符合当前筛选条件，将重新计算费用。
 						</>
 					) : isFetching ? (
-						"Checking how many logs are missing a cost…"
+						"正在统计缺少费用的日志数量…"
 					) : isError || missingCount === null ? (
-						"Logs in the current window that don't have a cost yet will be recalculated."
+						"当前时间窗口内尚无费用的日志将被重新计算。"
 					) : missingCount === 0 ? (
-						"All logs in the current window already have a cost."
+						"当前时间窗口内的日志均已有费用。"
 					) : (
 						<>
-							<span className="text-foreground font-medium">{formatCompactNumber(missingCount)}</span> {missingCount === 1 ? "log" : "logs"} in the
-							current window {missingCount === 1 ? "doesn't have" : "don't have"} a cost yet and will be recalculated.
+							<span className="text-foreground font-medium">{formatCompactNumber(missingCount)}</span>{" "}
+							条日志在当前时间窗口内尚无费用，将被重新计算。
 						</>
 					)}
 				</p>
 
 				<div className="flex items-start gap-2 rounded-md border border-amber-500/30 bg-amber-500/10 p-3 text-xs text-muted-foreground">
 					<Info className="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-500" />
-					<span>Affects the logs dashboard only. Governance budgets and usage tracking remain unchanged.</span>
+					<span>仅影响日志仪表盘。治理预算与用量统计保持不变。</span>
 				</div>
 
 				<DialogFooter className="pt-0">
 					<Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>
-						Cancel
+						取消
 					</Button>
 					<Button size="sm" onClick={() => onConfirm(mode)} disabled={confirmDisabled}>
-						Recalculate
+						重新计算
 					</Button>
 				</DialogFooter>
 			</DialogContent>

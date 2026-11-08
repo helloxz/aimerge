@@ -7,7 +7,7 @@ function RouteComponent() {
 	const hasGuardrailsAccess = useRbac(RbacResource.GuardrailsConfig, RbacOperation.View);
 	const childMatches = useChildMatches();
 	if (!hasGuardrailsAccess) {
-		return <NoPermissionView entity="guardrails configuration" />;
+		return <NoPermissionView entity="护栏配置" />;
 	}
 	return childMatches.length === 0 ? <GuardrailsPage /> : <Outlet />;
 }

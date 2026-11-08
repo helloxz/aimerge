@@ -34,7 +34,7 @@ export function MCPLibraryServersTable({
 		if (!serverToDelete) return;
 		try {
 			await deleteEntry(serverToDelete.id).unwrap();
-			toast.success(`"${serverToDelete.name}" removed from the library.`);
+			toast.success(`已从服务器库移除“${serverToDelete.name}”。`);
 			setServerToDelete(null);
 		} catch (error) {
 			toast.error(getErrorMessage(error));
@@ -46,10 +46,10 @@ export function MCPLibraryServersTable({
 			<Table containerClassName="overflow-x-clip">
 				<TableHeader className="bg-muted sticky top-0 z-10">
 					<TableRow>
-						<TableHead className="w-16">Icon</TableHead>
-						<TableHead>Server</TableHead>
-						<TableHead className="hidden w-10 lg:table-cell">Details</TableHead>
-						<TableHead className="w-32 text-right">Actions</TableHead>
+						<TableHead className="w-16">图标</TableHead>
+						<TableHead>服务器</TableHead>
+						<TableHead className="hidden w-10 lg:table-cell">详情</TableHead>
+						<TableHead className="w-32 text-right">操作</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>
@@ -81,13 +81,13 @@ export function MCPLibraryServersTable({
 											{isInstalled && (
 												<Badge variant="success" className="gap-1">
 													<Check className="size-3" />
-													Installed
+													已安装
 												</Badge>
 											)}
-											{server.source === "custom" && <Badge variant="outline">Custom</Badge>}
+											{server.source === "custom" && <Badge variant="outline">自定义</Badge>}
 										</div>
 										<p className="text-muted-foreground line-clamp-1 max-w-4xl text-sm leading-5">
-											{server.description || "No description available."}
+											{server.description || "暂无描述。"}
 										</p>
 									</div>
 								</TableCell>
@@ -111,13 +111,13 @@ export function MCPLibraryServersTable({
 															variant="outline"
 															size="icon"
 															onClick={() => setServerToDelete(server)}
-															aria-label={`Remove ${server.name} from library`}
+															aria-label={`从服务器库移除 ${server.name}`}
 															data-testid={`mcp-library-table-delete-${server.slug}`}
 														>
 															<Trash2 className="h-4 w-4" />
 														</Button>
 													</TooltipTrigger>
-													<TooltipContent>Remove from library</TooltipContent>
+													<TooltipContent>从服务器库移除</TooltipContent>
 												</Tooltip>
 											</div>
 										)}
@@ -128,7 +128,7 @@ export function MCPLibraryServersTable({
 														asChild
 														variant="outline"
 														size="icon"
-														aria-label={`Open ${server.name} documentation`}
+														aria-label={`打开 ${server.name} 的文档`}
 														data-testid={`mcp-library-table-docs-${server.slug}`}
 													>
 														<a href={server.docs_url} target="_blank" rel="noreferrer">
@@ -136,19 +136,19 @@ export function MCPLibraryServersTable({
 														</a>
 													</Button>
 												</TooltipTrigger>
-												<TooltipContent>Documentation</TooltipContent>
+												<TooltipContent>文档</TooltipContent>
 											</Tooltip>
 										)}
 										{isInstalled ? (
 											<Tooltip>
 												<TooltipTrigger asChild>
 													<Button asChild size="icon" data-testid={`mcp-library-table-open-${server.slug}`}>
-														<Link to="/workspace/mcp-registry" aria-label={`Open ${server.name}`}>
+														<Link to="/workspace/mcp-registry" aria-label={`打开 ${server.name}`}>
 															<LogIn className="h-4 w-4" />
 														</Link>
 													</Button>
 												</TooltipTrigger>
-												<TooltipContent>Open installed server</TooltipContent>
+												<TooltipContent>打开已安装的服务器</TooltipContent>
 											</Tooltip>
 										) : (
 											<Tooltip>
@@ -157,13 +157,13 @@ export function MCPLibraryServersTable({
 														size="icon"
 														onClick={() => onInstall(server)}
 														disabled={!canCreateMCPClient}
-														aria-label={`Install ${server.name}`}
+														aria-label={`安装 ${server.name}`}
 														data-testid={`mcp-library-table-install-${server.slug}`}
 													>
 														<Download className="h-4 w-4" />
 													</Button>
 												</TooltipTrigger>
-												<TooltipContent>Install</TooltipContent>
+												<TooltipContent>安装</TooltipContent>
 											</Tooltip>
 										)}
 									</div>
@@ -193,10 +193,10 @@ export function MCPLibraryServersTableSkeleton({ rows = 8 }: { rows?: number }) 
 			<Table containerClassName="overflow-x-clip">
 				<TableHeader className="bg-muted sticky top-0 z-10">
 					<TableRow>
-						<TableHead className="w-16">Icon</TableHead>
-						<TableHead>Server</TableHead>
-						<TableHead className="hidden w-10 lg:table-cell">Details</TableHead>
-						<TableHead className="w-32 text-right">Actions</TableHead>
+						<TableHead className="w-16">图标</TableHead>
+						<TableHead>服务器</TableHead>
+						<TableHead className="hidden w-10 lg:table-cell">详情</TableHead>
+						<TableHead className="w-32 text-right">操作</TableHead>
 					</TableRow>
 				</TableHeader>
 				<TableBody>

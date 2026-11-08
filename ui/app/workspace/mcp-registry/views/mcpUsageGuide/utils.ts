@@ -81,7 +81,7 @@ export function maskSecret(value?: string): string {
 /** Human-readable label describing how many servers a command registers. */
 export function getRegistrationLabel(serverScope: ServerScope, selectedServers: MCPClient[]): string {
 	if (serverScope === "selected" && selectedServers.length > 0) {
-		return `${selectedServers.length} ${selectedServers.length === 1 ? "server" : "servers"}`;
+		return `${selectedServers.length} 个服务器`;
 	}
 	return "bifrost";
 }

@@ -24,7 +24,7 @@ export default function MCPRegistryOAuthCallbackPage() {
 			if (status === "success") {
 				window.opener.postMessage({ type: "oauth_success" }, window.location.origin);
 			} else {
-				window.opener.postMessage({ type: "oauth_failed", error: error ?? "OAuth flow failed" }, window.location.origin);
+				window.opener.postMessage({ type: "oauth_failed", error: error ?? "OAuth 流程失败" }, window.location.origin);
 			}
 			setCloseAttempted(true);
 			window.close();
@@ -40,12 +40,12 @@ export default function MCPRegistryOAuthCallbackPage() {
 	return (
 		<div className="mx-auto flex min-h-[60vh] w-full max-w-xl items-center justify-center p-6">
 			<div className="bg-card w-full rounded-lg border p-8 text-center shadow-sm">
-				<h1 className="text-xl font-semibold">{status === "success" ? "Authorization complete" : "Authorization failed"}</h1>
+				<h1 className="text-xl font-semibold">{status === "success" ? "授权完成" : "授权失败"}</h1>
 				{error && <p className="text-destructive mt-2 text-sm">{error}</p>}
-				<p className="text-muted-foreground mt-4 text-sm">{closeAttempted ? "You can close this tab." : "This window can be closed."}</p>
+				<p className="text-muted-foreground mt-4 text-sm">{closeAttempted ? "您可以关闭此标签页。" : "此窗口可以关闭。"}</p>
 				<div className="mt-6">
 					<Button asChild variant="outline" data-testid="mcp-callback-back-button">
-						<Link to="/workspace/mcp-registry">Back to MCP registry</Link>
+						<Link to="/workspace/mcp-registry">返回 MCP 服务器目录</Link>
 					</Button>
 				</div>
 			</div>

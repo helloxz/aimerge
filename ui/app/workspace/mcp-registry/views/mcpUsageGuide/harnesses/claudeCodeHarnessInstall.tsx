@@ -34,13 +34,13 @@ export function ClaudeCodeHarnessInstall({
 						<SelectValue />
 					</SelectTrigger>
 					<SelectContent>
-						<SelectItem value="local">Local</SelectItem>
-						<SelectItem value="project">Project</SelectItem>
-						<SelectItem value="user">User</SelectItem>
+						<SelectItem value="local">本地</SelectItem>
+						<SelectItem value="project">项目</SelectItem>
+						<SelectItem value="user">用户</SelectItem>
 					</SelectContent>
 				</Select>
 			}
-			emptyMessage={virtualKey ? "Select servers or use Gateway root." : "Select a virtual key to generate the command."}
+			emptyMessage={virtualKey ? "请选择服务器，或使用网关根路径。" : "请选择虚拟密钥以生成命令。"}
 			harnessName="Claude Code"
 			logoSrc="/images/harness/claudecode.svg"
 			registrationLabel={getRegistrationLabel(serverScope, selectedServers)}

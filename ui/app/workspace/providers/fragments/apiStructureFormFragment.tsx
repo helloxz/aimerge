@@ -83,11 +83,11 @@ export function ApiStructureFormFragment({ provider }: Props) {
 		)
 			.unwrap()
 			.then(() => {
-				toast.success("Provider configuration updated successfully");
+				toast.success("提供商配置已更新");
 				form.reset(data);
 			})
 			.catch((err) => {
-				toast.error("Failed to update provider configuration", {
+				toast.error("更新提供商配置失败", {
 					description: getErrorMessage(err),
 				});
 			});
@@ -107,11 +107,11 @@ export function ApiStructureFormFragment({ provider }: Props) {
 						name="base_provider_type"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Base Provider Type</FormLabel>
+								<FormLabel>基础提供商类型</FormLabel>
 								<Select onValueChange={field.onChange} value={field.value}>
 									<FormControl>
 										<SelectTrigger disabled={true}>
-											<SelectValue placeholder="Select base provider" />
+											<SelectValue placeholder="选择基础提供商" />
 										</SelectTrigger>
 									</FormControl>
 									<SelectContent>
@@ -123,7 +123,7 @@ export function ApiStructureFormFragment({ provider }: Props) {
 										<SelectItem value="replicate">Replicate</SelectItem>
 									</SelectContent>
 								</Select>
-								<FormDescription>The underlying provider this custom provider will use</FormDescription>
+								<FormDescription>该自定义提供商所使用的基础提供商</FormDescription>
 								<FormMessage />
 							</FormItem>
 						)}
@@ -137,9 +137,9 @@ export function ApiStructureFormFragment({ provider }: Props) {
 									<div className="flex items-center justify-between space-x-2 rounded-lg border p-3">
 										<div className="space-y-0.5">
 											<label htmlFor="drop-excess-requests" className="text-sm font-medium">
-												Is Keyless?
+												无需密钥？
 											</label>
-											<p className="text-muted-foreground text-sm">Whether the custom provider requires a key</p>
+											<p className="text-muted-foreground text-sm">该自定义提供商是否需要密钥</p>
 										</div>
 										<Switch
 											id="drop-excess-requests"
@@ -165,18 +165,18 @@ export function ApiStructureFormFragment({ provider }: Props) {
 				{/* Form Actions */}
 				<div className="flex justify-end gap-2 py-2">
 					<Button type="button" variant="outline" onClick={() => form.reset()} disabled={!hasUpdateProviderAccess}>
-						Reset
+						重置
 					</Button>
 					<TooltipProvider>
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<Button type="submit" disabled={!form.formState.isDirty || !hasUpdateProviderAccess} isLoading={isUpdatingProvider}>
-									Save API Structure Configuration
+									保存 API 结构配置
 								</Button>
 							</TooltipTrigger>
 							{!form.formState.isValid && (
 								<TooltipContent>
-									<p>{form.formState.errors.root?.message || "Please fix validation errors"}</p>
+									<p>{form.formState.errors.root?.message || "请修正校验错误"}</p>
 								</TooltipContent>
 							)}
 						</Tooltip>

@@ -8,17 +8,16 @@ export function HarnessCommandSection({
 	canCopyCommand,
 	command,
 	controls,
-	copySuccessMessage = "Command copied",
+	copySuccessMessage = "命令已复制",
 	deeplink,
-	deeplinkLabel = "Install",
+	deeplinkLabel = "安装",
 	emptyMessage,
 	harnessName,
-	label = "Command",
+	label = "命令",
 	logoSrc,
 	registrationLabel,
 }: HarnessCommandSectionProps) {
 	const { copy, copied } = useCopyToClipboard({ successMessage: copySuccessMessage });
-	const copyLabel = label.toLowerCase();
 	const canUseDeeplink = canCopyCommand && !!deeplink;
 
 	return (
@@ -57,7 +56,7 @@ export function HarnessCommandSection({
 									</Button>
 								)}
 							</TooltipTrigger>
-							<TooltipContent>{canUseDeeplink ? deeplinkLabel : "Finish the selections first"}</TooltipContent>
+							<TooltipContent>{canUseDeeplink ? deeplinkLabel : "请先完成选择"}</TooltipContent>
 						</Tooltip>
 					)}
 
@@ -70,14 +69,14 @@ export function HarnessCommandSection({
 								size="sm"
 								disabled={!canCopyCommand}
 								onClick={() => void copy(command)}
-								aria-label={copied ? `${label} copied` : `Copy ${copyLabel}`}
+								aria-label={copied ? `${label}已复制` : `复制${label}`}
 								data-testid="mcp-usage-guide-copy-command"
 							>
 								{copied ? <Check className="size-4 text-green-600" /> : <Copy className="size-4" />}
-								<span>{copied ? "Copied" : "Copy"}</span>
+								<span>{copied ? "已复制" : "复制"}</span>
 							</Button>
 						</TooltipTrigger>
-						<TooltipContent>{canCopyCommand ? (copied ? "Copied" : `Copy ${copyLabel}`) : "Finish the selections first"}</TooltipContent>
+						<TooltipContent>{canCopyCommand ? (copied ? "已复制" : `复制${label}`) : "请先完成选择"}</TooltipContent>
 					</Tooltip>
 				</div>
 			</div>

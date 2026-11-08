@@ -97,21 +97,21 @@ const buildPayload = (config: EditorCacheConfig, mode: CacheMode): CacheConfig =
 
 const validateForSave = (config: EditorCacheConfig, mode: CacheMode): string | null => {
 	if (mode === "semantic") {
-		if (!config.provider) return "Pick an embedding provider for semantic mode, or switch to Direct only.";
-		if (!config.embedding_model?.trim()) return "Pick an embedding model for semantic mode.";
+		if (!config.provider) return "请为语义模式选择嵌入提供商，或切换到仅直接匹配。";
+		if (!config.embedding_model?.trim()) return "请为语义模式选择嵌入模型。";
 		if (!config.dimension || config.dimension <= 1) {
-			return "Semantic mode requires the embedding model's real dimension (must be > 1).";
+			return "语义模式需要嵌入模型的真实维度（必须大于 1）。";
 		}
 	}
-	if (config.ttl !== undefined && config.ttl < 0) return "TTL must be non-negative.";
+	if (config.ttl !== undefined && config.ttl < 0) return "TTL 不能为负数。";
 	if (config.threshold !== undefined && (config.threshold < 0 || config.threshold > 1)) {
-		return "Similarity threshold must be between 0 and 1.";
+		return "相似度阈值必须在 0 到 1 之间。";
 	}
 	if (
 		config.conversation_history_threshold !== undefined &&
 		(config.conversation_history_threshold < 1 || config.conversation_history_threshold > 50)
 	) {
-		return "Conversation history threshold must be between 1 and 50.";
+		return "会话历史阈值必须在 1 到 50 之间。";
 	}
 	return null;
 };
@@ -153,7 +153,7 @@ export default function CachingView() {
 
 	useEffect(() => {
 		if (providersError) {
-			toast.error(`Failed to load providers: ${getErrorMessage(providersError as any)}`);
+			toast.error(`加载提供商失败：${getErrorMessage(providersError as any)}`);
 		}
 	}, [providersError]);
 
@@ -224,9 +224,9 @@ export default function CachingView() {
 					path: "",
 				}).unwrap();
 			}
-			toast.success(checked ? "Local cache enabled" : "Local cache disabled");
+			toast.success(checked ? "本地缓存已启用" : "本地缓存已停用");
 		} catch (error) {
-			toast.error(`Failed to ${checked ? "enable" : "disable"} local cache: ${getErrorMessage(error)}`);
+			toast.error(`${checked ? "启用" : "停用"}本地缓存失败：${getErrorMessage(error)}`);
 		}
 	};
 
@@ -253,9 +253,9 @@ export default function CachingView() {
 			setCacheConfig(editor);
 			setServerCacheConfig(editor);
 			setMode(inferMode(editor));
-			toast.success("Cache configuration updated");
+			toast.success("缓存配置已更新");
 		} catch (error) {
-			toast.error(`Failed to update cache configuration: ${getErrorMessage(error)}`);
+			toast.error(`更新缓存配置失败：${getErrorMessage(error)}`);
 		}
 	};
 
@@ -265,13 +265,13 @@ export default function CachingView() {
 	return (
 		<div className="mx-auto w-full max-w-4xl space-y-6">
 			<div>
-				<h2 className="text-lg font-semibold tracking-tight">Local Cache</h2>
+				<h2 className="text-lg font-semibold tracking-tight">本地缓存</h2>
 				<p className="text-muted-foreground text-sm">
-					Cache responses locally with two complementary lookup paths: <b>direct</b> hash matching for exact replays, and <b>semantic</b>{" "}
-					similarity search for related content. Send the <b>x-bf-cache-key</b> header to scope cached responses to a tenant or feature.{" "}
+					通过两条互补的查找路径在本地缓存响应：<b>直接匹配</b>对完全相同的内容做哈希重放，<b>语义匹配</b>{" "}
+					则对相关内容做相似度搜索。发送 <b>x-bf-cache-key</b> 请求头可将缓存响应限定到某个租户或功能。{" "}
 					{!isVectorStoreEnabled && (
 						<span className="text-destructive font-medium">
-							Requires a vector store to be configured and enabled in <code>config.json</code>.
+							需先在 <code>config.json</code> 中配置并启用向量存储。
 						</span>
 					)}
 				</p>
@@ -279,9 +279,9 @@ export default function CachingView() {
 
 			{configError !== undefined && (
 				<div className="border-destructive/50 bg-destructive/10 rounded-sm border p-4">
-					<p className="text-destructive text-sm font-medium">Failed to load configuration</p>
+					<p className="text-destructive text-sm font-medium">加载配置失败</p>
 					<p className="text-muted-foreground mt-1 text-sm">
-						{getErrorMessage(configError) || "An unexpected error occurred. Please try again."}
+						{getErrorMessage(configError) || "发生意外错误，请重试。"}
 					</p>
 				</div>
 			)}
@@ -300,11 +300,10 @@ export default function CachingView() {
 					<div className="flex items-center justify-between space-x-2">
 						<div className="space-y-0.5">
 							<label htmlFor="enable-caching" className="text-sm font-medium">
-								Enable Caching
+								启用缓存
 							</label>
 							<p className="text-muted-foreground text-sm">
-								Loads (or unloads) the plugin without a server restart. Configuration changes you make below mutate the live plugin in
-								place, no redeploy needed.{" "}
+								无需重启服务即可加载（或卸载）该插件。下方所做的配置修改会直接作用于运行中的插件，无需重新部署。{" "}
 							</p>
 						</div>
 						<Switch
@@ -326,35 +325,32 @@ export default function CachingView() {
 							<div className={cn("space-y-4", !cachingActive && "pointer-events-none opacity-50")} aria-disabled={!cachingActive}>
 								{/* Mode picker. Direct-only is first-class. */}
 								<div className="space-y-2">
-									<Label className="text-sm font-medium">Cache Mode</Label>
+									<Label className="text-sm font-medium">缓存模式</Label>
 									<Tabs value={mode} onValueChange={(v) => setMode(v as CacheMode)}>
 										<TabsList className="grid w-full grid-cols-2">
 											<TabsTrigger value="direct" data-testid="caching-mode-direct-tab">
-												Direct only
+												仅直接匹配
 											</TabsTrigger>
 											<TabsTrigger
 												value="semantic"
 												data-testid="caching-mode-semantic-tab"
 												disabled={embeddingProviders.length === 0}
 												title={
-													embeddingProviders.length === 0 ? "Configure an embedding-capable provider to enable semantic mode." : undefined
+													embeddingProviders.length === 0 ? "配置一个支持嵌入的提供商以启用语义模式。" : undefined
 												}
 											>
-												Direct + Semantic
+												直接 + 语义
 											</TabsTrigger>
 										</TabsList>
 									</Tabs>
 									<p className="text-muted-foreground text-xs">
 										{mode === "direct" ? (
 											<>
-												Direct-only mode hashes each request and replays an exact match. No embeddings, no provider needed. Cheapest path,
-												perfect for stable prompts.
+												仅直接匹配模式会对每个请求做哈希，命中完全一致的内容时直接重放。无需嵌入模型，也无需额外提供商。这是开销最低的路径，非常适合稳定的提示词。
 											</>
 										) : (
 											<>
-												Direct + semantic mode adds vector similarity search on top of direct hash matching. Requires an embedding-capable
-												provider and the model&apos;s real dimension. Direct hits are still served first; semantic search runs only when the
-												direct lookup misses.
+												直接 + 语义模式在直接哈希匹配之上增加了向量相似度搜索。需要支持嵌入的提供商以及模型的真实维度。直接命中仍会优先返回；只有在直接查找未命中时才会执行语义搜索。
 											</>
 										)}
 									</p>
@@ -371,19 +367,15 @@ export default function CachingView() {
 									<>
 										{hasStructuralChange && (
 											<div className="rounded-sm border border-amber-200 bg-amber-50 p-3 text-xs text-amber-900">
-												<b>Heads up:</b> a vector store namespace can only hold vectors of <em>one</em> dimension. Whenever you change the
-												embedding <b>provider</b>, <b>model</b>, or <b>dimension</b>, make sure the <b>dimension</b> still matches what the
-												model produces, otherwise writes to the existing namespace will fail and reads will silently miss. The namespace is{" "}
-												<em>not</em> recreated automatically; either use a fresh namespace or drop the existing class/index in your vector
-												store before saving.
+												<b>注意：</b>一个向量存储命名空间只能存放 <em>同一</em>维度 的向量。每当你更改嵌入的 <b>提供商</b>、<b>模型</b>或 <b>维度</b>时，请确保 <b>维度</b>仍与模型实际输出的维度一致，否则写入现有命名空间会失败，读取也会静默未命中。命名空间不会自动重建；请改用新的命名空间，或在保存前删除向量存储中已有的 class/index。
 											</div>
 										)}
 
 										<div className="space-y-4">
-											<h3 className="text-sm font-medium">Embedding Provider &amp; Model</h3>
+											<h3 className="text-sm font-medium">嵌入提供商与模型</h3>
 											<div className="grid grid-cols-2 gap-4">
 												<div className="space-y-2">
-													<Label htmlFor="provider">Configured Providers</Label>
+													<Label htmlFor="provider">已配置的提供商</Label>
 													<Select
 														value={cacheConfig.provider}
 														onValueChange={(value: ModelProviderName) =>
@@ -394,7 +386,7 @@ export default function CachingView() {
 														}
 													>
 														<SelectTrigger className="w-full" data-testid="caching-provider-select">
-															<SelectValue placeholder="Select provider" />
+															<SelectValue placeholder="选择提供商" />
 														</SelectTrigger>
 														<SelectContent>
 															{embeddingProviders
@@ -411,7 +403,7 @@ export default function CachingView() {
 													</Select>
 												</div>
 												<div className="space-y-2">
-													<Label htmlFor="embedding_model">Embedding Model*</Label>
+													<Label htmlFor="embedding_model">嵌入模型*</Label>
 													<ModelMultiselect
 														inputId="embedding_model"
 														data-testid="caching-embedding-model-select"
@@ -419,17 +411,16 @@ export default function CachingView() {
 														provider={cacheConfig.provider || undefined}
 														value={cacheConfig.embedding_model ?? ""}
 														onChange={(model) => updateLocal({ embedding_model: model })}
-														placeholder={cacheConfig.provider ? "Search or type an embedding model..." : "Select a provider first"}
+														placeholder={cacheConfig.provider ? "搜索或输入嵌入模型…" : "请先选择提供商"}
 														disabled={!cacheConfig.provider}
 													/>
 												</div>
 											</div>
 											<p className="text-muted-foreground text-xs">
-												API keys are inherited from the embedding provider&apos;s main configuration, you don&apos;t need to add them again
-												here.
+												API 密钥沿用嵌入提供商的主配置，无需在此处重复添加。
 											</p>
 											<div className="space-y-2">
-												<Label htmlFor="dimension">Dimension</Label>
+												<Label htmlFor="dimension">维度</Label>
 												<Input
 													id="dimension"
 													data-testid="caching-dimension-input"
@@ -449,9 +440,8 @@ export default function CachingView() {
 													}}
 												/>
 												<p className="text-muted-foreground text-xs">
-													Vector size produced by the embedding model. Must match the model exactly (e.g. <code>1536</code> for OpenAI{" "}
-													<code>text-embedding-3-small</code>, <code>3072</code> for <code>text-embedding-3-large</code>, <code>768</code>{" "}
-													for many Cohere/Voyage models).
+												嵌入模型输出的向量大小，必须与模型完全一致（例如 OpenAI <code>text-embedding-3-small</code> 为 <code>1536</code>，{" "}
+													<code>text-embedding-3-large</code> 为 <code>3072</code>，许多 Cohere/Voyage 模型为 <code>768</code>）。
 												</p>
 											</div>
 										</div>
@@ -460,10 +450,10 @@ export default function CachingView() {
 
 								{/* Cache settings shared across modes. */}
 								<div className="space-y-4">
-									<h3 className="text-sm font-medium">Cache Settings</h3>
+									<h3 className="text-sm font-medium">缓存设置</h3>
 									<div className={cn("grid gap-4", mode === "semantic" ? "grid-cols-2" : "grid-cols-1")}>
 										<div className="space-y-2">
-											<Label htmlFor="ttl">TTL (seconds)</Label>
+											<Label htmlFor="ttl">TTL（秒）</Label>
 											<Input
 												id="ttl"
 												data-testid="caching-ttl-input"
@@ -483,12 +473,12 @@ export default function CachingView() {
 												}}
 											/>
 											<p className="text-muted-foreground text-xs">
-												How long cached entries live before they expire. Override per-request via the <b>x-bf-cache-ttl</b> header.
+												缓存条目的存活时间。可通过 <b>x-bf-cache-ttl</b> 请求头按请求覆盖。
 											</p>
 										</div>
 										{mode === "semantic" && (
 											<div className="space-y-2">
-												<Label htmlFor="threshold">Similarity Threshold</Label>
+												<Label htmlFor="threshold">相似度阈值</Label>
 												<Input
 													id="threshold"
 													data-testid="caching-threshold-input"
@@ -510,7 +500,7 @@ export default function CachingView() {
 													}}
 												/>
 												<p className="text-muted-foreground text-xs">
-													Minimum cosine similarity for a semantic hit. Override per-request via <b>x-bf-cache-threshold</b>.
+												语义命中所需的最小余弦相似度。可通过 <b>x-bf-cache-threshold</b> 按请求覆盖。
 												</p>
 											</div>
 										)}
@@ -519,10 +509,10 @@ export default function CachingView() {
 
 								{/* Storage & Cache Key. */}
 								<div className="space-y-4">
-									<h3 className="text-sm font-medium">Storage &amp; Cache Key</h3>
+									<h3 className="text-sm font-medium">存储与缓存键</h3>
 									<div className="grid grid-cols-2 gap-4">
 										<div className="space-y-2">
-											<Label htmlFor="vector_store_namespace">Vector Store Namespace</Label>
+											<Label htmlFor="vector_store_namespace">向量存储命名空间</Label>
 											<Input
 												id="vector_store_namespace"
 												data-testid="caching-vector-store-namespace-input"
@@ -532,24 +522,21 @@ export default function CachingView() {
 												onChange={(e) => updateLocal({ vector_store_namespace: e.target.value })}
 											/>
 											<p className="text-muted-foreground text-xs">
-												Bucket/index name where cache entries live. Leave blank to use the default (<code>BifrostLocalCachePlugin</code>).
-												Changing this points the plugin at a different (possibly empty) bucket. Old entries are not deleted, they just stop
-												being queried.
+												缓存条目所在的桶/索引名称。留空则使用默认值（<code>BifrostLocalCachePlugin</code>）。修改后会指向另一个（可能为空的）桶。旧条目不会被删除，只是不再被查询。
 											</p>
 										</div>
 										<div className="space-y-2">
-											<Label htmlFor="default_cache_key">Default Cache Key</Label>
+											<Label htmlFor="default_cache_key">默认缓存键</Label>
 											<Input
 												id="default_cache_key"
 												data-testid="caching-default-cache-key-input"
 												type="text"
-												placeholder="(none)"
+												placeholder="（无）"
 												value={cacheConfig.default_cache_key ?? ""}
 												onChange={(e) => updateLocal({ default_cache_key: e.target.value })}
 											/>
 											<p className="text-muted-foreground text-xs">
-												Fallback partition key used when a request doesn&apos;t set <b>x-bf-cache-key</b>. Cache keys isolate entries: same
-												key ↔ shared cache pool. Leave blank to <b>disable caching</b> for any request that doesn&apos;t send the header.
+												当请求未设置 <b>x-bf-cache-key</b> 时使用的兜底分区键。缓存键用于隔离条目：相同的键共享同一个缓存池。留空则对未发送该请求头的请求<b>禁用缓存</b>。
 											</p>
 										</div>
 									</div>
@@ -557,10 +544,10 @@ export default function CachingView() {
 
 								{/* Conversation Settings. */}
 								<div className="space-y-4">
-									<h3 className="text-sm font-medium">Conversation Settings</h3>
+									<h3 className="text-sm font-medium">会话设置</h3>
 									<div className="grid grid-cols-2 gap-4">
 										<div className="space-y-2">
-											<Label htmlFor="conversation_history_threshold">Conversation History Threshold</Label>
+											<Label htmlFor="conversation_history_threshold">会话历史阈值</Label>
 											<Input
 												id="conversation_history_threshold"
 												data-testid="caching-conversation-history-threshold-input"
@@ -586,16 +573,15 @@ export default function CachingView() {
 												}}
 											/>
 											<p className="text-muted-foreground text-xs">
-												Skip caching for conversations with more than this many messages. Long histories rarely match exactly and inflate
-												the cache without paying off.
+												消息数超过该值的会话将跳过缓存。过长的历史记录很少能完全匹配，只会增加缓存体积却没有收益。
 											</p>
 										</div>
 									</div>
 									<div className="space-y-2">
 										<div className="flex h-fit items-center justify-between space-x-2 rounded-sm border p-3">
 											<div className="space-y-0.5">
-												<Label className="text-sm font-medium">Exclude System Prompt</Label>
-												<p className="text-muted-foreground text-xs">Strip system messages from the cache key.</p>
+												<Label className="text-sm font-medium">排除系统提示词</Label>
+												<p className="text-muted-foreground text-xs">从缓存键中剔除系统消息。</p>
 											</div>
 											<Switch
 												data-testid="caching-exclude-system-prompt-switch"
@@ -609,13 +595,13 @@ export default function CachingView() {
 
 								{/* Cache Behavior applies to both modes. */}
 								<div className="space-y-4">
-									<h3 className="text-sm font-medium">Cache Key Composition</h3>
+									<h3 className="text-sm font-medium">缓存键组成</h3>
 									<div className="space-y-3">
 										<div className="flex items-center justify-between space-x-2 rounded-sm border p-3">
 											<div className="space-y-0.5">
-												<Label className="text-sm font-medium">Cache by Model</Label>
+												<Label className="text-sm font-medium">按模型缓存</Label>
 												<p className="text-muted-foreground text-xs">
-													Include model name in the cache key. Different models won&apos;t share cached responses.
+												在缓存键中包含模型名称。不同模型之间不会共享缓存响应。
 												</p>
 											</div>
 											<Switch
@@ -627,9 +613,9 @@ export default function CachingView() {
 										</div>
 										<div className="flex items-center justify-between space-x-2 rounded-sm border p-3">
 											<div className="space-y-0.5">
-												<Label className="text-sm font-medium">Cache by Provider</Label>
+												<Label className="text-sm font-medium">按提供商缓存</Label>
 												<p className="text-muted-foreground text-xs">
-													Include provider name in the cache key. Different providers won&apos;t share cached responses.
+												在缓存键中包含提供商名称。不同提供商之间不会共享缓存响应。
 												</p>
 											</div>
 											<Switch
@@ -643,22 +629,22 @@ export default function CachingView() {
 								</div>
 
 								<div className="space-y-2">
-									<Label className="text-sm font-medium">Per-request overrides</Label>
+									<Label className="text-sm font-medium">按请求覆盖</Label>
 									<ul className="text-muted-foreground list-inside list-disc text-xs">
 										<li>
-											<b>x-bf-cache-key</b>: scope this request to a specific cache partition.
+											<b>x-bf-cache-key</b>：将本次请求限定到指定的缓存分区。
 										</li>
 										<li>
-											<b>x-bf-cache-ttl</b>: override TTL for just this request.
+											<b>x-bf-cache-ttl</b>：仅覆盖本次请求的 TTL。
 										</li>
 										<li>
-											<b>x-bf-cache-threshold</b>: override the semantic similarity threshold.
+											<b>x-bf-cache-threshold</b>：覆盖语义相似度阈值。
 										</li>
 										<li>
-											<b>x-bf-cache-type</b>: send <code>direct</code> or <code>semantic</code> to limit lookup to one path.
+											<b>x-bf-cache-type</b>：发送 <code>direct</code> 或 <code>semantic</code> 以将查找限制在单一路径。
 										</li>
 										<li>
-											<b>x-bf-cache-no-store</b>: <code>true</code> to skip writing the response (still serves cached hits).
+											<b>x-bf-cache-no-store</b>：设为 <code>true</code> 可跳过写入响应（仍会返回缓存命中结果）。
 										</li>
 									</ul>
 								</div>
@@ -670,7 +656,7 @@ export default function CachingView() {
 									onClick={handleSave}
 									disabled={!hasUnsavedConfigChanges || isSaving || Boolean(validationError)}
 								>
-									{isSaving ? "Saving..." : "Save Changes"}
+									{isSaving ? "保存中…" : "保存更改"}
 								</Button>
 							</div>
 						</>

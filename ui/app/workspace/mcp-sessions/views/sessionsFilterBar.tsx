@@ -17,23 +17,23 @@ import { Fingerprint, KeyRound, Search, UserRound, X } from "lucide-react";
 // filter vocabulary matches what the user sees in the table.
 const KIND_OPTIONS = [
 	{ label: "OAuth", value: "token" },
-	{ label: "Headers", value: "header" },
+	{ label: "请求头", value: "header" },
 ];
 
 const STATUS_OPTIONS = [
-	{ label: "Active", value: "active" },
-	{ label: "Orphaned", value: "orphaned" },
-	{ label: "Needs re-auth", value: "needs_reauth" },
-	{ label: "Needs update", value: "needs_update" },
-	{ label: "Pending", value: "pending" },
+	{ label: "活跃", value: "active" },
+	{ label: "已孤立", value: "orphaned" },
+	{ label: "需重新认证", value: "needs_reauth" },
+	{ label: "需更新", value: "needs_update" },
+	{ label: "待处理", value: "pending" },
 ];
 
 // Identity-mode icons match the glyphs used in BindingCell so the dropdown
 // reads as the same vocabulary as the rendered table column.
 const AUTH_MODE_OPTIONS = [
-	{ label: "User", value: "user", icon: <UserRound className="size-3.5" /> },
-	{ label: "Virtual key", value: "vk", icon: <KeyRound className="size-3.5" /> },
-	{ label: "Session", value: "session", icon: <Fingerprint className="size-3.5" /> },
+	{ label: "用户", value: "user", icon: <UserRound className="size-3.5" /> },
+	{ label: "虚拟密钥", value: "vk", icon: <KeyRound className="size-3.5" /> },
+	{ label: "会话", value: "session", icon: <Fingerprint className="size-3.5" /> },
 ];
 
 export interface SessionsFilterBarProps {
@@ -55,8 +55,8 @@ export default function SessionsFilterBar(props: SessionsFilterBarProps) {
 			<div className="relative max-w-sm min-w-[200px] flex-1">
 				<Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
 				<Input
-					aria-label="Search sessions"
-					placeholder="Search MCP, user, VK, session..."
+					aria-label="搜索会话"
+					placeholder="搜索 MCP、用户、VK、会话..."
 					value={props.search}
 					onChange={(e) => props.onSearchChange(e.target.value)}
 					className="pl-9"
@@ -71,7 +71,7 @@ export default function SessionsFilterBar(props: SessionsFilterBarProps) {
 				options={KIND_OPTIONS}
 				value={props.kindFilter}
 				onValueChange={props.onKindFilterChange}
-				placeholder="All types"
+				placeholder="全部类型"
 				className="h-9 w-[180px]"
 			/>
 			<ComboboxSelect
@@ -82,7 +82,7 @@ export default function SessionsFilterBar(props: SessionsFilterBarProps) {
 				options={STATUS_OPTIONS}
 				value={props.statusFilter}
 				onValueChange={props.onStatusFilterChange}
-				placeholder="All statuses"
+				placeholder="全部状态"
 				className="h-9 w-[180px]"
 			/>
 			<ComboboxSelect
@@ -93,13 +93,13 @@ export default function SessionsFilterBar(props: SessionsFilterBarProps) {
 				options={AUTH_MODE_OPTIONS}
 				value={props.authModeFilter}
 				onValueChange={props.onAuthModeFilterChange}
-				placeholder="All identities"
+				placeholder="全部身份"
 				className="h-9 w-[180px]"
 			/>
 			{props.hasActiveFilters && (
 				<Button variant="ghost" size="sm" onClick={props.onClearFilters} data-testid="mcp-sessions-clear-filters-btn" className="h-9">
 					<X className="h-4 w-4" />
-					Clear filters
+					清除筛选
 				</Button>
 			)}
 		</div>

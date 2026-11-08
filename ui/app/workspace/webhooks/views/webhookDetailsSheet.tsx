@@ -8,6 +8,7 @@ import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 import { getErrorMessage, useGetWebhookDeliveriesQuery, useRedeliverWebhookDeliveryMutation } from "@/lib/store";
 import { WEBHOOK_TUNING_DEFAULTS, WebhookDelivery, WebhookDeliveryOutcome, WebhookEndpoint, WebhookEvent } from "@/lib/types/webhooks";
 import { format, formatDistanceToNow } from "date-fns";
+import { zhCN } from "date-fns/locale";
 import { ChevronDown, ChevronLeft, ChevronRight, Info, Loader2, RefreshCcw, Send } from "lucide-react";
 import { Fragment, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
@@ -22,10 +23,10 @@ const OUTCOME_COLORS: Record<WebhookDeliveryOutcome, string> = {
 };
 
 const OUTCOME_LABELS: Record<WebhookDeliveryOutcome, string> = {
-	delivered: "delivered",
-	retryable_failure: "retrying",
-	permanent_failure: "failed",
-	exhausted: "retries exhausted",
+	delivered: "已送达",
+	retryable_failure: "重试中",
+	permanent_failure: "失败",
+	exhausted: "重试已耗尽",
 };
 
 const DetailEntry = ({ label, value }: { label: string; value: React.ReactNode }) => (
@@ -35,7 +36,7 @@ const DetailEntry = ({ label, value }: { label: string; value: React.ReactNode }
 	</div>
 );
 
-const relativeTime = (timestamp?: string) => (timestamp ? formatDistanceToNow(new Date(timestamp), { addSuffix: true }) : "never");
+const relativeTime = (timestamp?: string) => (timestamp ? formatDistanceToNow(new Date(timestamp), { addSuffix: true, locale: zhCN }) : "从未");
 
 // Wraps a badge with the attempt's error text as a tooltip when present.
 const withErrorTooltip = (badge: React.ReactNode, error?: string) => {
@@ -152,7 +153,7 @@ export function WebhookDetailsSheet({ endpoint, isTesting, canManage, onTest, on
 			// The oldest send is the original; label the rest as redeliveries in order.
 			const sends = [...sendsNewestFirst].reverse().map((sendAttempts, index) => ({
 				key: `${webhookId}:${index}`,
-				label: index === 0 ? "Original" : `Redelivery ${index}`,
+				label: index === 0 ? "原始投递" : `第 ${index} 次重投`,
 				attempts: sendAttempts,
 			}));
 			return { webhookId, latest: attempts[0], latestSend: sends[sends.length - 1], sends };
@@ -176,7 +177,7 @@ export function WebhookDetailsSheet({ endpoint, isTesting, canManage, onTest, on
 		setRedeliveringIds((prev) => new Set(prev).add(deliveryId));
 		try {
 			await redeliverWebhookDelivery(deliveryId).unwrap();
-			toast.success("Redelivery queued under the original webhook id");
+			toast.success("已按原始 webhook id 重新排队投递");
 		} catch (err) {
 			toast.error(getErrorMessage(err));
 		} finally {
@@ -202,11 +203,11 @@ export function WebhookDetailsSheet({ endpoint, isTesting, canManage, onTest, on
 						<p className="text-md max-w-full truncate">{endpoint?.name}</p>
 						{endpoint?.disabled ? (
 							<Badge variant="outline" className="bg-gray-100 text-gray-800">
-								disabled
+								已禁用
 							</Badge>
 						) : (
 							<Badge variant="outline" className="bg-green-100 text-green-800">
-								enabled
+								已启用
 							</Badge>
 						)}
 					</SheetTitle>
@@ -216,7 +217,7 @@ export function WebhookDetailsSheet({ endpoint, isTesting, canManage, onTest, on
 				<div className="space-y-4 rounded-sm border p-4">
 					<div className="grid grid-cols-3 gap-4">
 						<DetailEntry
-							label="Events"
+							label="事件"
 							value={
 								<div className="flex flex-wrap gap-1">
 									{endpoint?.events.map((event) => (
@@ -227,22 +228,22 @@ export function WebhookDetailsSheet({ endpoint, isTesting, canManage, onTest, on
 								</div>
 							}
 						/>
-						<DetailEntry label="Include response" value={endpoint?.include_response ? "yes" : "no"} />
-						<DetailEntry label="Private network" value={endpoint?.allow_private_network ? "allowed" : "blocked"} />
-						<DetailEntry label="Last success" value={relativeTime(endpoint?.last_success_at)} />
-						<DetailEntry label="Last failure" value={relativeTime(endpoint?.last_failure_at)} />
-						<DetailEntry label="Consecutive failures" value={endpoint?.consecutive_failures ?? 0} />
-						<DetailEntry label="Max retries" value={tuning("max_retries")} />
+						<DetailEntry label="包含响应" value={endpoint?.include_response ? "是" : "否"} />
+						<DetailEntry label="私有网络" value={endpoint?.allow_private_network ? "允许" : "已拦截"} />
+						<DetailEntry label="最近成功" value={relativeTime(endpoint?.last_success_at)} />
+						<DetailEntry label="最近失败" value={relativeTime(endpoint?.last_failure_at)} />
+						<DetailEntry label="连续失败次数" value={endpoint?.consecutive_failures ?? 0} />
+						<DetailEntry label="最大重试次数" value={tuning("max_retries")} />
 						<DetailEntry
-							label="Retry backoff"
+							label="重试退避"
 							value={`${tuning("retry_backoff_initial_seconds", "s")} → ${tuning("retry_backoff_max_seconds", "s")}`}
 						/>
-						<DetailEntry label="Attempt timeout" value={tuning("attempt_timeout_seconds", "s")} />
+						<DetailEntry label="尝试超时" value={tuning("attempt_timeout_seconds", "s")} />
 					</div>
 				</div>
 
 				<div className="mt-4 flex items-center justify-between">
-					<h3 className="font-semibold">Delivery History</h3>
+					<h3 className="font-semibold">投递历史</h3>
 					{canManage && (
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
@@ -254,7 +255,7 @@ export function WebhookDetailsSheet({ endpoint, isTesting, canManage, onTest, on
 									data-testid="webhook-test-fire-btn"
 								>
 									{isTesting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-									<span className="flex-1 text-center">Send Test Event</span>
+									<span className="flex-1 text-center">发送测试事件</span>
 									<ChevronDown className="h-3 w-3" />
 								</Button>
 							</DropdownMenuTrigger>
@@ -279,32 +280,30 @@ export function WebhookDetailsSheet({ endpoint, isTesting, canManage, onTest, on
 						<TableHeader className="bg-muted sticky top-0 z-10">
 							<TableRow>
 								<TableHead className="w-8 px-2"></TableHead>
-								<TableHead>Time</TableHead>
-								<TableHead>Request ID</TableHead>
-								<TableHead>Event</TableHead>
+								<TableHead>时间</TableHead>
+								<TableHead>请求 ID</TableHead>
+								<TableHead>事件</TableHead>
 								<TableHead>
 									<Tooltip>
 										<TooltipTrigger asChild>
 											<span className="inline-flex cursor-help items-center gap-1.5">
-												Status
+												状态
 												<Info className="text-muted-foreground size-3" />
 											</span>
 										</TooltipTrigger>
 										<TooltipContent className="max-w-xs">
 											<div className="space-y-1">
 												<p>
-													<span className="font-medium">delivered</span>: receiver returned a 2xx.
+													<span className="font-medium">已送达</span>：接收方返回 2xx。
 												</p>
 												<p>
-													<span className="font-medium">retrying</span>: transient failure (network error, timeout, 429, or 5xx); another
-													attempt is scheduled.
+													<span className="font-medium">重试中</span>：暂时性失败（网络错误、超时、429 或 5xx），已安排再次尝试。
 												</p>
 												<p>
-													<span className="font-medium">failed</span>: permanent error (a non-retryable 4xx such as 401/404); not retried
-													automatically.
+													<span className="font-medium">失败</span>：永久性错误（如 401/404 等不可重试的 4xx），不会自动重试。
 												</p>
 												<p>
-													<span className="font-medium">retries exhausted</span>: kept failing until the retry budget ran out.
+													<span className="font-medium">重试已耗尽</span>：持续失败直到重试次数用尽。
 												</p>
 											</div>
 										</TooltipContent>
@@ -314,17 +313,16 @@ export function WebhookDetailsSheet({ endpoint, isTesting, canManage, onTest, on
 									<Tooltip>
 										<TooltipTrigger asChild>
 											<span className="inline-flex cursor-help items-center gap-1.5">
-												Responses
+												响应
 												<Info className="text-muted-foreground size-3" />
 											</span>
 										</TooltipTrigger>
 										<TooltipContent className="max-w-xs">
-											One chip per delivery attempt, oldest to newest: the receiver's response code, or a dash when no response arrived.
-											Hover a failed code for its error.
+											每次投递尝试对应一个标签，从旧到新：接收方的响应状态码，未收到响应时为短横线。将鼠标悬停在失败的码上可查看错误。
 										</TooltipContent>
 									</Tooltip>
 								</TableHead>
-								<TableHead className="text-right">Actions</TableHead>
+								<TableHead className="text-right">操作</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
@@ -337,13 +335,13 @@ export function WebhookDetailsSheet({ endpoint, isTesting, canManage, onTest, on
 							) : isError ? (
 								<TableRow>
 									<TableCell colSpan={7} className="text-destructive h-24 text-center" data-testid="webhook-delivery-history-error">
-										Failed to load delivery history. Retrying…
+										加载投递历史失败，正在重试…
 									</TableCell>
 								</TableRow>
 							) : deliveries.length === 0 ? (
 								<TableRow>
 									<TableCell colSpan={7} className="text-muted-foreground h-24 text-center">
-										No deliveries yet.
+										暂无投递记录。
 									</TableCell>
 								</TableRow>
 							) : (
@@ -367,7 +365,7 @@ export function WebhookDetailsSheet({ endpoint, isTesting, canManage, onTest, on
 															className="size-8"
 															onClick={() => toggleExpanded(webhookId)}
 															aria-expanded={expanded}
-															aria-label={expanded ? "Collapse redeliveries" : "Expand redeliveries"}
+															aria-label={expanded ? "收起重投记录" : "展开重投记录"}
 															data-testid={`webhook-delivery-expand-${webhookId}`}
 														>
 															{expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
@@ -403,7 +401,7 @@ export function WebhookDetailsSheet({ endpoint, isTesting, canManage, onTest, on
 														{outcomeBadge(headline)}
 														{hasResends && (
 															<Badge variant="outline" className="text-muted-foreground text-xs">
-																{sends.length} sends
+																{sends.length} 次发送
 															</Badge>
 														)}
 													</div>
@@ -417,7 +415,7 @@ export function WebhookDetailsSheet({ endpoint, isTesting, canManage, onTest, on
 															onClick={() => handleRedeliver(latest.id)}
 															disabled={redeliveringIds.has(latest.id) || latest.outcome === "retryable_failure" || endpoint?.disabled}
 															data-testid={`webhook-redeliver-btn-${webhookId}`}
-															aria-label="Redeliver"
+															aria-label="重新投递"
 														>
 															{redeliveringIds.has(latest.id) ? (
 																<Loader2 className="h-4 w-4 animate-spin" />
@@ -443,7 +441,7 @@ export function WebhookDetailsSheet({ endpoint, isTesting, canManage, onTest, on
 																	/>
 																	<span className="text-sm font-medium">{send.label}</span>
 																	<span className="text-muted-foreground text-xs tabular-nums">
-																		{format(new Date(sendLatest.created_at), "MMM d, yyyy hh:mm:ss aa")}
+																		{format(new Date(sendLatest.created_at), "yyyy-MM-dd HH:mm:ss")}
 																	</span>
 																</div>
 															</TableCell>
@@ -464,8 +462,8 @@ export function WebhookDetailsSheet({ endpoint, isTesting, canManage, onTest, on
 				{totalCount > 0 && (
 					<div className="flex shrink-0 items-center justify-between text-xs" data-testid="webhook-delivery-pagination">
 						<div className="text-muted-foreground flex items-center gap-2">
-							{(offset + 1).toLocaleString()}-{Math.min(offset + PAGE_SIZE, totalCount).toLocaleString()} of {totalCount.toLocaleString()}{" "}
-							deliveries
+							{(offset + 1).toLocaleString()}-{Math.min(offset + PAGE_SIZE, totalCount).toLocaleString()} / 共 {totalCount.toLocaleString()}{" "}
+							项
 						</div>
 						<div className="flex items-center gap-2">
 							<Button
@@ -473,21 +471,21 @@ export function WebhookDetailsSheet({ endpoint, isTesting, canManage, onTest, on
 								size="sm"
 								onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))}
 								disabled={offset === 0}
-								aria-label="Previous page"
+								aria-label="上一页"
 							>
 								<ChevronLeft className="size-3" />
 							</Button>
 							<div className="flex items-center gap-1">
-								<span>Page</span>
+								<span>第</span>
 								<span>{Math.floor(offset / PAGE_SIZE) + 1}</span>
-								<span>of {Math.ceil(totalCount / PAGE_SIZE)}</span>
+								<span>页，共 {Math.ceil(totalCount / PAGE_SIZE)} 页</span>
 							</div>
 							<Button
 								variant="ghost"
 								size="sm"
 								onClick={() => setOffset(offset + PAGE_SIZE)}
 								disabled={offset + PAGE_SIZE >= totalCount}
-								aria-label="Next page"
+								aria-label="下一页"
 							>
 								<ChevronRight className="size-3" />
 							</Button>

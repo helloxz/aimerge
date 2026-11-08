@@ -69,7 +69,7 @@ export function ExportPopover({ getData, activeTab, onPreloadData, onPdfExport, 
 				await generatePdf(sections, fileName(scope), {
 					branding: {
 						logoSrc: "/bifrost-logo.webp",
-						text: "Powered by",
+						text: "由 Bifrost 提供支持",
 					},
 				});
 			} finally {
@@ -87,7 +87,7 @@ export function ExportPopover({ getData, activeTab, onPreloadData, onPdfExport, 
 			<DropdownMenuTrigger asChild>
 				<Button variant="outline" size="default" disabled={exporting} data-testid="dashboard-export-trigger">
 					{exporting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Download className="h-4 w-4" />}
-					{exporting ? "Exporting..." : "Export"}
+					{exporting ? "导出中…" : "导出"}
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="end">
@@ -99,10 +99,10 @@ export function ExportPopover({ getData, activeTab, onPreloadData, onPdfExport, 
 					<DropdownMenuPortal>
 						<DropdownMenuSubContent>
 							<DropdownMenuItem onClick={() => handleCsvExport(activeTab)} data-testid="export-csv-current-tab">
-								This tab ({activeTabLabel})
+								当前标签页（{activeTabLabel}）
 							</DropdownMenuItem>
 							<DropdownMenuItem onClick={() => handleCsvExport("all")} data-testid="export-csv-all-tabs">
-								All tabs
+								所有标签页
 							</DropdownMenuItem>
 						</DropdownMenuSubContent>
 					</DropdownMenuPortal>
@@ -115,10 +115,10 @@ export function ExportPopover({ getData, activeTab, onPreloadData, onPdfExport, 
 					<DropdownMenuPortal>
 						<DropdownMenuSubContent>
 							<DropdownMenuItem onClick={() => handlePdfExport(activeTab)} data-testid="export-pdf-current-tab">
-								This tab ({activeTabLabel})
+								当前标签页（{activeTabLabel}）
 							</DropdownMenuItem>
 							<DropdownMenuItem onClick={() => handlePdfExport("all")} data-testid="export-pdf-all-tabs">
-								All tabs
+								所有标签页
 							</DropdownMenuItem>
 						</DropdownMenuSubContent>
 					</DropdownMenuPortal>

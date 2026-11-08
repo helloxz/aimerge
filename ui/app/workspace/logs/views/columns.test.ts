@@ -16,7 +16,7 @@ describe("getMessage", () => {
 			],
 		} as unknown as LogEntry;
 
-		expect(getMessage(log)).toBe("User: hello from the browser");
+		expect(getMessage(log)).toBe("用户：hello from the browser");
 	});
 
 	it("returns LM realtime text from output message", () => {
@@ -30,7 +30,7 @@ describe("getMessage", () => {
 			},
 		} as unknown as LogEntry;
 
-		expect(getMessage(log)).toBe("Assistant: hello from the model");
+		expect(getMessage(log)).toBe("助手：hello from the model");
 	});
 
 	it("returns split realtime text when both user and assistant are present", () => {
@@ -48,7 +48,7 @@ describe("getMessage", () => {
 			},
 		} as unknown as LogEntry;
 
-		expect(getMessage(log)).toBe("User: who are you?\nAssistant: I am the assistant.");
+		expect(getMessage(log)).toBe("用户：who are you?\n助手：I am the assistant.");
 	});
 
 	it("returns split realtime text including tool output", () => {
@@ -70,7 +70,7 @@ describe("getMessage", () => {
 			},
 		} as unknown as LogEntry;
 
-		expect(getMessage(log)).toBe('Tool Result: {"nextResponse":"tool result"}\nUser: who are you?\nAssistant: I am the assistant.');
+		expect(getMessage(log)).toBe('工具结果：{"nextResponse":"tool result"}\n用户：who are you?\n助手：I am the assistant.');
 	});
 
 	it("returns realtime assistant tool calls from output message", () => {
@@ -95,6 +95,6 @@ describe("getMessage", () => {
 			},
 		} as unknown as LogEntry;
 
-		expect(getMessage(log)).toBe('User: show me a pastel palette\nAssistant Tool Call: display_color_palette({"theme":"pastel"})');
+		expect(getMessage(log)).toBe('用户：show me a pastel palette\n助手工具调用：display_color_palette({"theme":"pastel"})');
 	});
 });

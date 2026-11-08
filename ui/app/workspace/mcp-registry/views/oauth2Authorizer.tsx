@@ -127,7 +127,7 @@ export const OAuth2Authorizer: React.FC<OAuth2AuthorizerProps> = ({
 		try {
 			return new URL(authorizeUrl).host;
 		} catch {
-			return "the OAuth provider";
+			return "OAuth 提供商";
 		}
 	}, [authorizeUrl]);
 
@@ -184,7 +184,7 @@ export const OAuth2Authorizer: React.FC<OAuth2AuthorizerProps> = ({
 				stopPolling();
 				await handleOAuthComplete();
 			} else if (result.status === "failed" || result.status === "expired") {
-				handleOAuthFailed(`Authorization ${result.status}`);
+				handleOAuthFailed(`授权未完成（${result.status}）`);
 			}
 		} catch (error) {
 			console.error("Error checking OAuth status:", error);
@@ -202,7 +202,7 @@ export const OAuth2Authorizer: React.FC<OAuth2AuthorizerProps> = ({
 						await handleOAuthComplete();
 					} else if (result.status === "failed" || result.status === "expired") {
 						stopPolling();
-						handleOAuthFailed("Authorization failed");
+						handleOAuthFailed("授权失败");
 					}
 				} catch {
 					// transient error — let polling continue
@@ -247,7 +247,7 @@ export const OAuth2Authorizer: React.FC<OAuth2AuthorizerProps> = ({
 				return;
 			}
 			if (event.data?.type === "oauth_failed") {
-				handleOAuthFailed(event.data.error ?? "OAuth flow failed");
+				handleOAuthFailed(event.data.error ?? "OAuth 流程失败");
 			}
 		};
 		window.addEventListener("message", handleMessage);
@@ -286,19 +286,19 @@ export const OAuth2Authorizer: React.FC<OAuth2AuthorizerProps> = ({
 	};
 
 	const titles: Record<Status, string> = {
-		confirm: "Authorize connection",
-		polling: "Waiting for authorization",
-		blocked: "Popup blocked",
-		success: "Connection authorized",
-		failed: "Authorization failed",
+		confirm: "授权连接",
+		polling: "等待授权",
+		blocked: "弹窗被阻止",
+		success: "连接已授权",
+		failed: "授权失败",
 	};
 
 	const subtitles: Record<Status, string> = {
-		confirm: "Run a one-time OAuth test before enabling this server.",
-		polling: "Complete sign-in in the popup window to continue.",
-		blocked: "Allow popups for this site, then try again.",
-		success: "OAuth authorization completed successfully.",
-		failed: "The OAuth flow did not complete.",
+		confirm: "启用此服务器前，请先执行一次 OAuth 测试。",
+		polling: "请在弹窗中完成登录以继续。",
+		blocked: "请允许此站点弹出窗口，然后重试。",
+		success: "OAuth 授权已成功完成。",
+		failed: "OAuth 流程未完成。",
 	};
 
 	return (
@@ -337,19 +337,19 @@ export const OAuth2Authorizer: React.FC<OAuth2AuthorizerProps> = ({
 						<>
 							<InfoBox icon={<KeyRound className="size-4" />}>
 								<p>
-									We'll open <strong>{authorizationHost}</strong> to verify the OAuth setup and discover available tools.
+									我们将打开 <strong>{authorizationHost}</strong>，以验证 OAuth 配置并发现可用工具。
 								</p>
 								<p className="text-muted-foreground/80 text-xs">
-									This login is for setup only. Each user authenticates individually when they connect.
+									此登录仅用于初始配置。每位用户在连接时会各自进行认证。
 								</p>
 							</InfoBox>
 							<div className="flex justify-end gap-2">
 								<Button size="sm" variant="outline" onClick={handleCancel} data-testid="per-user-oauth-cancel">
-									Cancel
+									取消
 								</Button>
 								<Button size="sm" onClick={openPopup} data-testid="per-user-oauth-confirm">
 									<ExternalLink className="size-3.5" />
-									Continue
+									继续
 								</Button>
 							</div>
 						</>
@@ -359,13 +359,13 @@ export const OAuth2Authorizer: React.FC<OAuth2AuthorizerProps> = ({
 					{status === "polling" && (
 						<>
 							<InfoBox icon={<Loader2 className="size-4 animate-spin" />}>
-								<p>This dialog will update automatically once the provider redirects back.</p>
-								<p className="text-muted-foreground/80 text-xs">Keep the popup open until authorization is complete.</p>
+								<p>提供商回调后，此对话框会自动更新。</p>
+								<p className="text-muted-foreground/80 text-xs">在授权完成前请保持弹窗打开。</p>
 							</InfoBox>
 							<div className="flex items-center justify-between">
 								<StepDots active={2} total={3} />
 								<Button size="sm" variant="outline" onClick={handleCancel} data-testid="oauth-polling-cancel-btn">
-									Cancel
+									取消
 								</Button>
 							</div>
 						</>
@@ -375,16 +375,16 @@ export const OAuth2Authorizer: React.FC<OAuth2AuthorizerProps> = ({
 					{status === "blocked" && (
 						<>
 							<InfoBox variant="warning" icon={<AlertTriangle className="size-4" />}>
-								<p>Your browser prevented the authorization window from opening.</p>
-								<p className="text-xs opacity-80">Enable popups for this site in your browser settings, then try again.</p>
+								<p>您的浏览器阻止了授权窗口打开。</p>
+								<p className="text-xs opacity-80">请在浏览器设置中允许此站点弹出窗口，然后重试。</p>
 							</InfoBox>
 							<div className="flex justify-end gap-2">
 								<Button size="sm" variant="outline" onClick={handleCancel} data-testid="oauth-pending-cancel-btn">
-									Cancel
+									取消
 								</Button>
 								<Button size="sm" onClick={openPopup} data-testid="oauth-open-window-btn">
 									<ExternalLink className="size-3.5" />
-									Open authorization
+									打开授权
 								</Button>
 							</div>
 						</>
@@ -393,8 +393,8 @@ export const OAuth2Authorizer: React.FC<OAuth2AuthorizerProps> = ({
 					{/* Success */}
 					{status === "success" && (
 						<InfoBox variant="success" icon={<CheckCircle2 className="size-4" />}>
-							<p className="font-medium">Finishing setup and syncing available tools.</p>
-							<p className="text-xs opacity-80">You can close this dialog; setup will complete in the background.</p>
+							<p className="font-medium">正在完成配置并同步可用工具。</p>
+							<p className="text-xs opacity-80">您可以关闭此对话框，配置将在后台完成。</p>
 						</InfoBox>
 					)}
 
@@ -402,16 +402,16 @@ export const OAuth2Authorizer: React.FC<OAuth2AuthorizerProps> = ({
 					{status === "failed" && (
 						<>
 							<InfoBox variant="danger" icon={<XCircle className="size-4" />}>
-								<p className="font-medium">Authorization did not complete.</p>
-								<p className="text-xs opacity-80">{errorMessage ?? "Check your OAuth provider configuration or try again."}</p>
+								<p className="font-medium">授权未完成。</p>
+								<p className="text-xs opacity-80">{errorMessage ?? "请检查 OAuth 提供商配置，或重试。"}</p>
 							</InfoBox>
 							<div className="flex justify-end gap-2">
 								<Button size="sm" variant="outline" onClick={handleCancel} data-testid="oauth-failed-close-btn">
-									Close
+									关闭
 								</Button>
 								<Button size="sm" onClick={handleRetry} data-testid="oauth-failed-retry-btn">
 									<RefreshCw className="size-3.5" />
-									Retry
+									重试
 								</Button>
 							</div>
 						</>

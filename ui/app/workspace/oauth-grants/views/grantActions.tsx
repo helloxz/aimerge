@@ -32,7 +32,7 @@ export default function GrantActions({ row, revoking, isPendingRow, onRevoke }: 
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
-				<Button data-testid="oauth-grants-actions-trigger" variant="ghost" size="icon" className="h-8 w-8" aria-label="Grant actions" disabled={busy}>
+				<Button data-testid="oauth-grants-actions-trigger" variant="ghost" size="icon" className="h-8 w-8" aria-label="授权操作" disabled={busy}>
 					{busy && isPendingRow ? <Loader2 className="h-4 w-4 animate-spin" /> : <MoreHorizontal className="h-4 w-4" />}
 				</Button>
 			</DropdownMenuTrigger>
@@ -41,7 +41,7 @@ export default function GrantActions({ row, revoking, isPendingRow, onRevoke }: 
 					<DropdownMenuItem asChild className="cursor-pointer">
 						<Link to={authSessionsUrl} data-testid="oauth-grants-view-sessions-link">
 							<ExternalLink className="h-4 w-4" />
-							View auth sessions
+							查看授权会话
 						</Link>
 					</DropdownMenuItem>
 				)}
@@ -53,7 +53,7 @@ export default function GrantActions({ row, revoking, isPendingRow, onRevoke }: 
 					onSelect={(e) => { e.preventDefault(); onRevoke(); }}
 				>
 					<Trash2 className="h-4 w-4" />
-					Revoke
+					撤销
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>

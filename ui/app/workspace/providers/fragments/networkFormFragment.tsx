@@ -27,26 +27,26 @@ interface NetworkFormFragmentProps {
 const secondsToHumanReadable = (seconds: number) => {
 	// Handle edge cases
 	if (!seconds || seconds < 0 || isNaN(seconds)) {
-		return "0 seconds";
+		return "0 秒";
 	}
 	seconds = Math.floor(seconds);
 	if (seconds < 60) {
-		return `${seconds} ${seconds === 1 ? "second" : "seconds"}`;
+		return `${seconds} 秒`;
 	}
 	if (seconds < 3600) {
 		const minutes = Math.floor(seconds / 60);
 		const remainingSeconds = seconds % 60;
-		const parts: string[] = [`${minutes} ${minutes === 1 ? "minute" : "minutes"}`];
-		if (remainingSeconds > 0) parts.push(`${remainingSeconds} ${remainingSeconds === 1 ? "second" : "seconds"}`);
+		const parts: string[] = [`${minutes} 分`];
+		if (remainingSeconds > 0) parts.push(`${remainingSeconds} 秒`);
 		return parts.join(" ");
 	}
 	if (seconds < 86400) {
 		const hours = Math.floor(seconds / 3600);
 		const minutes = Math.floor((seconds % 3600) / 60);
 		const remainingSeconds = seconds % 60;
-		const parts: string[] = [`${hours} ${hours === 1 ? "hour" : "hours"}`];
-		if (minutes > 0) parts.push(`${minutes} ${minutes === 1 ? "minute" : "minutes"}`);
-		if (remainingSeconds > 0) parts.push(`${remainingSeconds} ${remainingSeconds === 1 ? "second" : "seconds"}`);
+		const parts: string[] = [`${hours} 小时`];
+		if (minutes > 0) parts.push(`${minutes} 分`);
+		if (remainingSeconds > 0) parts.push(`${remainingSeconds} 秒`);
 		return parts.join(" ");
 	}
 	// For >= 1 day, only show non-zero components
@@ -55,10 +55,10 @@ const secondsToHumanReadable = (seconds: number) => {
 	const minutes = Math.floor((seconds % 3600) / 60);
 	const remainingSeconds = seconds % 60;
 	const parts: string[] = [];
-	parts.push(`${days} ${days === 1 ? "day" : "days"}`);
-	if (hours > 0) parts.push(`${hours} ${hours === 1 ? "hour" : "hours"}`);
-	if (minutes > 0) parts.push(`${minutes} ${minutes === 1 ? "minute" : "minutes"}`);
-	if (remainingSeconds > 0) parts.push(`${remainingSeconds} ${remainingSeconds === 1 ? "second" : "seconds"}`);
+	parts.push(`${days} 天`);
+	if (hours > 0) parts.push(`${hours} 小时`);
+	if (minutes > 0) parts.push(`${minutes} 分`);
+	if (remainingSeconds > 0) parts.push(`${remainingSeconds} 秒`);
 	return parts.join(" ");
 };
 
@@ -102,9 +102,9 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 		const requiresBaseUrl = isCustomProvider;
 		if (requiresBaseUrl && (data.network_config?.base_url ?? "").trim() === "") {
 			if ((provider.network_config?.base_url ?? "").trim() !== "") {
-				toast.error("You can't remove network configuration for this provider.");
+				toast.error("无法移除该提供商的网络配置。");
 			} else {
-				toast.error("Base URL is required for this provider.");
+				toast.error("该提供商必须填写 Base URL。");
 			}
 			return;
 		}
@@ -133,11 +133,11 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 		updateProvider(updatedProvider)
 			.unwrap()
 			.then(() => {
-				toast.success("Provider configuration updated successfully");
+				toast.success("提供商配置已更新");
 				form.reset(data);
 			})
 			.catch((err) => {
-				toast.error("Failed to update provider configuration", {
+				toast.error("更新提供商配置失败", {
 					description: getErrorMessage(err),
 				});
 			});
@@ -182,7 +182,7 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 								name="network_config.base_url"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Base URL {baseURLRequired ? "(Required)" : "(Optional)"}</FormLabel>
+										<FormLabel>Base URL {baseURLRequired ? "（必填）" : "（可选）"}</FormLabel>
 										<FormControl>
 											<Input
 												placeholder={isCustomProvider ? "https://api.your-provider.com" : "https://api.example.com"}
@@ -202,7 +202,7 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 								name="network_config.default_request_timeout_in_seconds"
 								render={({ field }) => (
 									<FormItem className="flex-1">
-										<FormLabel>Timeout (seconds)</FormLabel>
+										<FormLabel>超时时间（秒）</FormLabel>
 										<FormControl>
 											<Input
 												placeholder="30"
@@ -233,7 +233,7 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 								name="network_config.stream_idle_timeout_in_seconds"
 								render={({ field }) => (
 									<FormItem className="flex-1">
-										<FormLabel>Stream Idle Timeout (seconds)</FormLabel>
+										<FormLabel>流式空闲超时（秒）</FormLabel>
 										<FormControl>
 											<Input
 												placeholder="60"
@@ -256,8 +256,7 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 											/>
 										</FormControl>
 										<FormDescription>
-											{field.value ? secondsToHumanReadable(field.value) : ""} Max time to wait for next chunk before closing a stalled
-											stream
+											{field.value ? secondsToHumanReadable(field.value) : ""} 等待下一个分块的最长时间，超时后关闭停滞的流。
 										</FormDescription>
 										<FormMessage />
 									</FormItem>
@@ -268,7 +267,7 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 								name="network_config.max_retries"
 								render={({ field }) => (
 									<FormItem className="flex-1">
-										<FormLabel>Max Retries</FormLabel>
+										<FormLabel>最大重试次数</FormLabel>
 										<FormControl>
 											<Input
 												placeholder="0"
@@ -300,7 +299,7 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 								name="network_config.retry_backoff_initial"
 								render={({ field }) => (
 									<FormItem className="flex-1">
-										<FormLabel>Initial Backoff (ms)</FormLabel>
+										<FormLabel>初始退避（毫秒）</FormLabel>
 										<FormControl>
 											<Input
 												placeholder="e.g 500"
@@ -330,7 +329,7 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 								name="network_config.retry_backoff_max"
 								render={({ field }) => (
 									<FormItem className="flex-1">
-										<FormLabel>Max Backoff (ms)</FormLabel>
+										<FormLabel>最大退避（毫秒）</FormLabel>
 										<FormControl>
 											<Input
 												placeholder="e.g 10000"
@@ -362,7 +361,7 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 								name="network_config.max_conns_per_host"
 								render={({ field }) => (
 									<FormItem className="flex-1">
-										<FormLabel>Max Connections Per Host</FormLabel>
+										<FormLabel>每个主机的最大连接数</FormLabel>
 										<FormControl>
 											<Input
 												data-testid="network-config-max-conns-per-host-input"
@@ -385,8 +384,7 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 											/>
 										</FormControl>
 										<FormDescription>
-											Max TCP connections per provider host. For HTTP/2 providers (e.g. Bedrock), each connection supports ~100 concurrent
-											streams.
+											每个提供商主机的最大 TCP 连接数。对于 HTTP/2 提供商（例如 Bedrock），每个连接约支持 100 个并发流。
 										</FormDescription>
 										<FormMessage />
 									</FormItem>
@@ -397,7 +395,7 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 								name="network_config.keep_alive_timeout_in_seconds"
 								render={({ field }) => (
 									<FormItem className="flex-1">
-										<FormLabel>Keep-Alive Timeout (seconds)</FormLabel>
+										<FormLabel>Keep-Alive 超时（秒）</FormLabel>
 										<FormControl>
 											<Input
 												data-testid="network-config-keep-alive-timeout-input"
@@ -420,8 +418,8 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 											/>
 										</FormControl>
 										<FormDescription>
-											{field.value ? secondsToHumanReadable(field.value) : ""} Idle keep-alive for pooled connections. Set below the
-											upstream server&apos;s keep-alive to avoid reusing connections it has already closed.
+											{field.value ? secondsToHumanReadable(field.value) : ""} 连接池中空闲连接的 Keep-Alive 时间。应设置为小于上游服务器的 Keep-Alive，
+											以避免复用其已关闭的连接。
 										</FormDescription>
 										<FormMessage />
 									</FormItem>
@@ -434,10 +432,9 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 							render={({ field }) => (
 								<FormItem className="flex flex-row items-center justify-between">
 									<div className="space-y-0.5">
-										<FormLabel>Enforce HTTP/2</FormLabel>
+										<FormLabel>强制使用 HTTP/2</FormLabel>
 										<FormDescription>
-											Force HTTP/2 on provider connections. Relevant for net/http-based providers (e.g. Bedrock) where each HTTP/2
-											connection supports ~100 concurrent streams.
+											强制提供商连接使用 HTTP/2。适用于基于 net/http 的提供商（例如 Bedrock），其每个 HTTP/2 连接约支持 100 个并发流。
 										</FormDescription>
 									</div>
 									<FormControl>
@@ -457,10 +454,10 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 							render={({ field }) => (
 								<FormItem className="flex flex-row items-center justify-between">
 									<div className="space-y-0.5">
-										<FormLabel>Allow Private Network</FormLabel>
+										<FormLabel>允许访问私有网络</FormLabel>
 										<FormDescription>
-											Allow connections to private IPs (e.g. <code>10.x</code>, <code>192.168.x</code>). Required for providers on a LAN,
-											k8s pod network, or private VPC. Cloud metadata addresses (169.254.x.x) are always blocked.
+											允许连接私有 IP（例如 <code>10.x</code>、<code>192.168.x</code>）。局域网、k8s Pod 网络或私有 VPC 中的提供商需要开启。
+											云元数据地址（169.254.x.x）始终会被阻止。
 										</FormDescription>
 									</div>
 									<FormControl>
@@ -483,9 +480,9 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 										<HeadersTable
 											value={field.value || {}}
 											onChange={field.onChange}
-											keyPlaceholder="Header name"
-											valuePlaceholder="Header value"
-											label="Extra Headers"
+											keyPlaceholder="请求头名称"
+											valuePlaceholder="请求头值"
+											label="额外请求头"
 											disabled={!hasUpdateProviderAccess}
 										/>
 									</FormControl>
@@ -496,7 +493,7 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 						<Accordion type="single" collapsible className="w-full">
 							<AccordionItem value="tls-config" className="border-b-0">
 								<AccordionTrigger className="py-0" data-testid="tls-config-trigger">
-									<span className="text-sm font-medium">TLS / Certificate</span>
+									<span className="text-sm font-medium">TLS / 证书</span>
 								</AccordionTrigger>
 								<AccordionContent className="space-y-4 pt-4 pb-0">
 									<FormField
@@ -505,11 +502,10 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 										render={({ field }) => (
 											<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
 												<div className="space-y-0.5">
-													<FormLabel>Skip TLS verification</FormLabel>
+													<FormLabel>跳过 TLS 校验</FormLabel>
 													<FormDescription>
-														Disable TLS certificate verification for provider connections. This bypasses server certificate validation and
-														should be used only as a last resort when a trusted CA chain cannot be configured. Prefer ca_cert_pem for
-														self-signed or private CA deployments.
+														禁用提供商连接的 TLS 证书校验。这会绕过服务器证书验证，仅在无法配置可信 CA 链时作为最后手段使用。
+													自签名或私有 CA 场景请优先使用 ca_cert_pem。
 													</FormDescription>
 												</div>
 												<FormControl>
@@ -528,7 +524,7 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 										name="network_config.ca_cert_pem"
 										render={({ field }) => (
 											<FormItem>
-												<FormLabel>CA Certificate (PEM) (Optional)</FormLabel>
+												<FormLabel>CA 证书（PEM）（可选）</FormLabel>
 												<FormControl>
 													<SecretVarInput
 														variant="textarea"
@@ -546,7 +542,7 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 													/>
 												</FormControl>
 												<FormDescription>
-													PEM-encoded CA certificate to trust for provider endpoint connections (e.g. self-signed or internal CA).
+													信任的 PEM 编码 CA 证书，用于提供商端点连接（例如自签名或内部 CA）。
 												</FormDescription>
 												<FormMessage />
 											</FormItem>
@@ -578,24 +574,24 @@ export function NetworkFormFragment({ provider }: NetworkFormFragmentProps) {
 								provider.network_config.base_url.trim() === ""
 							}
 						>
-							Remove configuration
+							移除配置
 						</Button>
 					)}
 					<TooltipProvider>
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<Button type="submit" disabled={!form.formState.isDirty || !hasUpdateProviderAccess} isLoading={isUpdatingProvider}>
-									Save Network Configuration
+									保存网络配置
 								</Button>
 							</TooltipTrigger>
 							{(!form.formState.isDirty || !form.formState.isValid) && (
 								<TooltipContent>
 									<p>
 										{!form.formState.isDirty && !form.formState.isValid
-											? "No changes made and validation errors present"
+											? "未做任何修改，且存在校验错误"
 											: !form.formState.isDirty
-												? "No changes made"
-												: "Please fix validation errors"}
+												? "未做任何修改"
+												: "请修正校验错误"}
 									</p>
 								</TooltipContent>
 							)}

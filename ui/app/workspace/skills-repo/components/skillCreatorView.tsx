@@ -20,10 +20,10 @@ export function SkillCreateView({ onCreated, onBack }: { onCreated: (id: string)
 
 		try {
 			const result = await createSkill(form.getPayload()).unwrap();
-			toast.success("Skill created successfully");
+			toast.success("技能已创建");
 			onCreated(result.skill.id);
 		} catch (err: unknown) {
-			toast.error("Failed to create skill", {
+			toast.error("创建技能失败", {
 				description: getErrorMessage(err),
 			});
 		}
@@ -32,7 +32,7 @@ export function SkillCreateView({ onCreated, onBack }: { onCreated: (id: string)
 	if (!hasCreateAccess) {
 		return (
 			<div className="flex h-full items-center justify-center">
-				<p className="text-muted-foreground">You do not have permission to create skills.</p>
+				<p className="text-muted-foreground">你没有创建技能的权限。</p>
 			</div>
 		);
 	}

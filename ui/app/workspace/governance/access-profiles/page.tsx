@@ -6,7 +6,7 @@ export default function AccessProfilesPage() {
 	const hasAccessProfilesAccess = useRbac(RbacResource.AccessProfiles, RbacOperation.View);
 
 	if (!hasAccessProfilesAccess) {
-		return <NoPermissionView entity="access-profiles" />;
+		return <NoPermissionView entity="访问配置" />;
 	}
 
 	return (

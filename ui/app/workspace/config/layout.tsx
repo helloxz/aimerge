@@ -17,7 +17,7 @@ function RouteComponent() {
 	const { isLoading } = useGetCoreConfigQuery({ fromDB: true }, { skip: !requiredAccess });
 
 	if (!requiredAccess) {
-		return <NoPermissionView entity="configuration" />;
+		return <NoPermissionView entity="配置" />;
 	}
 
 	if (isLoading) {

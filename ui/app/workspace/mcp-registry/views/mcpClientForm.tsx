@@ -146,7 +146,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 	if ((connectionType === "http" || connectionType === "sse") && (authType === "headers" || authType === "per_user_headers") && headers) {
 		for (const [key, secretVar] of Object.entries(headers)) {
 			if (!secretVar.value && !secretVar.ref) {
-				headersValidationError = `Header "${key}" must have a value`;
+				headersValidationError = `请求头 "${key}" 必须提供值`;
 				break;
 			}
 		}
@@ -177,11 +177,11 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 			const connRef = data.connection_string?.ref?.trim() || "";
 			const isSecret = data.connection_string?.type === "env" || data.connection_string?.type === "vault";
 			if (!connVal && !connRef) {
-				setError("connection_string", { message: "Connection URL is required" });
+				setError("connection_string", { message: "连接 URL 为必填项" });
 				hasErrors = true;
 			} else if (!isSecret && connVal && !/^https?:\/\/.+/.test(connVal)) {
 				setError("connection_string", {
-					message: "Connection URL must start with http:// or https://",
+					message: "连接 URL 必须以 http:// 或 https:// 开头",
 				});
 				hasErrors = true;
 			}
@@ -190,31 +190,31 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 		if (connectionType === "stdio") {
 			const cmd = data.stdio_config?.command || "";
 			if (!cmd.trim()) {
-				setError("stdio_config.command", { message: "Command is required for STDIO connections" });
+				setError("stdio_config.command", { message: "STDIO 连接必须提供命令" });
 				hasErrors = true;
 			} else if (/[<>|&;]/.test(cmd)) {
-				setError("stdio_config.command", { message: "Command cannot contain special shell characters" });
+				setError("stdio_config.command", { message: "命令不能包含 Shell 特殊字符" });
 				hasErrors = true;
 			}
 		}
 
 		if (authType === "oauth" || authType === "per_user_oauth") {
 			if (data.oauth_config?.authorize_url && !/^https?:\/\/.+$/.test(data.oauth_config.authorize_url)) {
-				setError("oauth_config.authorize_url", { message: "Authorize URL must start with http:// or https://" });
+				setError("oauth_config.authorize_url", { message: "授权 URL 必须以 http:// 或 https:// 开头" });
 				hasErrors = true;
 			}
 			if (data.oauth_config?.token_url && !/^https?:\/\/.+$/.test(data.oauth_config.token_url)) {
-				setError("oauth_config.token_url", { message: "Token URL must start with http:// or https://" });
+				setError("oauth_config.token_url", { message: "令牌 URL 必须以 http:// 或 https:// 开头" });
 				hasErrors = true;
 			}
 			if (data.oauth_config?.registration_url && !/^https?:\/\/.+$/.test(data.oauth_config.registration_url)) {
-				setError("oauth_config.registration_url", { message: "Registration URL must start with http:// or https://" });
+				setError("oauth_config.registration_url", { message: "注册 URL 必须以 http:// 或 https:// 开头" });
 				hasErrors = true;
 			}
 			if (resourceText.trim() && !isValidOAuthResourceURI(resourceText.trim())) {
 				toast({
-					title: "Invalid resource URI",
-					description: "OAuth resource must be an absolute URI without a fragment.",
+					title: "资源 URI 无效",
+					description: "OAuth 资源必须是绝对 URI，且不能包含片段。",
 					variant: "destructive",
 				});
 				hasErrors = true;
@@ -224,8 +224,8 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 		if (authType === "per_user_headers") {
 			if (perUserHeaderKeys.length === 0) {
 				toast({
-					title: "Header keys required",
-					description: "Declare at least one header name users must supply.",
+					title: "需要请求头键名",
+					description: "请至少声明一个用户必须提供的请求头名称。",
 					variant: "destructive",
 				});
 				hasErrors = true;
@@ -307,7 +307,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 				});
 			} else {
 				setIsLoading(false);
-				toast({ title: "Success", description: "Server created" });
+				toast({ title: "成功", description: "服务器已创建" });
 				onSaved();
 				onClose();
 			}
@@ -317,7 +317,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 				setError("name", { message: getErrorMessage(error) });
 				return;
 			}
-			toast({ title: "Error", description: getErrorMessage(error), variant: "destructive" });
+			toast({ title: "错误", description: getErrorMessage(error), variant: "destructive" });
 		}
 	};
 
@@ -325,8 +325,8 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 		<Sheet open={open} onOpenChange={(open) => !open && !oauthFlow && onClose()}>
 			<SheetContent className="flex w-full flex-col overflow-x-hidden px-0">
 				<SheetHeader className="flex flex-col items-start px-7 pt-8">
-					<SheetTitle>New MCP Server</SheetTitle>
-					<SheetDescription>Configure and connect to a new Model Context Protocol server.</SheetDescription>
+					<SheetTitle>新建 MCP 服务器</SheetTitle>
+					<SheetDescription>配置并连接一个新的 Model Context Protocol 服务器。</SheetDescription>
 				</SheetHeader>
 
 				<Form {...methods}>
@@ -337,19 +337,19 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 								control={control}
 								name="name"
 								rules={{
-									required: "Server name is required",
-									minLength: { value: 3, message: "Server name must be at least 3 characters" },
-									maxLength: { value: 50, message: "Server name cannot exceed 50 characters" },
+									required: "服务器名称为必填项",
+									minLength: { value: 3, message: "服务器名称至少 3 个字符" },
+									maxLength: { value: 50, message: "服务器名称不能超过 50 个字符" },
 									validate: {
-										format: (v) => /^[a-zA-Z0-9_]+$/.test(v) || "Server name can only contain letters, numbers, and underscores",
-										noLeadingDigit: (v) => !/^[0-9]/.test(v) || "Server name cannot start with a number",
+										format: (v) => /^[a-zA-Z0-9_]+$/.test(v) || "服务器名称只能包含字母、数字和下划线",
+										noLeadingDigit: (v) => !/^[0-9]/.test(v) || "服务器名称不能以数字开头",
 									},
 								}}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Name</FormLabel>
+										<FormLabel>名称</FormLabel>
 										<FormControl>
-											<Input id="client-name" data-testid="client-name-input" placeholder="Server name" maxLength={50} {...field} />
+											<Input id="client-name" data-testid="client-name-input" placeholder="服务器名称" maxLength={50} {...field} />
 										</FormControl>
 										<FormMessage />
 									</FormItem>
@@ -362,7 +362,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 								name="connection_type"
 								render={({ field }) => (
 									<FormItem className="w-full">
-										<FormLabel>Connection Type</FormLabel>
+										<FormLabel>连接类型</FormLabel>
 										<Select
 											value={field.value}
 											onValueChange={(value: MCPConnectionType) => {
@@ -377,12 +377,12 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 										>
 											<FormControl>
 												<SelectTrigger className="w-full" data-testid="connection-type-select">
-													<SelectValue placeholder="Select connection type" />
+													<SelectValue placeholder="选择连接类型" />
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
 												<SelectItem value="http" data-testid="connection-type-http">
-													HTTP (Streamable)
+													HTTP（Streamable）
 												</SelectItem>
 												<SelectItem value="sse" data-testid="connection-type-sse">
 													Server-Sent Events (SSE)
@@ -392,7 +392,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 												</SelectItem>
 											</SelectContent>
 										</Select>
-										<p className="text-muted-foreground text-xs">Connection type and authentication settings cannot be changed later.</p>
+										<p className="text-muted-foreground text-xs">连接类型与认证设置在创建后无法更改。</p>
 										<FormMessage />
 									</FormItem>
 								)}
@@ -405,7 +405,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 								render={({ field }) => (
 									<div className="flex items-center justify-between space-x-2 rounded-lg border p-4">
 										<div className="flex items-center gap-2">
-											<Label htmlFor="code-mode">Code Mode Server</Label>
+											<Label htmlFor="code-mode">代码模式服务器</Label>
 											<TooltipProvider>
 												<Tooltip>
 													<TooltipTrigger asChild>
@@ -415,13 +415,13 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 															rel="noopener noreferrer"
 															data-testid="code-mode-link-help"
 															className="text-muted-foreground hover:text-foreground focus-visible:ring-ring rounded focus-visible:ring-2 focus-visible:outline-none"
-															aria-label="Learn more about Code Mode"
+															aria-label="了解代码模式的更多信息"
 														>
 															<Info className="h-4 w-4 cursor-help" />
 														</a>
 													</TooltipTrigger>
 													<TooltipContent>
-														<p>Click to learn more about Code Mode</p>
+														<p>点击了解代码模式的更多信息</p>
 													</TooltipContent>
 												</Tooltip>
 											</TooltipProvider>
@@ -438,7 +438,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 								render={({ field }) => (
 									<div className="flex items-center justify-between space-x-2 rounded-lg border p-4">
 										<div className="flex items-center gap-2">
-											<Label htmlFor="ping-available">Ping Available for Health Check</Label>
+											<Label htmlFor="ping-available">健康检查使用 Ping</Label>
 											<TooltipProvider>
 												<Tooltip>
 													<TooltipTrigger asChild>
@@ -446,8 +446,8 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 													</TooltipTrigger>
 													<TooltipContent className="max-w-xs">
 														<p>
-															Enable to use lightweight ping method for health checks. Disable if your MCP server doesn't support ping -
-															will use listTools instead.
+															启用后将使用轻量的 ping 方式进行健康检查。如果您的 MCP 服务器不支持 ping，请关闭此选项——此时将改用
+															listTools。
 														</p>
 													</TooltipContent>
 												</Tooltip>
@@ -471,14 +471,14 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 										name="connection_string"
 										render={({ field }) => (
 											<FormItem>
-												<FormLabel>Connection URL</FormLabel>
+												<FormLabel>连接 URL</FormLabel>
 												<SecretVarInput
 													value={field.value}
 													onChange={(value) => {
 														field.onChange(value);
 														clearErrors("connection_string");
 													}}
-													placeholder="http://your-mcp-server:3000 or env.MCP_SERVER_URL"
+													placeholder="http://your-mcp-server:3000 或 env.MCP_SERVER_URL"
 													data-testid="connection-url-input"
 												/>
 												<FormMessage />
@@ -488,19 +488,19 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 
 									{/* Auth Type */}
 									<FormItem className="w-full">
-										<FormLabel>Authentication Type</FormLabel>
+										<FormLabel>认证类型</FormLabel>
 										<Select value={authKind} onValueChange={(value: "none" | "headers" | "oauth") => applyAuthKind(value)}>
 											<FormControl>
 												<SelectTrigger className="w-full" data-testid="auth-type-select">
-													<SelectValue placeholder="Select authentication type" />
+													<SelectValue placeholder="选择认证类型" />
 												</SelectTrigger>
 											</FormControl>
 											<SelectContent>
 												<SelectItem value="none" data-testid="auth-type-none">
-													None
+													无
 												</SelectItem>
 												<SelectItem value="headers" data-testid="auth-type-headers">
-													Headers
+													请求头
 												</SelectItem>
 												<SelectItem value="oauth" data-testid="auth-type-oauth">
 													OAuth 2.0
@@ -512,19 +512,19 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 									{/* Auth Scope — only meaningful when there's an auth flow */}
 									{authKind !== "none" && (
 										<FormItem className="w-full">
-											<FormLabel>Auth Scope</FormLabel>
+											<FormLabel>认证范围</FormLabel>
 											<Select value={authScope} onValueChange={(value: "shared" | "per_user") => applyAuthScope(value)}>
 												<FormControl>
 													<SelectTrigger className="w-full" data-testid="auth-scope-select">
-														<SelectValue placeholder="Select auth scope" />
+														<SelectValue placeholder="选择认证范围" />
 													</SelectTrigger>
 												</FormControl>
 												<SelectContent>
 													<SelectItem value="shared" data-testid="auth-scope-shared">
-														Shared
+														共享
 													</SelectItem>
 													<SelectItem value="per_user" data-testid="auth-scope-per-user">
-														Per-User
+														按用户
 													</SelectItem>
 												</SelectContent>
 											</Select>
@@ -540,9 +540,9 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 													<HeadersTable
 														value={field.value || {}}
 														onChange={field.onChange}
-														keyPlaceholder="Header name"
-														valuePlaceholder="Header value"
-														label="Headers"
+														keyPlaceholder="请求头名称"
+														valuePlaceholder="请求头值"
+														label="请求头"
 														useSecretVarInput
 													/>
 													{headersValidationError && <p className="text-destructive text-xs">{headersValidationError}</p>}
@@ -561,10 +561,10 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 											    tool use via the inline auth landing page. */}
 											<div className="space-y-1">
 												<div className="space-y-0.5">
-													<div className="text-sm font-medium">Required Headers</div>
+													<div className="text-sm font-medium">必需的请求头</div>
 													<p className="text-muted-foreground text-sm">
-														Comma-separated list of header names each caller must supply when they first use this server (e.g.{" "}
-														<code>X-API-Key, X-Tenant-ID</code>). Values are submitted per user - never stored on this server config.
+														以逗号分隔的请求头名称列表，每位调用方在首次使用此服务器时必须提供（例如{" "}
+														<code>X-API-Key, X-Tenant-ID</code>）。这些值按用户提交，绝不会存储在此服务器配置中。
 													</p>
 												</div>
 												<Textarea
@@ -589,9 +589,9 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 														<HeadersTable
 															value={field.value || {}}
 															onChange={field.onChange}
-															keyPlaceholder="Header name"
-															valuePlaceholder="Header value"
-															label="Static Headers (optional, applied alongside user values)"
+															keyPlaceholder="请求头名称"
+															valuePlaceholder="请求头值"
+															label="静态请求头（可选，与用户提供的值一起使用）"
 															useSecretVarInput
 														/>
 														{headersValidationError && <p className="text-destructive text-xs">{headersValidationError}</p>}
@@ -611,7 +611,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 										<Accordion type="single" collapsible className="w-full">
 											<AccordionItem value="oauth-advanced" className="border-b-0">
 												<AccordionTrigger className="py-0" data-testid="oauth-advanced-trigger">
-													<span className="text-sm font-medium">OAuth Client Advanced Settings</span>
+													<span className="text-sm font-medium">OAuth 客户端高级设置</span>
 												</AccordionTrigger>
 												<AccordionContent className="space-y-4 pt-4 pb-0">
 													{/* OAuth Client ID */}
@@ -621,7 +621,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 														render={({ field }) => (
 															<FormItem>
 																<div className="flex items-center gap-2">
-																	<FormLabel>OAuth Client ID (optional)</FormLabel>
+																	<FormLabel>OAuth 客户端 ID（可选）</FormLabel>
 																	<TooltipProvider>
 																		<Tooltip>
 																			<TooltipTrigger asChild>
@@ -629,8 +629,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 																			</TooltipTrigger>
 																			<TooltipContent className="max-w-xs">
 																				<p>
-																					Leave empty to use Dynamic Client Registration (RFC 7591). Bifrost will automatically register
-																					with the OAuth provider if supported.
+																					留空则使用动态客户端注册（RFC 7591）。若提供商支持，Bifrost 会自动向 OAuth 提供商注册。
 																				</p>
 																			</TooltipContent>
 																		</Tooltip>
@@ -640,12 +639,12 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 																	<SecretVarInput
 																		value={field.value}
 																		onChange={field.onChange}
-																		placeholder="your-client-id (auto-generated if empty)"
+																		placeholder="your-client-id（留空则自动生成）"
 																		data-testid="mcp-oauth-client-id"
 																	/>
 																</FormControl>
 																<p className="text-muted-foreground text-xs">
-																	Will be auto-generated via dynamic registration if left empty and provider supports it
+																	如果留空且提供商支持，将通过动态注册自动生成
 																</p>
 																<FormMessage />
 															</FormItem>
@@ -658,7 +657,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 														name="oauth_config.client_secret"
 														render={({ field }) => (
 															<FormItem>
-																<FormLabel>OAuth Client Secret (optional for PKCE)</FormLabel>
+																<FormLabel>OAuth 客户端密钥（PKCE 流程下可选）</FormLabel>
 																<FormControl>
 																	<SecretVarInput
 																		value={field.value}
@@ -669,7 +668,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 																		data-testid="mcp-oauth-client-secret"
 																	/>
 																</FormControl>
-																<p className="text-muted-foreground text-xs">Leave empty for public clients using PKCE</p>
+																<p className="text-muted-foreground text-xs">使用 PKCE 的公共客户端请留空</p>
 																<FormMessage />
 															</FormItem>
 														)}
@@ -681,7 +680,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 														name="oauth_config.authorize_url"
 														render={({ field }) => (
 															<FormItem>
-																<FormLabel>Authorization URL (optional, auto-discovered)</FormLabel>
+																<FormLabel>授权 URL（可选，自动发现）</FormLabel>
 																<FormControl>
 																	<Input
 																		{...field}
@@ -705,7 +704,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 														name="oauth_config.token_url"
 														render={({ field }) => (
 															<FormItem>
-																<FormLabel>Token URL (optional, auto-discovered)</FormLabel>
+																<FormLabel>令牌 URL（可选，自动发现）</FormLabel>
 																<FormControl>
 																	<Input
 																		{...field}
@@ -729,7 +728,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 														name="oauth_config.registration_url"
 														render={({ field }) => (
 															<FormItem>
-																<FormLabel>Registration URL (optional, auto-discovered)</FormLabel>
+																<FormLabel>注册 URL（可选，自动发现）</FormLabel>
 																<FormControl>
 																	<Input
 																		{...field}
@@ -749,7 +748,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 
 													{/* Scopes (local state, not RHF field) */}
 													<div className="space-y-2">
-														<Label>Scopes (optional, comma-separated)</Label>
+														<Label>作用域（可选，以逗号分隔）</Label>
 														<Input
 															value={scopesText}
 															onChange={(e) => setScopesText(e.target.value)}
@@ -760,11 +759,11 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 
 													{/* OAuth Resource Indicator (local state, not RHF field) */}
 													<div className="space-y-2">
-														<Label>Resource</Label>
+														<Label>资源</Label>
 														<Input
 															value={resourceText}
 															onChange={(e) => setResourceText(e.target.value)}
-															placeholder="https://provider.example.com/mcp or urn:example:mcp"
+															placeholder="https://provider.example.com/mcp 或 urn:example:mcp"
 															data-testid="mcp-oauth-resource-input"
 														/>
 													</div>
@@ -777,7 +776,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 									<Accordion type="single" collapsible className="w-full">
 										<AccordionItem value="tls-config" className="border-b-0">
 											<AccordionTrigger className="py-0" data-testid="tls-config-trigger">
-												<span className="text-sm font-medium">TLS / Certificate</span>
+												<span className="text-sm font-medium">TLS 证书</span>
 											</AccordionTrigger>
 											<AccordionContent className="space-y-4 pt-4 pb-0">
 												<FormField
@@ -786,10 +785,9 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 													render={({ field }) => (
 														<FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
 															<div className="space-y-0.5">
-																<FormLabel>Skip TLS verification</FormLabel>
+																<FormLabel>跳过 TLS 验证</FormLabel>
 																<p className="text-muted-foreground text-sm">
-																	Disable TLS certificate verification. Use only in trusted isolated environments. Takes priority over CA
-																	certificate.
+																	禁用 TLS 证书验证。仅在受信任的隔离环境中使用。此选项的优先级高于 CA 证书。
 																</p>
 															</div>
 															<FormControl>
@@ -807,7 +805,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 													name="tls_config.ca_cert_pem"
 													render={({ field }) => (
 														<FormItem>
-															<FormLabel>CA Certificate (PEM) (Optional)</FormLabel>
+															<FormLabel>CA 证书（PEM）（可选）</FormLabel>
 															<FormControl>
 																<SecretVarInput
 																	variant="textarea"
@@ -822,7 +820,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 																/>
 															</FormControl>
 															<p className="text-muted-foreground text-sm">
-																PEM-encoded CA certificate to trust for MCP server connections (e.g. self-signed or private CA).
+																用于信任 MCP 服务器连接的 PEM 编码 CA 证书（例如自签名或私有 CA）。
 															</p>
 															<FormMessage />
 														</FormItem>
@@ -840,11 +838,9 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 										<div className="flex items-start gap-2">
 											<Info className="mt-0.5 h-4 w-4 flex-shrink-0 text-amber-700" />
 											<div className="flex-1">
-												<p className="text-xs font-medium text-amber-900">Docker Notice</p>
+												<p className="text-xs font-medium text-amber-900">Docker 提示</p>
 												<p className="mt-0.5 text-xs text-amber-800">
-													If not using the official Bifrost Docker image, STDIO connections may not work if required commands (npx, python,
-													etc.) aren't installed. You can safely ignore this if running locally or using a custom image with the necessary
-													dependencies.
+													如果未使用官方 Bifrost Docker 镜像，在未安装所需命令（npx、python 等）时，STDIO 连接可能无法工作。若在本地运行，或使用已包含所需依赖的自定义镜像，可以忽略此提示。
 												</p>
 											</div>
 										</div>
@@ -856,7 +852,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 										name="stdio_config.command"
 										render={({ field }) => (
 											<FormItem>
-												<FormLabel>Command</FormLabel>
+												<FormLabel>命令</FormLabel>
 												<FormControl>
 													<Input
 														{...field}
@@ -876,7 +872,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 
 									{/* Args (local state) */}
 									<div className="space-y-2">
-										<Label>Arguments (comma-separated)</Label>
+										<Label>参数（以逗号分隔）</Label>
 										<Input
 											value={argsText}
 											onChange={(e) => setArgsText(e.target.value)}
@@ -888,7 +884,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 									{/* Envs (local state) */}
 									<div className="space-y-2">
 										<div className="flex items-center gap-2">
-											<Label>Environment Variables</Label>
+											<Label>环境变量</Label>
 											<TooltipProvider>
 												<Tooltip>
 													<TooltipTrigger asChild>
@@ -896,7 +892,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 													</TooltipTrigger>
 													<TooltipContent className="max-w-xs">
 														<p>
-															Add a value for each variable, or leave it blank to read the value from the environment where Bifrost runs.
+															为每个变量填入值，或留空以从 Bifrost 运行所在的环境中读取。
 														</p>
 													</TooltipContent>
 												</Tooltip>
@@ -906,7 +902,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 											value={envVars}
 											onChange={setEnvVars}
 											keyPlaceholder="API_KEY"
-											valuePlaceholder="Value (or leave blank to use host env)"
+											valuePlaceholder="值（留空则使用宿主环境变量）"
 											label=""
 										/>
 									</div>
@@ -918,7 +914,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 						<div className="dark:bg-card border-border border-t bg-white px-8 py-4">
 							<div className="flex justify-end gap-2">
 								<Button type="button" variant="outline" onClick={onClose} disabled={isLoading} data-testid="cancel-client-btn">
-									Cancel
+									取消
 								</Button>
 								<TooltipProvider>
 									<Tooltip>
@@ -930,13 +926,13 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 													isLoading={isLoading}
 													data-testid="save-client-btn"
 												>
-													Create
+													创建
 												</Button>
 											</span>
 										</TooltipTrigger>
 										{!hasCreateMCPClientAccess && (
 											<TooltipContent>
-												<p>You don't have permission to perform this action</p>
+												<p>您没有执行此操作的权限</p>
 											</TooltipContent>
 										)}
 									</Tooltip>
@@ -955,13 +951,13 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 						setOauthFlow(null);
 					}}
 					onSuccess={() => {
-						toast({ title: "Success", description: "MCP server connected with OAuth" });
+						toast({ title: "成功", description: "MCP 服务器已通过 OAuth 连接" });
 						setOauthFlow(null);
 						onClose();
 						onSaved();
 					}}
 					onError={(error) => {
-						toast({ title: "OAuth Error", description: error, variant: "destructive" });
+						toast({ title: "OAuth 错误", description: error, variant: "destructive" });
 					}}
 					onConflict={(error) => {
 						setOauthFlow(null);
@@ -987,7 +983,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ open, onClose, onSaved }) => {
 					}}
 					onSuccess={() => {
 						setHeadersFlow(null);
-						toast({ title: "Success", description: "MCP server connected with per-user headers" });
+						toast({ title: "成功", description: "MCP 服务器已通过按用户请求头连接" });
 						onSaved();
 						onClose();
 					}}

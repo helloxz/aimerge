@@ -7,7 +7,7 @@ function RouteComponent() {
 	const hasSkillsRepositoryAccess = useRbac(RbacResource.SkillsRepository, RbacOperation.View);
 
 	if (!hasSkillsRepositoryAccess) {
-		return <NoPermissionView entity="skills repository" />;
+		return <NoPermissionView entity="技能仓库" />;
 	}
 
 	return <SkillsRepoPage />;

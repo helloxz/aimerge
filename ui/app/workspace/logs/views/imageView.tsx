@@ -28,16 +28,16 @@ function getImageSrc(b64: string): string {
 
 // Helper function to get method type label from request type
 function getMethodTypeLabel(requestType?: string): string {
-	if (!requestType) return "Image Generation";
+	if (!requestType) return "图片生成";
 
 	const normalizedType = requestType.toLowerCase();
 	if (normalizedType.includes("image_edit")) {
-		return RequestTypeLabels[normalizedType as keyof typeof RequestTypeLabels] || "Image Edit";
+		return RequestTypeLabels[normalizedType as keyof typeof RequestTypeLabels] || "图片编辑";
 	}
 	if (normalizedType.includes("image_variation")) {
-		return RequestTypeLabels[normalizedType as keyof typeof RequestTypeLabels] || "Image Variation";
+		return RequestTypeLabels[normalizedType as keyof typeof RequestTypeLabels] || "图片变体";
 	}
-	return RequestTypeLabels[normalizedType as keyof typeof RequestTypeLabels] || "Image Generation";
+	return RequestTypeLabels[normalizedType as keyof typeof RequestTypeLabels] || "图片生成";
 }
 
 export default function ImageView({ imageInput, imageEditInput, imageVariationInput, imageOutput, requestType }: ImageViewProps) {
@@ -71,10 +71,10 @@ export default function ImageView({ imageInput, imageEditInput, imageVariationIn
 				<div className="w-full rounded-sm border">
 					<div className="flex items-center gap-2 border-b px-6 py-2 text-sm font-medium">
 						<Image className="h-4 w-4" />
-						{methodTypeLabel} Input
+						{methodTypeLabel} 输入
 					</div>
 					<div className="space-y-4 p-6">
-						<div className="text-muted-foreground mb-2 text-xs font-medium">PROMPT</div>
+						<div className="text-muted-foreground mb-2 text-xs font-medium">提示词</div>
 						<div className="font-mono text-xs">{imageInput.prompt}</div>
 					</div>
 				</div>
@@ -85,19 +85,19 @@ export default function ImageView({ imageInput, imageEditInput, imageVariationIn
 				<div className="w-full rounded-sm border">
 					<div className="flex items-center gap-2 border-b px-6 py-2 text-sm font-medium">
 						<Image className="h-4 w-4" />
-						{methodTypeLabel} Input
+						{methodTypeLabel} 输入
 					</div>
 					<div className="space-y-4 p-6">
 						{imageEditInput.images && imageEditInput.images.length > 0 && (
 							<div>
-								<div className="text-muted-foreground mb-2 text-xs font-medium">INPUT IMAGES</div>
+								<div className="text-muted-foreground mb-2 text-xs font-medium">输入图片</div>
 								<div className="flex flex-wrap gap-2">
 									{imageEditInput.images.map((img, i) =>
 										img.image ? (
 											<img
 												key={i}
 												src={getImageSrc(img.image)}
-												alt={`Input image ${i + 1}`}
+												alt={`输入图片 ${i + 1}`}
 												className="max-h-48 max-w-48 rounded border object-contain"
 											/>
 										) : null,
@@ -106,7 +106,7 @@ export default function ImageView({ imageInput, imageEditInput, imageVariationIn
 							</div>
 						)}
 						<div>
-							<div className="text-muted-foreground mb-2 text-xs font-medium">PROMPT</div>
+							<div className="text-muted-foreground mb-2 text-xs font-medium">提示词</div>
 							<div className="font-mono text-xs">{imageEditInput.prompt}</div>
 						</div>
 					</div>
@@ -118,13 +118,13 @@ export default function ImageView({ imageInput, imageEditInput, imageVariationIn
 				<div className="w-full rounded-sm border">
 					<div className="flex items-center gap-2 border-b px-6 py-2 text-sm font-medium">
 						<Image className="h-4 w-4" />
-						{methodTypeLabel} Input
+						{methodTypeLabel} 输入
 					</div>
 					<div className="space-y-4 p-6">
-						<div className="text-muted-foreground mb-2 text-xs font-medium">INPUT IMAGE</div>
+						<div className="text-muted-foreground mb-2 text-xs font-medium">输入图片</div>
 						<img
 							src={getImageSrc(imageVariationInput.image.image)}
-							alt="Input image"
+							alt="输入图片"
 							className="max-h-48 max-w-48 rounded border object-contain"
 						/>
 					</div>
@@ -136,14 +136,14 @@ export default function ImageView({ imageInput, imageEditInput, imageVariationIn
 				<div className="w-full rounded-sm border">
 					<div className="flex items-center gap-2 border-b px-6 py-2 text-sm font-medium">
 						<Image className="h-4 w-4" />
-						{methodTypeLabel} Output
+						{methodTypeLabel} 输出
 					</div>
 					<div className="space-y-4 p-6">
 						{currentImage && (
 							<>
 								{currentImage.revised_prompt && (
 									<div className="mb-4">
-										<div className="text-muted-foreground mb-2 text-xs font-medium">REVISED PROMPT</div>
+										<div className="text-muted-foreground mb-2 text-xs font-medium">修订后的提示词</div>
 										<div className="font-mono text-xs">{currentImage.revised_prompt}</div>
 									</div>
 								)}
@@ -156,13 +156,13 @@ export default function ImageView({ imageInput, imageEditInput, imageVariationIn
 
 								{totalImages > 1 && (
 									<div className="mt-3 flex items-center justify-center gap-4">
-										<Button variant="outline" size="sm" onClick={goToPrevious} aria-label="Previous image" title="Previous image">
+										<Button variant="outline" size="sm" onClick={goToPrevious} aria-label="上一张图片" title="上一张图片">
 											<ChevronLeft className="h-4 w-4" />
 										</Button>
 										<span className="text-muted-foreground text-sm">
 											{currentIndex + 1} / {totalImages}
 										</span>
-										<Button variant="outline" size="sm" onClick={goToNext} aria-label="Next image" title="Next image">
+										<Button variant="outline" size="sm" onClick={goToNext} aria-label="下一张图片" title="下一张图片">
 											<ChevronRight className="h-4 w-4" />
 										</Button>
 									</div>

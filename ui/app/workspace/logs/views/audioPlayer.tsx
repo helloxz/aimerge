@@ -86,7 +86,7 @@ const AudioPlayer = ({ src, format }: AudioPlayerProps) => {
 			});
 		} catch (err) {
 			console.error("Failed to decode audio data:", err);
-			setError("Failed to decode audio data. The audio file may be corrupted.");
+			setError("音频数据解码失败，音频文件可能已损坏。");
 			return null;
 		}
 	};
@@ -105,7 +105,7 @@ const AudioPlayer = ({ src, format }: AudioPlayerProps) => {
 			audio.src = audioUrl;
 			audio.play().catch((err) => {
 				console.error("Failed to play audio:", err);
-				setError("Failed to play audio. Please try again.");
+				setError("音频播放失败，请重试。");
 				setIsPlaying(false);
 			});
 			setIsPlaying(true);
@@ -151,12 +151,12 @@ const AudioPlayer = ({ src, format }: AudioPlayerProps) => {
 			<div className="flex items-center gap-2">
 				<Button onClick={handlePlayPause} variant="outline" size="sm" className="flex items-center gap-2" disabled={!!error}>
 					{isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-					{isPlaying ? "Pause" : "Play"}
+					{isPlaying ? "暂停" : "播放"}
 				</Button>
 
 				<Button onClick={handleDownload} variant="outline" size="sm" className="flex items-center gap-2" disabled={!!error}>
 					<Download className="h-4 w-4" />
-					Download
+					下载
 				</Button>
 			</div>
 			{error && <div className="text-sm text-red-500">{error}</div>}

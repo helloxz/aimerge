@@ -24,25 +24,22 @@ export default function RevokeGrantDialog({ open, onOpenChange, onConfirm }: Rev
 		<AlertDialog open={open} onOpenChange={onOpenChange}>
 			<AlertDialogContent>
 				<AlertDialogHeader>
-					<AlertDialogTitle>Revoke this OAuth grant?</AlertDialogTitle>
+					<AlertDialogTitle>撤销此 OAuth 授权？</AlertDialogTitle>
 					<AlertDialogDescription>
-						The refresh token for this grant stops rotating right away, so the
-						MCP client can no longer renew its access. Its current access token
-						is a short-lived JWT that keeps working on the{" "}
+						此授权的刷新令牌将立即停止轮换，MCP 客户端无法再续期访问。其当前访问令牌是一个短期 JWT，在过期前（默认 10 分钟）仍可在{" "}
 						<code className="rounded bg-muted px-1 py-0.5 text-xs">/mcp</code>{" "}
-						endpoint until it expires (default 10 minutes), after which the client
-						is fully cut off and must reconnect via the OAuth consent flow.
+						端点使用；过期后该客户端将被完全断开，需重新通过 OAuth 授权同意流程连接。
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
 					<AlertDialogCancel data-testid="oauth-grants-revoke-cancel-btn">
-						Cancel
+						取消
 					</AlertDialogCancel>
 					<AlertDialogAction
 						data-testid="oauth-grants-revoke-confirm-btn"
 						onClick={onConfirm}
 					>
-						Revoke
+						撤销
 					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>

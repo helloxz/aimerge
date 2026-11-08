@@ -76,7 +76,7 @@ export function LogDetailSheet({
 			<SheetContent className="border-secondary flex w-full flex-col gap-4 overflow-x-hidden border p-8 sm:max-w-[60%]">
 				{!isFullDataReady ? (
 					<div className="flex h-full items-center justify-center">
-						<SheetTitle className="sr-only">Loading log details</SheetTitle>
+						<SheetTitle className="sr-only">正在加载日志详情</SheetTitle>
 						<Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
 					</div>
 				) : (
@@ -96,7 +96,7 @@ export function LogDetailSheet({
 										data-testid="session-button-view"
 										onClick={() => onViewSession(displayLog.parent_request_id as string, displayLog.id)}
 									>
-										View Session
+										查看会话
 									</Button>
 								) : null}
 								<SheetNavigationButtons

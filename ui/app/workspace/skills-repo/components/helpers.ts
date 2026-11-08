@@ -19,11 +19,11 @@ export const PAGE_SIZE = 25;
 // ---------- Helpers ----------
 
 export function formatDate(dateStr: string) {
-	return new Date(dateStr).toLocaleString();
+	return new Date(dateStr).toLocaleString("zh-CN");
 }
 
 export function formatDateShort(dateStr: string) {
-	return new Date(dateStr).toLocaleDateString();
+	return new Date(dateStr).toLocaleDateString("zh-CN");
 }
 
 export function formatFileSize(bytes: number): string {

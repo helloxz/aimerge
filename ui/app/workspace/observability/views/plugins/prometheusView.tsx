@@ -75,10 +75,10 @@ export default function PrometheusView({ onDelete, isDeleting }: PrometheusViewP
 				.unwrap()
 				.then(() => {
 					resolve();
-					toast.success("Prometheus configuration updated successfully");
+					toast.success("Prometheus 配置已更新");
 				})
 				.catch((err) => {
-					toast.error("Failed to update Prometheus configuration", {
+					toast.error("更新 Prometheus 配置失败", {
 						description: getErrorMessage(err),
 					});
 					reject(err);

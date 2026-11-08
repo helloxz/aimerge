@@ -115,13 +115,13 @@ export const MCPHeadersAuthorizer: React.FC<MCPHeadersAuthorizerProps> = ({
 				}}
 			>
 				<DialogHeader>
-					<DialogTitle>{status === "confirm" ? "Test Header Configuration" : "Header Authorization"}</DialogTitle>
+					<DialogTitle>{status === "confirm" ? "测试请求头配置" : "请求头授权"}</DialogTitle>
 					<DialogDescription>
-						{status === "confirm" && "A one-time test is needed to verify your header setup."}
-						{status === "input" && "Enter sample values to verify the connection."}
-						{status === "testing" && "Verifying connection..."}
-						{status === "success" && "Verification successful!"}
-						{status === "failed" && "Verification failed"}
+						{status === "confirm" && "需要执行一次测试来验证您的请求头配置。"}
+						{status === "input" && "输入示例值以验证连接。"}
+						{status === "testing" && "正在验证连接..."}
+						{status === "success" && "验证成功！"}
+						{status === "failed" && "验证失败"}
 					</DialogDescription>
 				</DialogHeader>
 
@@ -130,20 +130,20 @@ export const MCPHeadersAuthorizer: React.FC<MCPHeadersAuthorizerProps> = ({
 						<>
 							<div className="text-muted-foreground space-y-3 text-sm">
 								<p>
-									To set up this MCP server, we need to verify that your header configuration is correct and discover the available tools.
+									为了完成此 MCP 服务器的配置，我们需要验证您的请求头配置是否正确，并发现可用工具。
 								</p>
 								<p>
-									You will be asked to provide sample values for the required headers. This is a <strong>one-time test</strong> to confirm
-									the setup works. Your sample values will <strong>not</strong> be stored or used for any other purpose.
+									稍后需要您为必需的请求头提供示例值。这是一次<strong>一次性测试</strong>，用于确认配置可用。您提供的示例值<strong>不会</strong>
+									被存储，也不会用于任何其他用途。
 								</p>
-								<p>Once verified, each user will submit their own header values when they use this MCP server.</p>
+								<p>验证通过后，每位用户在使用此 MCP 服务器时会各自提交自己的请求头值。</p>
 							</div>
 							<div className="flex w-full justify-end space-x-2">
 								<Button onClick={handleCancel} variant="outline" data-testid="per-user-headers-cancel">
-									Cancel
+									取消
 								</Button>
 								<Button onClick={handleConfirm} data-testid="per-user-headers-confirm">
-									Continue with Test
+									继续测试
 								</Button>
 							</div>
 						</>
@@ -152,12 +152,12 @@ export const MCPHeadersAuthorizer: React.FC<MCPHeadersAuthorizerProps> = ({
 					{status === "input" && (
 						<>
 							<p className="text-muted-foreground text-sm">
-								These values are used only for this verification. They are <strong>not</strong> persisted.
+								这些值仅用于本次验证，<strong>不会</strong>被持久化保存。
 							</p>
 							<HeadersForm
 								requiredKeys={perUserHeaderKeys}
 								onSubmit={handleRunTest}
-								submitLabel="Run Test"
+								submitLabel="运行测试"
 								onCancel={handleCancel}
 								testIdPrefix="per-user-headers-admin-test"
 							/>
@@ -168,7 +168,7 @@ export const MCPHeadersAuthorizer: React.FC<MCPHeadersAuthorizerProps> = ({
 						<>
 							<div className="flex flex-col items-center space-y-2">
 								<Loader2 className="text-secondary-foreground h-4 w-4 animate-spin" />
-								<p className="text-muted-foreground text-sm">Verifying connection and discovering tools...</p>
+								<p className="text-muted-foreground text-sm">正在验证连接并发现工具...</p>
 							</div>
 						</>
 					)}
@@ -180,7 +180,7 @@ export const MCPHeadersAuthorizer: React.FC<MCPHeadersAuthorizerProps> = ({
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
 								</svg>
 							</div>
-							<p className="text-sm text-green-600">MCP server connected successfully!</p>
+							<p className="text-sm text-green-600">MCP 服务器连接成功！</p>
 						</div>
 					)}
 
@@ -191,9 +191,9 @@ export const MCPHeadersAuthorizer: React.FC<MCPHeadersAuthorizerProps> = ({
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
 								</svg>
 							</div>
-							<p className="text-sm text-red-600">{errorMessage || "An error occurred"}</p>
+							<p className="text-sm text-red-600">{errorMessage || "发生错误"}</p>
 							<Button onClick={handleRetry} variant="outline" data-testid="mcp-headers-authorizer-retry-btn">
-								Retry
+								重试
 							</Button>
 						</div>
 					)}

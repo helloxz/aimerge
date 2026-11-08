@@ -7,7 +7,7 @@ function RouteComponent() {
 	const hasMCPGatewayAccess = useRbac(RbacResource.MCPGateway, RbacOperation.Update);
 	const hasSettingsAccess = useRbac(RbacResource.Settings, RbacOperation.Update);
 	if (!hasMCPGatewayAccess || !hasSettingsAccess) {
-		return <NoPermissionView entity="MCP gateway settings" />;
+		return <NoPermissionView entity="MCP 网关设置" />;
 	}
 	return <MCPSettingsPage />;
 }

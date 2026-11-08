@@ -21,13 +21,13 @@ const KNOWN_BETA_HEADERS = [
 	{
 		prefix: "computer-use-",
 		label: "Computer Use",
-		description: "Computer use client tool",
+		description: "计算机操作客户端工具",
 		defaults: { anthropic: true, vertex: true, bedrock: true, bedrock_mantle: true, azure: true },
 	},
 	{
 		prefix: "structured-outputs-",
 		label: "Structured Outputs",
-		description: "Strict tool validation and output_format",
+		description: "严格的工具校验与 output_format",
 		defaults: { anthropic: true, vertex: false, bedrock: true, bedrock_mantle: true, azure: true },
 	},
 	{
@@ -39,37 +39,37 @@ const KNOWN_BETA_HEADERS = [
 	{
 		prefix: "mcp-client-",
 		label: "MCP Client",
-		description: "MCP connector support",
+		description: "MCP 连接器支持",
 		defaults: { anthropic: true, vertex: false, bedrock: false, bedrock_mantle: false, azure: true },
 	},
 	{
 		prefix: "prompt-caching-scope-",
 		label: "Prompt Caching Scope",
-		description: "Prompt caching scope control",
+		description: "提示缓存范围控制",
 		defaults: { anthropic: true, vertex: false, bedrock: false, bedrock_mantle: false, azure: true },
 	},
 	{
 		prefix: "compact-",
 		label: "Compaction",
-		description: "Server-side context compaction",
+		description: "服务端上下文压缩",
 		defaults: { anthropic: true, vertex: true, bedrock: true, bedrock_mantle: true, azure: true },
 	},
 	{
 		prefix: "context-management-",
 		label: "Context Management",
-		description: "Context editing (clear_tool_uses, clear_thinking)",
+		description: "上下文编辑（clear_tool_uses、clear_thinking）",
 		defaults: { anthropic: true, vertex: true, bedrock: true, bedrock_mantle: true, azure: true },
 	},
 	{
 		prefix: "files-api-",
 		label: "Files API",
-		description: "Files API support",
+		description: "Files API 支持",
 		defaults: { anthropic: true, vertex: false, bedrock: false, bedrock_mantle: false, azure: true },
 	},
 	{
 		prefix: "interleaved-thinking-",
 		label: "Interleaved Thinking",
-		description: "Interleaved thinking between tool calls",
+		description: "工具调用之间的交错思考",
 		defaults: { anthropic: true, vertex: true, bedrock: true, bedrock_mantle: true, azure: true },
 	},
 	{
@@ -81,19 +81,19 @@ const KNOWN_BETA_HEADERS = [
 	{
 		prefix: "context-1m-",
 		label: "Context 1M",
-		description: "1M context window (beta for Sonnet 4.5/4)",
+		description: "1M 上下文窗口（Sonnet 4.5/4 的 Beta 功能）",
 		defaults: { anthropic: true, vertex: true, bedrock: true, bedrock_mantle: true, azure: true },
 	},
 	{
 		prefix: "fast-mode-",
 		label: "Fast Mode",
-		description: "Fast mode (Opus 4.6 research preview)",
+		description: "快速模式（Opus 4.6 研究预览）",
 		defaults: { anthropic: true, vertex: false, bedrock: false, bedrock_mantle: false, azure: false },
 	},
 	{
 		prefix: "redact-thinking-",
 		label: "Redact Thinking",
-		description: "Redact thinking blocks in responses",
+		description: "在响应中隐藏思考块",
 		defaults: { anthropic: true, vertex: false, bedrock: false, bedrock_mantle: false, azure: true },
 	},
 ] as const;
@@ -186,11 +186,11 @@ export function BetaHeadersFormFragment({ provider }: BetaHeadersFormFragmentPro
 		)
 			.unwrap()
 			.then(() => {
-				toast.success("Beta header configuration updated successfully");
+				toast.success("Beta 请求头配置已更新");
 				form.reset(data);
 			})
 			.catch((err) => {
-				toast.error("Failed to update beta header configuration", {
+				toast.error("更新 Beta 请求头配置失败", {
 					description: getErrorMessage(err),
 				});
 			});
@@ -231,15 +231,15 @@ export function BetaHeadersFormFragment({ provider }: BetaHeadersFormFragmentPro
 
 		// Validate
 		if (KNOWN_PREFIXES.has(prefix)) {
-			setNewPrefixError("This is a known header; use the override dropdown above instead");
+			setNewPrefixError("这是已知请求头，请改用上方的覆盖下拉框");
 			return;
 		}
 		if (overrides[prefix] !== undefined) {
-			setNewPrefixError("This prefix already exists");
+			setNewPrefixError("该前缀已存在");
 			return;
 		}
 		if (!/^[a-z0-9-]+$/.test(prefix)) {
-			setNewPrefixError("Prefix must contain only lowercase letters, numbers, and hyphens");
+			setNewPrefixError("前缀只能包含小写字母、数字和连字符");
 			return;
 		}
 
@@ -262,16 +262,15 @@ export function BetaHeadersFormFragment({ provider }: BetaHeadersFormFragmentPro
 			<form onSubmit={form.handleSubmit(onSubmit)} data-testid="provider-config-beta-headers-content">
 				<div className="space-y-2 px-6 pb-6">
 					<p className="text-muted-foreground text-xs">
-						Configure which Anthropic beta headers are allowed for this provider. Override the defaults when a provider adds or removes
-						support for a beta feature.
+						配置该提供商允许使用哪些 Anthropic Beta 请求头。当提供商新增或移除某项 Beta 功能支持时，可在此覆盖默认值。
 					</p>
 					<div className="rounded-md border">
 						<table className="w-full text-sm">
 							<thead>
 								<tr className="border-b">
-									<th className="px-3 py-2 text-left font-medium">Beta Header</th>
-									<th className="px-3 py-2 text-left font-medium">Default</th>
-									<th className="w-[180px] px-3 py-2 text-left font-medium">Override</th>
+									<th className="px-3 py-2 text-left font-medium">Beta 请求头</th>
+									<th className="px-3 py-2 text-left font-medium">默认</th>
+									<th className="w-[180px] px-3 py-2 text-left font-medium">覆盖</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -285,7 +284,7 @@ export function BetaHeadersFormFragment({ provider }: BetaHeadersFormFragmentPro
 										</td>
 										<td className="px-3 py-2">
 											<Badge variant={row.defaultSupported ? "default" : "secondary"} className="text-xs">
-												{row.defaultSupported ? "Supported" : "Unsupported"}
+												{row.defaultSupported ? "支持" : "不支持"}
 											</Badge>
 										</td>
 										<td className="w-[180px] px-3 py-2">
@@ -301,9 +300,9 @@ export function BetaHeadersFormFragment({ provider }: BetaHeadersFormFragmentPro
 													<SelectValue />
 												</SelectTrigger>
 												<SelectContent>
-													<SelectItem value="default">Default</SelectItem>
-													<SelectItem value="enabled">Supported</SelectItem>
-													<SelectItem value="disabled">Unsupported</SelectItem>
+													<SelectItem value="default">默认</SelectItem>
+													<SelectItem value="enabled">支持</SelectItem>
+													<SelectItem value="disabled">不支持</SelectItem>
 												</SelectContent>
 											</Select>
 										</td>
@@ -314,12 +313,12 @@ export function BetaHeadersFormFragment({ provider }: BetaHeadersFormFragmentPro
 										<td className="px-3 py-2">
 											<div className="flex flex-col gap-0.5">
 												<span className="font-mono text-xs">{prefix}*</span>
-												<span className="text-muted-foreground text-xs">Custom header</span>
+												<span className="text-muted-foreground text-xs">自定义请求头</span>
 											</div>
 										</td>
 										<td className="px-3 py-2">
 											<Badge variant="outline" className="text-xs">
-												Custom
+												自定义
 											</Badge>
 										</td>
 										<td className="w-[180px] px-3 py-2">
@@ -336,8 +335,8 @@ export function BetaHeadersFormFragment({ provider }: BetaHeadersFormFragmentPro
 														<SelectValue />
 													</SelectTrigger>
 													<SelectContent>
-														<SelectItem value="enabled">Supported</SelectItem>
-														<SelectItem value="disabled">Unsupported</SelectItem>
+														<SelectItem value="enabled">支持</SelectItem>
+														<SelectItem value="disabled">不支持</SelectItem>
 													</SelectContent>
 												</Select>
 												<Button
@@ -348,7 +347,7 @@ export function BetaHeadersFormFragment({ provider }: BetaHeadersFormFragmentPro
 													disabled={!hasUpdateProviderAccess}
 													onClick={() => removeCustomPrefix(prefix)}
 													data-testid={`provider-beta-remove-prefix-btn-${prefix.replace(/-/g, "")}`}
-													aria-label={`Remove custom prefix ${prefix}`}
+													aria-label={`移除自定义前缀 ${prefix}`}
 												>
 													<Trash2 className="h-3.5 w-3.5" />
 												</Button>
@@ -363,7 +362,7 @@ export function BetaHeadersFormFragment({ provider }: BetaHeadersFormFragmentPro
 					<div className="flex items-start gap-2 pt-2">
 						<div className="flex-1">
 							<Input
-								placeholder="Add custom beta header prefix (e.g. new-feature-)"
+								placeholder="添加自定义 Beta 请求头前缀（例如 new-feature-）"
 								value={newPrefix}
 								onChange={(e) => {
 									setNewPrefix(e.target.value);
@@ -378,7 +377,7 @@ export function BetaHeadersFormFragment({ provider }: BetaHeadersFormFragmentPro
 								disabled={!hasUpdateProviderAccess}
 								className="h-8 text-xs"
 								data-testid="provider-beta-custom-prefix-input"
-								aria-label="Custom beta header prefix"
+								aria-label="自定义 Beta 请求头前缀"
 								aria-describedby={newPrefixError ? "custom-prefix-error" : undefined}
 							/>
 							{newPrefixError && (
@@ -397,7 +396,7 @@ export function BetaHeadersFormFragment({ provider }: BetaHeadersFormFragmentPro
 							data-testid="provider-beta-add-prefix-btn"
 						>
 							<Plus className="mr-1 h-3.5 w-3.5" />
-							Add
+							添加
 						</Button>
 					</div>
 				</div>
@@ -409,7 +408,7 @@ export function BetaHeadersFormFragment({ provider }: BetaHeadersFormFragmentPro
 						isLoading={isUpdatingProvider}
 						data-testid="provider-beta-save-btn"
 					>
-						Save Beta Header Configuration
+						保存 Beta 请求头配置
 					</Button>
 				</div>
 			</form>

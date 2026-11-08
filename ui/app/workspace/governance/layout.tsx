@@ -23,7 +23,7 @@ function RouteComponent() {
 
 	const childMatches = useChildMatches();
 	if (!hasAnyGovernanceAccess) {
-		return <NoPermissionView entity="governance" />;
+		return <NoPermissionView entity="治理" />;
 	}
 	return childMatches.length === 0 ? <GovernancePage /> : <Outlet />;
 }

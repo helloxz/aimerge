@@ -83,18 +83,18 @@ function formatTimestamp(timestamp: string, bucketSizeSeconds: number): string {
 	const date = new Date(timestamp);
 
 	if (bucketSizeSeconds >= 86400) {
-		// Daily buckets: "Jan 20"
-		return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+		// Daily buckets: "01-20"
+		return date.toLocaleDateString("zh-CN", { month: "2-digit", day: "2-digit" });
 	} else if (bucketSizeSeconds >= 3600) {
 		// Hourly buckets: "10:00"
-		return date.toLocaleTimeString("en-US", {
+		return date.toLocaleTimeString("zh-CN", {
 			hour: "2-digit",
 			minute: "2-digit",
 			hour12: false,
 		});
 	} else {
 		// Sub-hourly: "10:15"
-		return date.toLocaleTimeString("en-US", {
+		return date.toLocaleTimeString("zh-CN", {
 			hour: "2-digit",
 			minute: "2-digit",
 			hour12: false,
@@ -105,9 +105,9 @@ function formatTimestamp(timestamp: string, bucketSizeSeconds: number): string {
 // Format full timestamp for tooltip
 function formatFullTimestamp(timestamp: string): string {
 	const date = new Date(timestamp);
-	return date.toLocaleString("en-US", {
-		month: "short",
-		day: "numeric",
+	return date.toLocaleString("zh-CN", {
+		month: "2-digit",
+		day: "2-digit",
 		hour: "2-digit",
 		minute: "2-digit",
 		hour12: false,
@@ -140,28 +140,28 @@ function CustomTooltip({ active, payload }: CustomTooltipProps) {
 				<div className="mt-2 flex items-center justify-between gap-4">
 					<span className="flex items-center gap-1.5">
 						<span className="h-2 w-2 rounded-full bg-blue-500" />
-						<span className="text-zinc-600 dark:text-zinc-400">Total</span>
+						<span className="text-zinc-600 dark:text-zinc-400">总计</span>
 					</span>
 					<span className="font-medium">{data.count.toLocaleString()}</span>
 				</div>
 				<div className="flex items-center justify-between gap-4">
 					<span className="flex items-center gap-1.5">
 						<span className="h-2 w-2 rounded-full bg-emerald-500" />
-						<span className="text-zinc-600 dark:text-zinc-400">Success</span>
+						<span className="text-zinc-600 dark:text-zinc-400">成功</span>
 					</span>
 					<span className="font-medium text-emerald-600 dark:text-emerald-400">{data.success.toLocaleString()}</span>
 				</div>
 				<div className="flex items-center justify-between gap-4">
 					<span className="flex items-center gap-1.5">
 						<span className="h-2 w-2 rounded-full bg-red-500" />
-						<span className="text-zinc-600 dark:text-zinc-400">Error</span>
+						<span className="text-zinc-600 dark:text-zinc-400">错误</span>
 					</span>
 					<span className="font-medium text-red-600 dark:text-red-400">{data.error.toLocaleString()}</span>
 				</div>
 				<div className="flex items-center justify-between gap-4">
 					<span className="flex items-center gap-1.5">
 						<span className="h-2 w-2 rounded-full bg-zinc-400" />
-						<span className="text-zinc-600 dark:text-zinc-400">Cancelled</span>
+						<span className="text-zinc-600 dark:text-zinc-400">已取消</span>
 					</span>
 					<span className="font-medium text-zinc-600 dark:text-zinc-400">{(data.cancelled ?? 0).toLocaleString()}</span>
 				</div>
@@ -373,22 +373,22 @@ export function LogsVolumeChart({
 				<div className="flex items-center justify-between">
 					<CollapsibleTrigger data-testid="logs-volume-chart-trigger" className="flex items-center gap-2 hover:opacity-80">
 						<ChevronDown className={`text-muted-foreground h-4 w-4 transition-transform duration-200 ${isOpen ? "" : "-rotate-90"}`} />
-						<span className="text-muted-foreground text-sm font-medium">Request Volume</span>
+						<span className="text-muted-foreground text-sm font-medium">请求量</span>
 					</CollapsibleTrigger>
 					<div className="mr-2 flex items-center gap-4">
 						{isOpen && (
 							<div className="flex items-center gap-3 text-xs">
 								<span className="flex items-center gap-1.5">
 									<span className="h-2 w-2 rounded-full bg-emerald-500" />
-									<span className="text-muted-foreground">Success</span>
+									<span className="text-muted-foreground">成功</span>
 								</span>
 								<span className="flex items-center gap-1.5">
 									<span className="h-2 w-2 rounded-full bg-red-500" />
-									<span className="text-muted-foreground">Error</span>
+									<span className="text-muted-foreground">错误</span>
 								</span>
 								<span className="flex items-center gap-1.5">
 									<span className="h-2 w-2 rounded-full bg-zinc-400" />
-									<span className="text-muted-foreground">Cancelled</span>
+									<span className="text-muted-foreground">已取消</span>
 								</span>
 							</div>
 						)}
@@ -399,7 +399,7 @@ export function LogsVolumeChart({
 								className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-xs transition-colors"
 							>
 								<RotateCcw className="h-3 w-3" />
-								Reset zoom
+								重置缩放
 							</button>
 						)}
 					</div>

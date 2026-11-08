@@ -47,7 +47,7 @@ function PricingOverrideActionsMenu({
 					variant="ghost"
 					size="icon"
 					className="h-8 w-8"
-					aria-label={`Actions for pricing override ${row.name || row.id}`}
+					aria-label={`定价覆盖 ${row.name || row.id} 的操作`}
 					data-testid={`pricing-override-actions-btn-${row.id}`}
 				>
 					<MoreHorizontal className="h-4 w-4" />
@@ -64,7 +64,7 @@ function PricingOverrideActionsMenu({
 					}}
 				>
 					<Edit className="h-4 w-4" />
-					Edit
+					编辑
 				</DropdownMenuItem>
 				<DropdownMenuItem
 					data-testid={`pricing-override-delete-btn-${row.id}`}
@@ -77,7 +77,7 @@ function PricingOverrideActionsMenu({
 					}}
 				>
 					<Trash2 className="h-4 w-4" />
-					Delete
+					删除
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
@@ -85,6 +85,20 @@ function PricingOverrideActionsMenu({
 }
 
 type ScopeFilter = "all" | PricingOverrideScopeKind;
+
+// Human-readable labels for the scope kinds, shown when an override is created
+// from an already-filtered list.
+const SCOPE_KIND_LABELS: Record<string, string> = {
+	global: "全局",
+	provider: "提供商",
+	provider_key: "提供商密钥",
+	virtual_key: "虚拟密钥",
+	virtual_key_provider: "虚拟密钥 · 提供商",
+	virtual_key_provider_key: "虚拟密钥 · 提供商密钥",
+	user: "用户",
+	user_provider: "用户 · 提供商",
+	user_provider_key: "用户 · 提供商密钥",
+};
 
 function parseScopeKind(value: string | null): ScopeFilter {
 	if (
@@ -107,19 +121,19 @@ function parseScopeKind(value: string | null): ScopeFilter {
 function scopeLabel(override: PricingOverride): string {
 	const scopeKind = resolveScopeKind(override);
 	if (override.virtual_key_id && scopeKind.startsWith("virtual_key")) {
-		return "Virtual Key";
+		return "虚拟密钥";
 	}
 	if (override.user_id && scopeKind.startsWith("user")) {
-		return "User";
+		return "用户";
 	}
-	return "Global";
+	return "全局";
 }
 
 // Returns the key label for the override, or "-" when no specific key is scoped.
 function keyLabel(override: PricingOverride, keyLabelMap: Map<string, string>): string {
 	if (!override.provider_key_id) {
 		if (!override.provider_id) return "-";
-		return "All Keys";
+		return "全部密钥";
 	}
 	return keyLabelMap.get(override.provider_key_id) || override.provider_key_id;
 }
@@ -231,7 +245,7 @@ export default function ScopedPricingOverridesView() {
 
 	useEffect(() => {
 		if (error) {
-			toast.error("Failed to load pricing overrides", { description: getErrorMessage(error) });
+			toast.error("加载定价覆盖失败", { description: getErrorMessage(error) });
 		}
 	}, [error]);
 
@@ -269,7 +283,7 @@ export default function ScopedPricingOverridesView() {
 			virtualKeyID: virtualKeyID || undefined,
 			providerID: providerID || undefined,
 			providerKeyID: providerKeyID || undefined,
-			label: `${scopeKind}${userID || virtualKeyID || providerID || providerKeyID ? " (filtered)" : ""}`,
+			label: `${SCOPE_KIND_LABELS[scopeKind] ?? scopeKind}${userID || virtualKeyID || providerID || providerKeyID ? "（已筛选）" : ""}`,
 		};
 	}, [scopeKind, userID, virtualKeyID, providerID, providerKeyID]);
 
@@ -287,10 +301,10 @@ export default function ScopedPricingOverridesView() {
 		if (!deleteTarget) return;
 		try {
 			await deleteOverride(deleteTarget.id).unwrap();
-			toast.success("Pricing override deleted");
+			toast.success("定价覆盖已删除");
 			setDeleteTarget(null);
 		} catch (deleteError) {
-			toast.error("Failed to delete pricing override", { description: getErrorMessage(deleteError) });
+			toast.error("删除定价覆盖失败", { description: getErrorMessage(deleteError) });
 		}
 	};
 
@@ -321,14 +335,14 @@ export default function ScopedPricingOverridesView() {
 		<div className="flex flex-col overflow-y-auto">
 			<div className="mb-4 flex items-center justify-between gap-4">
 				<div>
-					<h2 className="text-lg font-semibold tracking-tight">Pricing Overrides</h2>
+					<h2 className="text-lg font-semibold tracking-tight">定价覆盖</h2>
 					<p className="text-muted-foreground text-sm">
-						Set custom rates for any model across global, virtual key, or user scopes, optionally narrowed to a specific provider or key
+						为任意模型设置自定义费率，可作用于全局、虚拟密钥或用户范围，并可进一步限定到指定提供商或密钥
 					</p>
 				</div>
 				<Button data-testid="pricing-override-create-btn" onClick={openCreateDrawer} className="gap-2">
 					<Plus className="h-4 w-4" />
-					<span className="hidden sm:inline">New Override</span>
+					<span className="hidden sm:inline">新建覆盖</span>
 				</Button>
 			</div>
 
@@ -337,8 +351,8 @@ export default function ScopedPricingOverridesView() {
 				<div className="relative w-full max-w-sm">
 					<Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
 					<Input
-						aria-label="Search pricing overrides by name"
-						placeholder="Search by name..."
+						aria-label="按名称搜索定价覆盖"
+						placeholder="按名称搜索…"
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
 						className="pl-9"
@@ -350,7 +364,7 @@ export default function ScopedPricingOverridesView() {
 					<VirtualKeySelector
 						value={virtualKeyID}
 						onChange={setVirtualKeyID}
-						placeholder="All virtual keys"
+						placeholder="全部虚拟密钥"
 						triggerClassName="h-9"
 						// A page, not a sheet — portalling keeps the popover out of the
 						// scrolling table container.
@@ -365,27 +379,27 @@ export default function ScopedPricingOverridesView() {
 						onClick={() => setVirtualKeyID("")}
 						data-testid="pricing-overrides-virtual-key-filter-clear-btn"
 					>
-						Clear
+						清除
 					</Button>
 				)}
 			</div>
 
 			<div className="mb-2 overflow-hidden rounded-sm border">
 				{isLoading ? (
-					<div className="p-4 text-sm">Loading overrides...</div>
+					<div className="p-4 text-sm">正在加载覆盖…</div>
 				) : error ? (
-					<div className="p-4 text-sm text-red-500">Failed to load pricing overrides. Please try refreshing the page.</div>
+					<div className="p-4 text-sm text-red-500">加载定价覆盖失败，请尝试刷新页面。</div>
 				) : (
 					<Table containerClassName="h-full overflow-auto">
 						<TableHeader className="bg-muted sticky top-0 z-10">
 							<TableRow className="bg-muted/50">
-								<TableHead className="font-semibold">Name</TableHead>
-								<TableHead className="font-semibold">Scope</TableHead>
-								<TableHead className="font-semibold">Provider</TableHead>
-								<TableHead className="font-semibold">Key</TableHead>
-								<TableHead className="font-semibold">Model</TableHead>
+								<TableHead className="font-semibold">名称</TableHead>
+								<TableHead className="font-semibold">范围</TableHead>
+								<TableHead className="font-semibold">提供商</TableHead>
+								<TableHead className="font-semibold">密钥</TableHead>
+								<TableHead className="font-semibold">模型</TableHead>
 								<TableHead className={`bg-muted sticky right-0 z-30 w-[50px] text-right font-semibold ${PIN_SHADOW_RIGHT}`}>
-									Actions
+									操作
 								</TableHead>
 							</TableRow>
 						</TableHeader>
@@ -393,7 +407,7 @@ export default function ScopedPricingOverridesView() {
 							{rows.length === 0 ? (
 								<TableRow>
 									<TableCell colSpan={6} className="h-24 text-center">
-										<span className="text-muted-foreground text-sm">No matching pricing overrides found.</span>
+										<span className="text-muted-foreground text-sm">未找到匹配的定价覆盖。</span>
 									</TableCell>
 								</TableRow>
 							) : (
@@ -437,8 +451,8 @@ export default function ScopedPricingOverridesView() {
 			{totalCount > 0 && (
 				<div className="flex shrink-0 items-center justify-between text-xs" data-testid="pagination">
 					<div className="text-muted-foreground flex items-center gap-2">
-						{(offset + 1).toLocaleString()}-{Math.min(offset + PAGE_SIZE, totalCount).toLocaleString()} of {totalCount.toLocaleString()}{" "}
-						entries
+						第 {(offset + 1).toLocaleString()}-{Math.min(offset + PAGE_SIZE, totalCount).toLocaleString()} 条，共{" "}
+						{totalCount.toLocaleString()} 条
 					</div>
 
 					<div className="flex items-center gap-2">
@@ -448,15 +462,15 @@ export default function ScopedPricingOverridesView() {
 							onClick={() => setOffset(Math.max(0, offset - PAGE_SIZE))}
 							disabled={offset === 0}
 							data-testid="pricing-overrides-pagination-prev-btn"
-							aria-label="Previous page"
+							aria-label="上一页"
 						>
 							<ChevronLeft className="size-3" />
 						</Button>
 
 						<div className="flex items-center gap-1">
-							<span>Page</span>
+							<span>第</span>
 							<span>{Math.floor(offset / PAGE_SIZE) + 1}</span>
-							<span>of {Math.ceil(totalCount / PAGE_SIZE)}</span>
+							<span>页，共 {Math.ceil(totalCount / PAGE_SIZE)} 页</span>
 						</div>
 
 						<Button
@@ -465,7 +479,7 @@ export default function ScopedPricingOverridesView() {
 							onClick={() => setOffset(offset + PAGE_SIZE)}
 							disabled={offset + PAGE_SIZE >= totalCount}
 							data-testid="pricing-overrides-pagination-next-btn"
-							aria-label="Next page"
+							aria-label="下一页"
 						>
 							<ChevronRight className="size-3" />
 						</Button>
@@ -483,14 +497,14 @@ export default function ScopedPricingOverridesView() {
 			<AlertDialog open={!!deleteTarget} onOpenChange={(open) => (!open ? setDeleteTarget(null) : undefined)}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Delete Pricing Override</AlertDialogTitle>
+						<AlertDialogTitle>删除定价覆盖</AlertDialogTitle>
 						<AlertDialogDescription>
-							Are you sure you want to delete &quot;{deleteTarget?.name}&quot;? This action cannot be undone.
+							确定要删除“{deleteTarget?.name}”吗？此操作无法撤销。
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
 						<AlertDialogCancel data-testid="pricing-override-delete-cancel-btn" disabled={isDeleting}>
-							Cancel
+							取消
 						</AlertDialogCancel>
 						<AlertDialogAction
 							data-testid="pricing-override-delete-confirm-btn"
@@ -501,7 +515,7 @@ export default function ScopedPricingOverridesView() {
 							disabled={isDeleting}
 							className="bg-destructive hover:bg-destructive/90"
 						>
-							{isDeleting ? "Deleting..." : "Delete"}
+							{isDeleting ? "删除中…" : "删除"}
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>

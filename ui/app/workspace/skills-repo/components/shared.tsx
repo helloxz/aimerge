@@ -120,7 +120,7 @@ function ClampedDescription({ description }: { description: string }) {
 						onClick={() => setExpanded(false)}
 						className="ml-1 cursor-pointer text-xs font-medium text-blue-600 transition-colors hover:underline dark:text-blue-400"
 					>
-						Show less
+						收起
 					</button>
 				)}
 			</p>
@@ -131,7 +131,7 @@ function ClampedDescription({ description }: { description: string }) {
 					className="bg-card absolute right-0 bottom-0 cursor-pointer pr-4 pl-8 text-xs font-medium text-blue-600 transition-colors hover:underline dark:text-blue-400"
 				>
 					<span className="from-card pointer-events-none absolute top-0 right-full h-full w-8 bg-gradient-to-l to-transparent" />
-					Show more
+					展开更多
 				</button>
 			)}
 		</div>
@@ -169,8 +169,8 @@ export function SkillHeader({
 }) {
 	const [showRawDialog, setShowRawDialog] = useState(false);
 	const { copy: copyRawSkillMd, copied: copiedRawSkillMd } = useCopyToClipboard({
-		successMessage: "Copied raw SKILL.md",
-		errorMessage: "Failed to copy raw SKILL.md",
+		successMessage: "已复制原始 SKILL.md",
+		errorMessage: "复制原始 SKILL.md 失败",
 	});
 
 	return (
@@ -178,7 +178,7 @@ export function SkillHeader({
 			<div className={cn("flex w-full flex-row items-center gap-2 bg-card relative", sticky && "sticky top-0 z-30 py-4")}>
 				<div className="flex h-5 flex-row items-center gap-2 align-middle">
 					{onBack ? (
-						<nav aria-label="Breadcrumb" className="min-w-0">
+						<nav aria-label="面包屑导航" className="min-w-0">
 							<ol className="text-muted-foreground flex items-center gap-1.5 text-sm">
 								<li>
 									<button
@@ -187,7 +187,7 @@ export function SkillHeader({
 										onClick={onBack}
 										className="hover:text-foreground cursor-pointer transition-colors"
 									>
-										Skills
+										技能
 									</button>
 								</li>
 								<li aria-hidden="true" className="text-muted-foreground/60">
@@ -211,7 +211,7 @@ export function SkillHeader({
 							className="h-auto shrink-0 px-1 py-0 text-xs text-blue-600 dark:text-blue-400"
 							onClick={() => setShowRawDialog(true)}
 						>
-							View raw SKILL.md
+							查看原始 SKILL.md
 						</Button>
 					)}
 				</div>
@@ -222,7 +222,7 @@ export function SkillHeader({
 							{downloadSkillName && (
 								<Button variant="outline" size="sm" asChild>
 									<a href={`${getApiBaseUrl()}/skills/serve/${encodeURIComponent(downloadSkillName)}/download.zip`} download>
-										Download ZIP
+										下载 ZIP
 									</a>
 								</Button>
 							)}
@@ -235,9 +235,9 @@ export function SkillHeader({
 				<ClampedDescription description={description} />
 				<TooltipProvider>
 					<div className="mt-4 flex flex-wrap items-center gap-2 pb-2">
-						<HeaderMetaItem label="License" value={license} missingText="No license defined" icon={Scale} />
-						<HeaderMetaItem label="Compatibility" value={compatibility} missingText="No compatibility defined" icon={Bot} />
-						<HeaderMetaItem label="Allowed tools" value={allowedTools} missingText="No allowed tools defined" icon={Hammer} />
+						<HeaderMetaItem label="许可证" value={license} missingText="未定义许可证" icon={Scale} />
+						<HeaderMetaItem label="兼容性" value={compatibility} missingText="未定义兼容性" icon={Bot} />
+						<HeaderMetaItem label="允许的工具" value={allowedTools} missingText="未定义允许的工具" icon={Hammer} />
 					</div>
 				</TooltipProvider>
 			</div>
@@ -257,13 +257,13 @@ export function SkillHeader({
 									size="icon"
 									className="bg-background/70 text-muted-foreground hover:bg-card hover:text-foreground h-8 w-8 rounded-sm"
 									onClick={() => copyRawSkillMd(composedSkillMd)}
-									aria-label={copiedRawSkillMd ? "Raw SKILL.md copied" : "Copy raw SKILL.md"}
+									aria-label={copiedRawSkillMd ? "已复制原始 SKILL.md" : "复制原始 SKILL.md"}
 								>
 									{copiedRawSkillMd ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
 								</Button>
 								<DialogClose className="text-muted-foreground hover:bg-card hover:text-foreground flex h-8 w-8 cursor-pointer items-center justify-center rounded-sm transition-colors">
 									<X className="h-4 w-4" />
-									<span className="sr-only">Close</span>
+									<span className="sr-only">关闭</span>
 								</DialogClose>
 							</div>
 							<ScrollArea className="h-full" viewportClassName="bg-muted">
@@ -294,14 +294,14 @@ export function FormSection({
 		<section className={cn("flex flex-col gap-2", className)}>
 			<div className="flex items-center gap-1.5">
 				<Label>{title}</Label>
-				{optional && <span className="text-muted-foreground text-xs">optional</span>}
+				{optional && <span className="text-muted-foreground text-xs">可选</span>}
 				{helperText && (
 					<Tooltip>
 						<TooltipTrigger asChild>
 							<button
 								type="button"
 								className="text-muted-foreground hover:text-foreground inline-flex h-4 w-4 items-center justify-center"
-								aria-label={`About ${title}`}
+								aria-label={`关于 ${title}`}
 							>
 								<Info className="h-3.5 w-3.5" aria-hidden="true" />
 							</button>
@@ -333,11 +333,11 @@ export function ReadOnlyMetadataTable({ value, className }: { value: Record<stri
 	const entries = Object.entries(value);
 
 	return (
-		<FormSection title="Metadata" className={cn("flex flex-1 flex-col", className)}>
+		<FormSection title="元数据" className={cn("flex flex-1 flex-col", className)}>
 			<div className="flex flex-1 flex-col rounded-sm border">
 				<div className="bg-muted/30 sticky top-0 z-10 grid grid-cols-2 border-b px-3 py-2 text-sm font-medium">
-					<span>Key</span>
-					<span>Value</span>
+					<span>键</span>
+					<span>值</span>
 				</div>
 				<div className="text-muted-foreground flex-1 divide-y overflow-y-auto">
 					{entries.map(([key, item]) => (
@@ -412,7 +412,7 @@ export function SkillMarkdown({
 	const markdownComponents = {
 		a: ({ href, children, ...props }: React.ComponentProps<"a">) => {
 			const isExternal = Boolean(href && (href.startsWith("//") || /^https?:\/\//i.test(href)));
-			const label = typeof children === "string" ? children : href || "external link";
+			const label = typeof children === "string" ? children : href || "外部链接";
 
 			if (isExternal && href) {
 				return (
@@ -464,8 +464,8 @@ export function SkillMarkdown({
 			<Dialog open={externalLink != null} onOpenChange={(open) => !open && setExternalLink(null)}>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>Open external link?</DialogTitle>
-						<DialogDescription>This link opens outside Bifrost in a new browser tab.</DialogDescription>
+						<DialogTitle>打开外部链接？</DialogTitle>
+						<DialogDescription>此链接将在 Bifrost 之外的新浏览器标签页中打开。</DialogDescription>
 					</DialogHeader>
 					<div className="bg-muted/40 rounded-sm border px-3 py-2">
 						<p className="truncate text-sm font-medium">{externalLink?.label}</p>
@@ -473,7 +473,7 @@ export function SkillMarkdown({
 					</div>
 					<DialogFooter>
 						<Button variant="outline" onClick={() => setExternalLink(null)}>
-							Cancel
+							取消
 						</Button>
 						<Button
 							onClick={() => {
@@ -483,7 +483,7 @@ export function SkillMarkdown({
 							}}
 						>
 							<ExternalLink className="h-4 w-4" />
-							Open link
+							打开链接
 						</Button>
 					</DialogFooter>
 				</DialogContent>
@@ -506,13 +506,13 @@ export function ReadOnlySkillBody({
 	return (
 		<Tabs defaultValue="preview" onValueChange={setActiveTab} className="flex min-h-0 w-full flex-1 flex-col gap-2">
 			<div className="flex items-center justify-between gap-2">
-				<h2 className="text-foreground text-base leading-[normal] font-semibold">SKILL.md Body</h2>
+				<h2 className="text-foreground text-base leading-[normal] font-semibold">SKILL.md 正文</h2>
 				<TabsList className="bg-muted h-8">
 					<TabsTrigger value="preview" className="h-6 px-2.5 text-xs">
-						Preview
+						预览
 					</TabsTrigger>
 					<TabsTrigger value="raw" className="h-6 px-2.5 text-xs">
-						Raw
+						原始
 					</TabsTrigger>
 				</TabsList>
 			</div>
@@ -528,7 +528,7 @@ export function ReadOnlySkillBody({
 					</div>
 				</TabsContent>
 				<TabsContent value="raw" className="m-0 flex-1 overflow-y-auto">
-					<pre className="min-h-full p-4 font-mono text-xs leading-5 whitespace-pre-wrap">{body || "(empty)"}</pre>
+					<pre className="min-h-full p-4 font-mono text-xs leading-5 whitespace-pre-wrap">{body || "（空）"}</pre>
 				</TabsContent>
 			</div>
 		</Tabs>
@@ -764,7 +764,7 @@ export function ReadOnlyFileTree({
 							}}
 							role={hasChildren || isDownloadable ? "button" : undefined}
 							tabIndex={hasChildren || isDownloadable ? 0 : undefined}
-							aria-label={isFolder ? `${isExpanded ? "Collapse" : "Expand"} ${item.name}` : item.name}
+							aria-label={isFolder ? `${isExpanded ? "收起" : "展开"} ${item.name}` : item.name}
 						>
 							<TreeRowChevron hasChildren={hasChildren} isExpanded={isExpanded} />
 							<TreeRowIcon isSkillMd={isSkillMd} isFile={isFile} isFolder={isFolder} isExpanded={isExpanded} />
@@ -774,9 +774,7 @@ export function ReadOnlyFileTree({
 							</span>
 
 							{isFolder && !isExpanded && item.childCount != null && item.childCount > 0 && (
-								<span className="text-muted-foreground text-xs">
-									{item.childCount} item{item.childCount !== 1 ? "s" : ""}
-								</span>
+								<span className="text-muted-foreground text-xs">{item.childCount} 项</span>
 							)}
 
 							{/* Download context menu (file + SKILL.md rows) */}
@@ -790,14 +788,14 @@ export function ReadOnlyFileTree({
 								>
 									<DropdownMenu>
 										<DropdownMenuTrigger asChild>
-											<Button variant="ghost" size="icon" className="h-6 w-6" aria-label={`Actions for ${item.name}`}>
+											<Button variant="ghost" size="icon" className="h-6 w-6" aria-label={`${item.name} 的操作`}>
 												<MoreHorizontal className="h-3.5 w-3.5" />
 											</Button>
 										</DropdownMenuTrigger>
 										<DropdownMenuContent align="end">
 											<DropdownMenuItem className="cursor-pointer" onSelect={() => downloadFile()}>
 												<Download className="h-3.5 w-3.5" />
-												Download
+												下载
 											</DropdownMenuItem>
 										</DropdownMenuContent>
 									</DropdownMenu>
@@ -812,23 +810,23 @@ export function ReadOnlyFileTree({
 								>
 									<DropdownMenu>
 										<DropdownMenuTrigger asChild>
-											<Button variant="ghost" size="icon" className="h-6 w-6" aria-label="File actions">
+											<Button variant="ghost" size="icon" className="h-6 w-6" aria-label="文件操作">
 												<MoreHorizontal className="h-3.5 w-3.5" />
 											</Button>
 										</DropdownMenuTrigger>
 										<DropdownMenuContent align="end">
 											<DropdownMenuItem className="cursor-pointer" disabled={isAllExpanded} onSelect={() => onExpandAll()}>
 												<ChevronsUpDown className="h-3.5 w-3.5" />
-												Expand all
+												全部展开
 											</DropdownMenuItem>
 											<DropdownMenuItem className="cursor-pointer" disabled={isAllCollapsed} onSelect={() => onCollapseAll()}>
 												<ChevronsDownUp className="h-3.5 w-3.5" />
-												Collapse all
+												全部收起
 											</DropdownMenuItem>
 											<DropdownMenuItem className="cursor-pointer" asChild>
 												<a href={downloadUrl} download>
 													<Download className="h-3.5 w-3.5" />
-													Download ZIP
+													下载 ZIP
 												</a>
 											</DropdownMenuItem>
 										</DropdownMenuContent>
@@ -844,7 +842,7 @@ export function ReadOnlyFileTree({
 
 	if (bare) return tree;
 
-	return <FormSection title="Files">{tree}</FormSection>;
+	return <FormSection title="文件">{tree}</FormSection>;
 }
 
 export function SkillReadOnlyContent({
@@ -893,7 +891,7 @@ export function SkillReadOnlyContent({
 									selected === METADATA_KEY ? "border-primary/20 bg-primary/10 text-primary hover:bg-primary/10" : "bg-card hover:bg-muted",
 								)}
 							>
-								Metadata
+								元数据
 							</button>
 						)}
 						{hasFrontmatter && (
@@ -908,7 +906,7 @@ export function SkillReadOnlyContent({
 										: "bg-card hover:bg-muted",
 								)}
 							>
-								Extra Frontmatter
+								额外 Frontmatter
 							</button>
 						)}
 					</div>
@@ -931,7 +929,7 @@ export function SkillReadOnlyContent({
 				{selected === METADATA_KEY && metadata ? (
 					<ReadOnlyMetadataTable value={metadata} />
 				) : selected === FRONTMATTER_KEY && extraFrontmatter ? (
-					<ReadOnlyYamlBlock title="Extra Frontmatter" value={extraFrontmatter} />
+					<ReadOnlyYamlBlock title="额外 Frontmatter" value={extraFrontmatter} />
 				) : selectedFile ? (
 					<FilePreviewPane file={selectedFile} skillName={skillName} mode="view" />
 				) : (
@@ -964,7 +962,7 @@ function SkillFilesSidebar({
 				<div className="relative grow">
 					<Search className="text-muted-foreground absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2" />
 					<Input
-						placeholder="Search files..."
+						placeholder="搜索文件..."
 						value={searchQuery}
 						onChange={(e) => setSearchQuery(e.target.value)}
 						data-testid="sidebar-search"

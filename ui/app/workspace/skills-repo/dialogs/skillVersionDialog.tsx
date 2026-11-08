@@ -79,7 +79,7 @@ export function SkillVersionsPopover({
 		<Popover open={open} onOpenChange={setOpen}>
 			<PopoverTrigger asChild>
 				<Button variant="outline" size="sm" data-testid="skill-versions-popover-trigger" className="h-8 gap-1.5">
-					Versions
+					版本
 					<ChevronDown className="h-3.5 w-3.5" />
 				</Button>
 			</PopoverTrigger>
@@ -171,14 +171,14 @@ export function SkillVersionsList({
 		<Command shouldFilter={false}>
 			<CommandInput
 				data-testid="skill-versions-search-input"
-				placeholder="Search versions..."
+				placeholder="搜索版本..."
 				value={search}
 				onValueChange={setSearch}
 				isLoading={isFetching}
 			/>
 			<CommandList>
 				{!isFetching && accumulated.length === 0 && (
-					<CommandEmpty>{debouncedSearch ? "No versions match your search" : "No versions yet"}</CommandEmpty>
+					<CommandEmpty>{debouncedSearch ? "没有匹配的版本" : "暂无版本"}</CommandEmpty>
 				)}
 				<CommandGroup>
 					{accumulated.map((v) => {
@@ -195,7 +195,7 @@ export function SkillVersionsList({
 									<span className="text-sm font-medium">{v.version}</span>
 									{isServing && (
 										<Badge variant="secondary" className="h-auto bg-emerald-100 px-1.5 py-0 text-xs">
-											Serving
+											已发布
 										</Badge>
 									)}
 								</span>
@@ -205,7 +205,7 @@ export function SkillVersionsList({
 					})}
 
 					{isError && !isFetching && accumulated.length === 0 && (
-						<div className="text-muted-foreground py-6 text-center text-xs">Failed to load versions</div>
+						<div className="text-muted-foreground py-6 text-center text-xs">加载版本失败</div>
 					)}
 
 					{/* Sentinel observed to trigger the next page fetch */}

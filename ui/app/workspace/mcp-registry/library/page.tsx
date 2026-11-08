@@ -110,7 +110,7 @@ export default function MCPLibraryPage() {
 		if (!err) return;
 		const message = getErrorMessage(err);
 		if (message.toLowerCase().includes("mcp is not configured in this bifrost instance")) return;
-		toast({ title: "Error", description: message, variant: "destructive" });
+		toast({ title: "错误", description: message, variant: "destructive" });
 	}, [libraryError, mcpClientsError, toast]);
 
 	const installedServerSlugs = useMemo(() => {
@@ -165,20 +165,20 @@ export default function MCPLibraryPage() {
 						{/* Header */}
 						<div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
 							<div className="space-y-1">
-								<h2 className="text-lg font-semibold tracking-tight">MCP Server Library</h2>
-								<p className="text-muted-foreground max-w-2xl text-sm">Browse and install MCP servers from the synced catalog.</p>
+								<h2 className="text-lg font-semibold tracking-tight">MCP 服务器库</h2>
+								<p className="text-muted-foreground max-w-2xl text-sm">从已同步的目录中浏览并安装 MCP 服务器。</p>
 							</div>
 							<div className="flex items-center gap-2">
 								{hasCreateMCPClientAccess && (
 									<Button variant="outline" size="sm" onClick={() => setAddServerOpen(true)} data-testid="mcp-library-add-server-btn">
 										<Plus className="h-4 w-4" />
-										Add Server
+										添加服务器
 									</Button>
 								)}
 								{hasSettingsAccess && (
 									<Button variant="outline" size="sm" onClick={() => setSettingsOpen(true)} data-testid="mcp-library-settings-btn">
 										<Settings className="h-4 w-4" />
-										Settings
+										设置
 									</Button>
 								)}
 							</div>
@@ -192,12 +192,12 @@ export default function MCPLibraryPage() {
 									<Input
 										value={urlState.search}
 										onChange={(e) => setUrlState({ search: e.target.value, offset: 0 })}
-										placeholder="Search servers..."
+										placeholder="搜索服务器..."
 										className="h-9 pl-9"
 										data-testid="mcp-library-search-input"
 									/>
 								</div>
-								<div className="border-border flex w-fit overflow-hidden rounded-sm border p-0.5" aria-label="Library view mode">
+								<div className="border-border flex w-fit overflow-hidden rounded-sm border p-0.5" aria-label="服务器库视图模式">
 									<Button
 										type="button"
 										variant="ghost"
@@ -212,7 +212,7 @@ export default function MCPLibraryPage() {
 										data-testid="mcp-library-table-view-toggle"
 									>
 										<List className="h-4 w-4" />
-										<span className="hidden sm:inline">Table</span>
+										<span className="hidden sm:inline">表格</span>
 									</Button>
 									<Button
 										type="button"
@@ -228,7 +228,7 @@ export default function MCPLibraryPage() {
 										data-testid="mcp-library-grid-view-toggle"
 									>
 										<LayoutGrid className="h-4 w-4" />
-										<span className="hidden sm:inline">Grid</span>
+										<span className="hidden sm:inline">网格</span>
 									</Button>
 								</div>
 							</div>
@@ -258,18 +258,18 @@ export default function MCPLibraryPage() {
 									</div>
 									<div className="flex flex-col gap-1">
 										<h1 className="text-muted-foreground text-xl font-medium">
-											{isCatalogEmpty ? "No synced servers yet" : "No servers found"}
+											{isCatalogEmpty ? "尚未同步任何服务器" : "未找到服务器"}
 										</h1>
 										<div className="text-muted-foreground mx-auto mt-2 max-w-[600px] text-sm font-normal">
 											{isCatalogEmpty
-												? "Configure the library sync source in Settings to populate this catalog."
-												: "Try adjusting your search or filters."}
+												? "请在设置中配置服务器库的同步源，以填充此目录。"
+												: "请尝试调整搜索条件或筛选。"}
 										</div>
 										{isCatalogEmpty && hasSettingsAccess && (
 											<div className="mx-auto mt-6 flex flex-row flex-wrap items-center justify-center gap-2">
 												<Button onClick={() => setSettingsOpen(true)} data-testid="mcp-library-empty-settings-btn">
 													<Settings className="h-4 w-4" />
-													Configure sync
+													配置同步
 												</Button>
 											</div>
 										)}
@@ -309,8 +309,8 @@ export default function MCPLibraryPage() {
 									{totalCount > 0 && (
 										<div className="mt-auto flex shrink-0 items-center justify-between text-xs" data-testid="pagination">
 											<div className="text-muted-foreground flex items-center gap-2">
-												{(urlState.offset + 1).toLocaleString()}-{Math.min(urlState.offset + PAGE_SIZE, totalCount).toLocaleString()} of{" "}
-												{totalCount.toLocaleString()} entries
+												第 {(urlState.offset + 1).toLocaleString()}-{Math.min(urlState.offset + PAGE_SIZE, totalCount).toLocaleString()} 条，共{" "}
+												{totalCount.toLocaleString()} 条
 											</div>
 
 											<div className="flex items-center gap-2">
@@ -320,15 +320,15 @@ export default function MCPLibraryPage() {
 													onClick={() => setUrlState({ offset: Math.max(0, urlState.offset - PAGE_SIZE) }, { history: "push" })}
 													disabled={urlState.offset === 0}
 													data-testid="mcp-library-pagination-prev-btn"
-													aria-label="Previous page"
+													aria-label="上一页"
 												>
 													<ChevronLeft className="size-3" />
 												</Button>
 
 												<div className="flex items-center gap-1">
-													<span>Page</span>
+													<span>第</span>
 													<span>{currentPage}</span>
-													<span>of {totalPages}</span>
+													<span>/ {totalPages} 页</span>
 												</div>
 
 												<Button
@@ -337,7 +337,7 @@ export default function MCPLibraryPage() {
 													onClick={() => setUrlState({ offset: urlState.offset + PAGE_SIZE }, { history: "push" })}
 													disabled={urlState.offset + PAGE_SIZE >= totalCount}
 													data-testid="mcp-library-pagination-next-btn"
-													aria-label="Next page"
+													aria-label="下一页"
 												>
 													<ChevronRight className="size-3" />
 												</Button>

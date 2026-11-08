@@ -6,27 +6,20 @@ export function formatTimestamp(timestamp: string, bucketSizeSeconds: number): s
 	const date = new Date(timestamp);
 
 	if (bucketSizeSeconds >= 86400) {
-		// Daily buckets: "Jan 20"
-		return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-	} else if (bucketSizeSeconds >= 3600) {
-		// Hourly buckets: "10:00"
-		return date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
+		// Daily buckets: "01-20"
+		return `${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
 	} else {
-		// Sub-hourly: "10:15"
-		return date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
+		// Hourly and sub-hourly buckets: "10:15"
+		const pad = (n: number) => String(n).padStart(2, "0");
+		return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
 	}
 }
 
 // Format full timestamp for tooltip
 export function formatFullTimestamp(timestamp: string): string {
 	const date = new Date(timestamp);
-	return date.toLocaleString("en-US", {
-		month: "short",
-		day: "numeric",
-		hour: "2-digit",
-		minute: "2-digit",
-		hour12: false,
-	});
+	const pad = (n: number) => String(n).padStart(2, "0");
+	return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
 // Format cost values
@@ -67,10 +60,10 @@ export function getModelColor(index: number): string {
 // the legend already says "+N more", so the data path follows the palette.
 export const TOP_SERIES_LIMIT = MODEL_COLORS.length;
 export const OTHER_SERIES_KEY = "__other__";
-export const OTHER_SERIES_LABEL = "Other";
+export const OTHER_SERIES_LABEL = "其他";
 export const OTHER_SERIES_COLOR = "#94a3b8"; // slate-400
 
-export const UNNAMED_MODEL_LABEL = "(unnamed)";
+export const UNNAMED_MODEL_LABEL = "（未命名）";
 
 // Resolves a raw model value to its display label: the canonical model name
 // when one is known (e.g. Bedrock inference-profile IDs mapped via key

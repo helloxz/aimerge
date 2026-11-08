@@ -15,7 +15,7 @@ export default function ConfigPage() {
 	}, [hasConfigAccess, navigate]);
 
 	if (!hasConfigAccess) {
-		return <NoPermissionView entity="configuration" />;
+		return <NoPermissionView entity="配置" />;
 	}
 	return null;
 }

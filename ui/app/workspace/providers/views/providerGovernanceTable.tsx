@@ -14,8 +14,21 @@ interface Props {
 }
 
 // Helper to format reset duration for display
+const resetDurationLabelsZh: Record<string, string> = {
+	"1m": "每分钟",
+	"5m": "每 5 分钟",
+	"15m": "每 15 分钟",
+	"30m": "每 30 分钟",
+	"1h": "每小时",
+	"6h": "每 6 小时",
+	"1d": "每天",
+	"1w": "每周",
+	"1M": "每月",
+	"1Q": "每季度",
+};
+
 const formatResetDuration = (duration: string) => {
-	return resetDurationLabels[duration] || duration;
+	return resetDurationLabelsZh[duration] || resetDurationLabels[duration] || duration;
 };
 
 // Circular progress component
@@ -115,7 +128,7 @@ function MetricCard({
 						<span className="text-muted-foreground text-sm font-medium whitespace-nowrap">{title}</span>
 						{isExhausted && (
 							<Badge variant="destructive" className="text-xs whitespace-nowrap">
-								Exhausted
+								已用尽
 							</Badge>
 						)}
 					</div>
@@ -133,13 +146,13 @@ function MetricCard({
 										</span>
 									</div>
 									<div className="text-xs">
-										<span className="text-muted-foreground">Resets {formatResetDuration(resetDuration)}</span>
+										<span className="text-muted-foreground">重置：{formatResetDuration(resetDuration)}</span>
 									</div>
 								</div>
 							</TooltipTrigger>
 							<TooltipContent side="bottom">
 								<p className="font-medium">
-									{clampedPercentage}% of {title.toLowerCase()} used
+									{title}已使用 {clampedPercentage}%
 								</p>
 							</TooltipContent>
 						</Tooltip>
@@ -170,7 +183,7 @@ export default function ProviderGovernanceTable({ provider, className }: Props) 
 			<div className={cn("w-full", className)}>
 				<CardHeader className="mb-4 px-0">
 					<CardTitle className="flex items-center justify-between">
-						<div className="flex items-center gap-2">Governance</div>
+						<div className="flex items-center gap-2">治理</div>
 					</CardTitle>
 				</CardHeader>
 				<div className="flex items-center justify-center py-12">
@@ -203,7 +216,7 @@ export default function ProviderGovernanceTable({ provider, className }: Props) 
 		<div className={cn("w-full", className)}>
 			<CardHeader className="mb-4 px-0">
 				<CardTitle className="flex items-center justify-between">
-					<div className="flex items-center gap-2">Governance</div>
+					<div className="flex items-center gap-2">治理</div>
 				</CardTitle>
 			</CardHeader>
 
@@ -212,7 +225,7 @@ export default function ProviderGovernanceTable({ provider, className }: Props) 
 				{budgets.map((budget) => (
 					<MetricCard
 						key={budget.id}
-						title={`Budget (${formatResetDuration(budget.reset_duration)})`}
+						title={`预算（${formatResetDuration(budget.reset_duration)}）`}
 						value={budget.current_usage}
 						max={budget.max_limit}
 						unit="$"
@@ -224,10 +237,10 @@ export default function ProviderGovernanceTable({ provider, className }: Props) 
 				{/* Token Rate Limit Card */}
 				{rateLimit?.token_max_limit && (
 					<MetricCard
-						title="Token Limit"
+						title="Token 限额"
 						value={rateLimit.token_current_usage}
 						max={rateLimit.token_max_limit}
-						unit="tokens"
+						unit="Token"
 						resetDuration={rateLimit.token_reset_duration || "1h"}
 						isExhausted={isTokenExhausted}
 					/>
@@ -236,10 +249,10 @@ export default function ProviderGovernanceTable({ provider, className }: Props) 
 				{/* Request Rate Limit Card */}
 				{rateLimit?.request_max_limit && (
 					<MetricCard
-						title="Request Limit"
+						title="请求限额"
 						value={rateLimit.request_current_usage}
 						max={rateLimit.request_max_limit}
-						unit="requests"
+						unit="次请求"
 						resetDuration={rateLimit.request_reset_duration || "1h"}
 						isExhausted={isRequestExhausted}
 					/>

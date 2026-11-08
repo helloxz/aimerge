@@ -40,7 +40,7 @@ export function MetadataTableEditor({
 
 	return (
 		<div className="flex flex-col gap-2">
-			<HeadersTable label="" value={parsedValue} onChange={handleChange} keyPlaceholder="Metadata key" valuePlaceholder="Metadata value" />
+			<HeadersTable label="" value={parsedValue} onChange={handleChange} keyPlaceholder="元数据键" valuePlaceholder="元数据值" />
 			{error && (
 				<p className="text-destructive mt-1 text-xs" role="alert">
 					{error}

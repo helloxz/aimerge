@@ -65,8 +65,8 @@ interface BoundaryFieldConfig {
 const BOUNDARY_FIELDS: BoundaryFieldConfig[] = [
 	{
 		key: "simple_medium",
-		label: "Simple → Medium",
-		description: "Scores at or below this are classified as SIMPLE.",
+		label: "SIMPLE → MEDIUM",
+		description: "分数小于或等于此值时，归类为 SIMPLE。",
 		fromTier: "SIMPLE",
 		toTier: "MEDIUM",
 		fromColor: P1,
@@ -74,8 +74,8 @@ const BOUNDARY_FIELDS: BoundaryFieldConfig[] = [
 	},
 	{
 		key: "medium_complex",
-		label: "Medium → Complex",
-		description: "Scores above simple_medium and at or below this are MEDIUM.",
+		label: "MEDIUM → COMPLEX",
+		description: "分数高于 simple_medium 且小于或等于此值时，归类为 MEDIUM。",
 		fromTier: "MEDIUM",
 		toTier: "COMPLEX",
 		fromColor: P2,
@@ -83,8 +83,8 @@ const BOUNDARY_FIELDS: BoundaryFieldConfig[] = [
 	},
 	{
 		key: "complex_reasoning",
-		label: "Complex → Reasoning",
-		description: "Scores above this are REASONING. Everything in between is COMPLEX.",
+		label: "COMPLEX → REASONING",
+		description: "分数高于此值时，归类为 REASONING；介于两者之间的均为 COMPLEX。",
 		fromTier: "COMPLEX",
 		toTier: "REASONING",
 		fromColor: P3,
@@ -92,7 +92,7 @@ const BOUNDARY_FIELDS: BoundaryFieldConfig[] = [
 	},
 ];
 
-const boundaryField = z.number({ error: "Enter a number between 0 and 1" }).gt(0, "Must be greater than 0").lt(1, "Must be less than 1");
+const boundaryField = z.number({ error: "请输入 0 到 1 之间的数字" }).gt(0, "必须大于 0").lt(1, "必须小于 1");
 
 const analyzerConfigSchema = z.object({
 	tier_boundaries: z
@@ -103,21 +103,21 @@ const analyzerConfigSchema = z.object({
 		})
 		.superRefine((data, ctx) => {
 			if (Number.isFinite(data.medium_complex) && Number.isFinite(data.simple_medium) && data.medium_complex <= data.simple_medium) {
-				ctx.addIssue({ code: "custom", message: "Must be greater than Simple → Medium", path: ["medium_complex"] });
+				ctx.addIssue({ code: "custom", message: "必须大于 SIMPLE → MEDIUM", path: ["medium_complex"] });
 			}
 			if (
 				Number.isFinite(data.complex_reasoning) &&
 				Number.isFinite(data.medium_complex) &&
 				data.complex_reasoning <= data.medium_complex
 			) {
-				ctx.addIssue({ code: "custom", message: "Must be greater than Medium → Complex", path: ["complex_reasoning"] });
+				ctx.addIssue({ code: "custom", message: "必须大于 MEDIUM → COMPLEX", path: ["complex_reasoning"] });
 			}
 		}),
 	keywords: z.object({
-		simple_keywords: z.array(z.string()).min(1, "Simple keywords cannot be empty"),
-		code_keywords: z.array(z.string()).min(1, "Code keywords cannot be empty"),
-		technical_keywords: z.array(z.string()).min(1, "Technical keywords cannot be empty"),
-		reasoning_keywords: z.array(z.string()).min(1, "Reasoning keywords cannot be empty"),
+		simple_keywords: z.array(z.string()).min(1, "简单关键词不能为空"),
+		code_keywords: z.array(z.string()).min(1, "代码关键词不能为空"),
+		technical_keywords: z.array(z.string()).min(1, "技术关键词不能为空"),
+		reasoning_keywords: z.array(z.string()).min(1, "推理关键词不能为空"),
 	}),
 });
 
@@ -283,7 +283,7 @@ export default function ComplexityRouterPage() {
 			.unwrap()
 			.then((defaults) => {
 				reset(defaults);
-				toast.success("Reset to defaults", { position: "top-right" });
+				toast.success("已恢复默认设置", { position: "top-right" });
 			})
 			.catch((err) => {
 				setSubmitError(getErrorMessage(err));
@@ -297,7 +297,7 @@ export default function ComplexityRouterPage() {
 			.unwrap()
 			.then((res) => {
 				reset(res);
-				toast.success("Configuration saved", { position: "top-right" });
+				toast.success("配置已保存", { position: "top-right" });
 			})
 			.catch((err) => {
 				setSubmitError(getErrorMessage(err));
@@ -313,7 +313,7 @@ export default function ComplexityRouterPage() {
 			<div className="mx-auto w-full max-w-7xl space-y-4 px-14 pt-8">
 				<p className="text-destructive font-mono text-sm">{getErrorMessage(error)}</p>
 				<Button data-testid="complexity-router-fetch-retry-button" type="button" variant="outline" size="sm" onClick={() => refetch()}>
-					Retry
+					重试
 				</Button>
 			</div>
 		);
@@ -322,9 +322,9 @@ export default function ComplexityRouterPage() {
 	if (!data) {
 		return (
 			<div className="mx-auto w-full max-w-7xl space-y-4 px-14 pt-8">
-				<p className="text-muted-foreground font-mono text-sm">No complexity router configuration is available.</p>
+				<p className="text-muted-foreground font-mono text-sm">暂无复杂度路由配置。</p>
 				<Button data-testid="complexity-router-fetch-retry-button" type="button" variant="outline" size="sm" onClick={() => refetch()}>
-					Retry
+					重试
 				</Button>
 			</div>
 		);
@@ -340,17 +340,16 @@ export default function ComplexityRouterPage() {
 				{/* ── Page header ── */}
 				<div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
 					<div className="space-y-1.5">
-						<h1 className="text-2xl font-semibold tracking-tight">Complexity Router</h1>
+						<h1 className="text-2xl font-semibold tracking-tight">复杂度路由</h1>
 						<p className="text-muted-foreground max-w-2xl text-sm leading-relaxed">
-							Tune how incoming requests are classified into four tiers. Thresholds and keyword lists feed the{" "}
-							<code className="bg-muted rounded-sm px-1 py-0.5 font-mono text-xs">complexity_tier</code> field that routing rules can
-							target.
+							调整传入请求被划分为四个层级的方式。阈值与关键词列表决定{" "}
+							<code className="bg-muted rounded-sm px-1 py-0.5 font-mono text-xs">complexity_tier</code> 字段的取值，路由规则可据此进行匹配。
 						</p>
 					</div>
 					<Button asChild variant="outline" size="sm" className="w-fit shrink-0" data-testid="complexity-router-docs-link">
 						<a href={"https://docs.getbifrost.ai/features/governance/complexity-router"} target="_blank" rel="noopener noreferrer">
 							<ExternalLink className="size-3.5" />
-							Docs
+							文档
 						</a>
 					</Button>
 				</div>
@@ -358,7 +357,7 @@ export default function ComplexityRouterPage() {
 				{/* ── Complexity Spectrum ── */}
 				<div className="bg-card space-y-4 rounded-sm border p-5">
 					<div className="flex items-center justify-between">
-						<p className="text-muted-foreground font-mono text-xs font-semibold tracking-widest uppercase">Complexity Spectrum</p>
+						<p className="text-muted-foreground font-mono text-xs font-semibold tracking-widest uppercase">复杂度分布</p>
 						<div className="flex items-center gap-4">
 							{Object.values(TIER_PALETTE).map(({ color, name }) => (
 								<div key={name} className="flex items-center gap-1.5">
@@ -373,7 +372,7 @@ export default function ComplexityRouterPage() {
 
 				{/* ── Tier Boundaries ── */}
 				<div className="space-y-3">
-					<h2 className="text-sm font-semibold">Tier Boundaries</h2>
+					<h2 className="text-sm font-semibold">层级边界</h2>
 
 					<div className="grid gap-3 md:grid-cols-3">
 						{BOUNDARY_FIELDS.map(({ key, label, description, fromTier, toTier, fromColor, toColor }) => {
@@ -381,18 +380,18 @@ export default function ComplexityRouterPage() {
 							const inputId = `boundary-${key}`;
 							const errorId = `${inputId}-error`;
 							const { onChange, ...boundaryInputProps } = register(`tier_boundaries.${key}`, {
-								required: "Enter a number between 0 and 1",
+								required: "请输入 0 到 1 之间的数字",
 								setValueAs: boundaryValueAsNumber,
 								validate: (value) => {
-									if (!Number.isFinite(value)) return "Enter a number between 0 and 1";
-									if (value <= 0) return "Must be greater than 0";
-									if (value >= 1) return "Must be less than 1";
+									if (!Number.isFinite(value)) return "请输入 0 到 1 之间的数字";
+									if (value <= 0) return "必须大于 0";
+									if (value >= 1) return "必须小于 1";
 									const { simple_medium, medium_complex } = liveBoundaries;
 									if (key === "medium_complex" && Number.isFinite(simple_medium) && value <= simple_medium) {
-										return "Must be greater than Simple → Medium";
+										return "必须大于 SIMPLE → MEDIUM";
 									}
 									if (key === "complex_reasoning" && Number.isFinite(medium_complex) && value <= medium_complex) {
-										return "Must be greater than Medium → Complex";
+										return "必须大于 MEDIUM → COMPLEX";
 									}
 									return true;
 								},
@@ -460,9 +459,9 @@ export default function ComplexityRouterPage() {
 				{/* ── Keyword Lists ── */}
 				<div className="space-y-3">
 					<div className="flex items-baseline gap-2.5">
-						<h2 className="text-sm font-semibold">Keyword Lists</h2>
+						<h2 className="text-sm font-semibold">关键词列表</h2>
 						<span className="text-muted-foreground text-xs">
-							Lowercased and deduplicated on save. Each list requires at least one entry.
+							保存时会转为小写并去重。每个列表至少需要一项。
 						</span>
 					</div>
 
@@ -475,13 +474,13 @@ export default function ComplexityRouterPage() {
 									<Controller
 										control={control}
 										name={`keywords.${key}` as const}
-										rules={{ validate: (value) => (value.length > 0 ? true : `${label} cannot be empty`) }}
+										rules={{ validate: (value) => (value.length > 0 ? true : `${label}不能为空`) }}
 										render={({ field }) => (
 											<div className="space-y-2 p-4 pl-5">
 												<div className="flex items-center justify-between">
 													<span className="text-xs font-medium">{label}</span>
 													<span className="text-muted-foreground font-mono text-[11px] tabular-nums">
-														{field.value.length} {field.value.length === 1 ? "entry" : "entries"}
+														{field.value.length} 项
 													</span>
 												</div>
 												<p className="text-muted-foreground text-xs leading-relaxed">{description}</p>
@@ -491,7 +490,7 @@ export default function ComplexityRouterPage() {
 													onValueChange={field.onChange}
 													collapsedTagLimit={KEYWORD_COLLAPSED_LIMIT}
 													expandButtonTestId={`complexity-router-keywords-${testIdPart(key)}-expand-button`}
-													placeholder="Type a keyword and press Enter"
+													placeholder="输入关键词后按回车"
 													aria-invalid={fieldError ? true : undefined}
 													aria-describedby={fieldError ? errorId : undefined}
 													className={cn(fieldError && "border-destructive")}
@@ -531,7 +530,7 @@ export default function ComplexityRouterPage() {
 						disabled={!canUpdate || isSaving || isResetting}
 					>
 						{isResetting ? <LoaderCircle className="h-3.5 w-3.5 animate-spin" /> : <RotateCcw className="h-3.5 w-3.5" />}
-						Restore defaults
+						恢复默认
 					</Button>
 					<Button
 						data-testid="complexity-router-discard-changes-button"
@@ -541,7 +540,7 @@ export default function ComplexityRouterPage() {
 						onClick={handleDiscard}
 						disabled={!isDirty || isSaving || isResetting || isFetching}
 					>
-						Discard changes
+						放弃更改
 					</Button>
 					<Button
 						data-testid="complexity-router-save-changes-button"
@@ -550,7 +549,7 @@ export default function ComplexityRouterPage() {
 						disabled={!canUpdate || !isDirty || isSaving || isResetting || (isSubmitted && hasErrors)}
 					>
 						{isSaving ? <LoaderCircle className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
-						{isSaving ? "Saving…" : "Save changes"}
+						{isSaving ? "保存中…" : "保存更改"}
 					</Button>
 				</div>
 			</form>
@@ -558,10 +557,9 @@ export default function ComplexityRouterPage() {
 			<AlertDialog open={restoreDialogOpen} onOpenChange={setRestoreDialogOpen}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Restore defaults</AlertDialogTitle>
+						<AlertDialogTitle>恢复默认</AlertDialogTitle>
 						<AlertDialogDescription>
-							This will reset all tier boundaries and keyword lists to the factory defaults. Your current configuration will be lost. This
-							action cannot be undone.
+							此操作会将所有层级边界与关键词列表重置为出厂默认值，当前配置将丢失，且无法撤销。
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
@@ -570,7 +568,7 @@ export default function ComplexityRouterPage() {
 							onClick={() => setRestoreDialogOpen(false)}
 							disabled={isResetting}
 						>
-							Cancel
+							取消
 						</AlertDialogCancel>
 						<AlertDialogAction
 							data-testid="complexity-router-restore-confirm-button"
@@ -580,7 +578,7 @@ export default function ComplexityRouterPage() {
 							}}
 							disabled={!canUpdate || isResetting}
 						>
-							Restore defaults
+							恢复默认
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>

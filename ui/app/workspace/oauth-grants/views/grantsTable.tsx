@@ -56,24 +56,24 @@ export default function GrantsTable({
 				<Table containerClassName="h-full overflow-auto">
 					<TableHeader className="bg-muted sticky top-0 z-20">
 						<TableRow>
-							<TableHead>Client</TableHead>
+							<TableHead>客户端</TableHead>
 							<TableHead>
 								<HeaderWithTooltip
-									label="Bound to"
-									tooltip="The identity this grant is tied to: an end user (via SSO), a virtual key (shared by anyone using that VK), or an anonymous session. This determines which upstream per-user OAuth sessions are reachable under this grant."
+									label="绑定对象"
+									tooltip="此授权所绑定的身份：最终用户（通过 SSO）、虚拟密钥（使用该虚拟密钥的任何人共享），或匿名会话。这决定了此授权下可访问哪些上游的按用户 OAuth 会话。"
 								/>
 							</TableHead>
 							<TableHead>
 								<HeaderWithTooltip
-									label="Access token expiry"
-									tooltip="When the current JWT access token expires. MCP clients silently refresh using the refresh token, so an active grant past its expiry will mint a new token automatically on the next request."
+									label="访问令牌过期时间"
+									tooltip="当前 JWT 访问令牌的过期时间。MCP 客户端会使用刷新令牌静默续期，因此已过期的有效授权会在下次请求时自动签发新令牌。"
 								/>
 							</TableHead>
-							<TableHead>Created</TableHead>
+							<TableHead>创建时间</TableHead>
 							<TableHead>
 								<HeaderWithTooltip
-									label="Last used"
-									tooltip="When this grant last refreshed its access token. MCP clients refresh as their token nears expiry, so this tracks the grant's most recent activity. Grants that have not refreshed since they were authorized fall back to when they were created."
+									label="最近使用"
+									tooltip="此授权最近一次刷新访问令牌的时间。MCP 客户端会在令牌临近过期时刷新，因此该时间反映授权的最新活动。从未刷新过的授权则显示其创建时间。"
 								/>
 							</TableHead>
 							<TableHead className={`bg-muted relative sticky right-0 z-10 w-[56px] text-right ${PIN_SHADOW_RIGHT}`} />
@@ -85,7 +85,7 @@ export default function GrantsTable({
 								<TableCell colSpan={6} className="h-24 text-center">
 									{hasActiveFilters ? (
 										<div className="text-muted-foreground text-sm">
-											No grants match these filters.
+											没有符合当前筛选条件的授权。
 										</div>
 									) : (
 										<EmptyGrantsState />
@@ -130,7 +130,7 @@ export default function GrantsTable({
 			{totalCount > 0 && (
 				<div className="flex shrink-0 items-center justify-between text-xs" data-testid="pagination">
 					<div className="text-muted-foreground flex items-center gap-2">
-						{(offset + 1).toLocaleString()}-{Math.min(offset + pageSize, totalCount).toLocaleString()} of {totalCount.toLocaleString()} entries
+						{(offset + 1).toLocaleString()}-{Math.min(offset + pageSize, totalCount).toLocaleString()} / 共 {totalCount.toLocaleString()} 条
 					</div>
 
 					<div className="flex items-center gap-2">
@@ -140,15 +140,15 @@ export default function GrantsTable({
 							onClick={() => onOffsetChange(Math.max(0, offset - pageSize))}
 							disabled={offset === 0}
 							data-testid="oauth-grants-prev-page-btn"
-							aria-label="Previous page"
+							aria-label="上一页"
 						>
 							<ChevronLeft className="size-3" />
 						</Button>
 
 						<div className="flex items-center gap-1">
-							<span>Page</span>
+							<span>第</span>
 							<span>{Math.floor(offset / pageSize) + 1}</span>
-							<span>of {Math.ceil(totalCount / pageSize)}</span>
+							<span>页，共 {Math.ceil(totalCount / pageSize)} 页</span>
 						</div>
 
 						<Button
@@ -157,7 +157,7 @@ export default function GrantsTable({
 							onClick={() => onOffsetChange(offset + pageSize)}
 							disabled={offset + pageSize >= totalCount}
 							data-testid="oauth-grants-next-page-btn"
-							aria-label="Next page"
+							aria-label="下一页"
 						>
 							<ChevronRight className="size-3" />
 						</Button>
@@ -201,15 +201,15 @@ function AccessTokenExpiry({ row }: { row: OAuth2GrantRow }) {
 	// alone would read as expired for any grant that has silently refreshed.
 	const baseMs = new Date(row.last_used_at ?? row.created_at).getTime();
 	if (!Number.isFinite(baseMs)) {
-		return <span className="text-muted-foreground">Unknown</span>;
+		return <span className="text-muted-foreground">未知</span>;
 	}
 	const expiryMs = baseMs + 600_000; // 10 min default
 	const diffMs = expiryMs - Date.now();
 	if (diffMs < 0) {
-		return <span className="text-muted-foreground">Refreshes on next use</span>;
+		return <span className="text-muted-foreground">下次使用时刷新</span>;
 	}
 	const mins = Math.ceil(diffMs / 60_000);
-	return <span>in {mins} min</span>;
+	return <span>{mins} 分钟后</span>;
 }
 
 function HeaderWithTooltip({ label, tooltip }: { label: string; tooltip: string }) {
@@ -232,8 +232,7 @@ function EmptyGrantsState() {
 	return (
 		<div className="flex flex-col items-center gap-3 py-4">
 			<p className="text-muted-foreground text-sm">
-				No grants yet. Grants appear here when an MCP client connects via the OAuth
-				consent flow. (Authentication Mode needs to be set to "oauth" or "both" for grants to be issued.)
+				暂无授权。当 MCP 客户端通过 OAuth 授权同意流程连接后，授权会显示在此处。（需将认证模式设置为 “oauth” 或 “both” 才会签发授权。）
 			</p>
 		</div>
 	);
@@ -244,14 +243,14 @@ function formatRelativePast(iso: string): string {
 		const ts = new Date(iso).getTime();
 		if (!Number.isFinite(ts)) return iso;
 		const diffMs = Date.now() - ts;
-		if (diffMs < 0) return "just now";
+		if (diffMs < 0) return "刚刚";
 		const mins = Math.floor(diffMs / 60_000);
-		if (mins < 1) return "just now";
-		if (mins < 60) return `${mins}m ago`;
+		if (mins < 1) return "刚刚";
+		if (mins < 60) return `${mins} 分钟前`;
 		const hrs = Math.floor(mins / 60);
-		if (hrs < 24) return `${hrs}h ago`;
+		if (hrs < 24) return `${hrs} 小时前`;
 		const days = Math.floor(hrs / 24);
-		return `${days}d ago`;
+		return `${days} 天前`;
 	} catch {
 		return iso;
 	}

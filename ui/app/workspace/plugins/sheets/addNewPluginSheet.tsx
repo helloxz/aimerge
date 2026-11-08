@@ -14,18 +14,18 @@ import { PluginFormFragment } from "../fragments/pluginFormFragments";
 const pluginFormSchema = z.object({
 	name: z
 		.string()
-		.min(1, "Plugin name is required")
-		.regex(/^[A-Za-z0-9-_]+$/, "Plugin name must contain only letters, numbers, hyphens, and underscores"),
+		.min(1, "插件名称为必填项")
+		.regex(/^[A-Za-z0-9-_]+$/, "插件名称只能包含字母、数字、连字符和下划线"),
 	path: z
 		.string()
-		.min(1, "Plugin path/URL is required")
+		.min(1, "插件路径/URL 为必填项")
 		.refine(
 			(val) => {
 				// Accept either absolute file paths or HTTP/HTTPS URLs
 				return val.startsWith("/") || val.startsWith("http://") || val.startsWith("https://");
 			},
 			{
-				message: "Please enter a valid absolute file path (starting with /) or HTTP/HTTPS URL",
+				message: "请输入有效的绝对文件路径（以 / 开头）或 HTTP/HTTPS URL",
 			},
 		),
 	hasConfig: z.boolean(),
@@ -43,7 +43,7 @@ const pluginFormSchema = z.object({
 				}
 			},
 			{
-				message: "Configuration must be valid JSON",
+				message: "配置必须是合法的 JSON",
 			},
 		),
 });
@@ -105,7 +105,7 @@ export default function AddNewPluginSheet({ open, onClose, onCreate, plugin }: A
 				try {
 					parsedConfig = JSON.parse(data.config);
 				} catch {
-					toast.error("Invalid JSON configuration");
+					toast.error("JSON 配置无效");
 					return;
 				}
 			}
@@ -119,7 +119,7 @@ export default function AddNewPluginSheet({ open, onClose, onCreate, plugin }: A
 						config: parsedConfig,
 					},
 				}).unwrap();
-				toast.success("Plugin updated successfully");
+				toast.success("插件已更新");
 			} else {
 				// Create new plugin
 				await createPlugin({
@@ -128,7 +128,7 @@ export default function AddNewPluginSheet({ open, onClose, onCreate, plugin }: A
 					enabled: true,
 					config: parsedConfig,
 				}).unwrap();
-				toast.success("Plugin created successfully");
+				toast.success("插件已创建");
 				// Notify parent with the config name to select it
 				onCreate?.(data.name);
 			}
@@ -151,11 +151,11 @@ export default function AddNewPluginSheet({ open, onClose, onCreate, plugin }: A
 		<Sheet open={open} onOpenChange={handleClose}>
 			<SheetContent className="flex w-full flex-col overflow-x-hidden pt-4">
 				<SheetHeader className="flex flex-col items-start px-8 py-4" headerClassName="mb-0 sticky top-0 bg-card z-10">
-					<SheetTitle>{isEditMode ? "Update Plugin" : "Install New Plugin"}</SheetTitle>
+					<SheetTitle>{isEditMode ? "更新插件" : "安装新插件"}</SheetTitle>
 					<SheetDescription>
 						{isEditMode
-							? "Update the plugin configuration. Note: Plugin name and path cannot be changed."
-							: "Add a custom plugin by providing its name, path/URL, and optional configuration."}
+							? "更新插件配置。注意：插件名称和路径不可更改。"
+							: "通过提供名称、路径/URL 以及可选配置来添加自定义插件。"}
 					</SheetDescription>
 				</SheetHeader>
 
@@ -167,10 +167,10 @@ export default function AddNewPluginSheet({ open, onClose, onCreate, plugin }: A
 
 						<div className="bg-card sticky bottom-0 flex justify-end gap-2 border-t px-8 py-4">
 							<Button type="button" variant="outline" onClick={handleClose} disabled={isLoading}>
-								Cancel
+								取消
 							</Button>
 							<Button type="submit" disabled={isLoading || !form.formState.isValid || disableAction} isLoading={isLoading}>
-								{isEditMode ? "Update Plugin" : "Install Plugin"}
+								{isEditMode ? "更新插件" : "安装插件"}
 							</Button>
 						</div>
 					</form>

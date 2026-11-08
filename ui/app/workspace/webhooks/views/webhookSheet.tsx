@@ -17,11 +17,11 @@ import { WebhookSecretReveal } from "../dialogs/webhookSecretDialog";
 
 const webhookFormSchema = z
 	.object({
-		name: z.string().trim().min(1, "Name is required"),
+		name: z.string().trim().min(1, "名称为必填项"),
 		url: z
 			.string()
 			.trim()
-			.min(1, "URL is required")
+			.min(1, "URL 为必填项")
 			.refine((value) => {
 				try {
 					const parsed = new URL(value);
@@ -29,8 +29,8 @@ const webhookFormSchema = z
 				} catch {
 					return false;
 				}
-			}, "Enter a valid HTTP(S) URL"),
-		events: z.array(z.enum(["async_job.completed", "async_job.failed"])).min(1, "Subscribe to at least one event"),
+			}, "请输入有效的 HTTP(S) URL"),
+		events: z.array(z.enum(["async_job.completed", "async_job.failed"])).min(1, "请至少订阅一个事件"),
 		include_response: z.boolean(),
 		allow_private_network: z.boolean(),
 		max_retries: z.number().int().min(0).optional(),
@@ -41,7 +41,7 @@ const webhookFormSchema = z
 		max_concurrent_deliveries: z.number().int().min(0).optional(),
 	})
 	.refine((data) => data.allow_private_network || !data.url.startsWith("http://"), {
-		message: 'http:// URLs require "Allow private network" to be enabled',
+		message: '使用 http:// URL 需要启用“允许私有网络”',
 		path: ["url"],
 	});
 
@@ -52,23 +52,23 @@ const TUNING_FIELDS: {
 	label: string;
 	description: string;
 }[] = [
-	{ key: "max_retries", label: "Max retries", description: "Retries after the first delivery attempt." },
+	{ key: "max_retries", label: "最大重试次数", description: "首次投递尝试之后的重试次数。" },
 	{
 		key: "retry_backoff_initial_seconds",
-		label: "Initial retry backoff (seconds)",
-		description: "Delay before the first retry; doubles per retry.",
+		label: "初始重试退避（秒）",
+		description: "首次重试前的延迟；每次重试翻倍。",
 	},
-	{ key: "retry_backoff_max_seconds", label: "Max retry backoff (seconds)", description: "Cap on the per-retry delay." },
-	{ key: "attempt_timeout_seconds", label: "Attempt timeout (seconds)", description: "End-to-end bound for one delivery attempt." },
+	{ key: "retry_backoff_max_seconds", label: "最大重试退避（秒）", description: "单次重试延迟的上限。" },
+	{ key: "attempt_timeout_seconds", label: "尝试超时（秒）", description: "一次投递尝试的端到端时限。" },
 	{
 		key: "max_response_payload_kbs",
-		label: "Max response payload (KB)",
-		description: "Responses above this size are omitted from the payload.",
+		label: "最大响应负载（KB）",
+		description: "超过此大小的响应会从负载中省略。",
 	},
 	{
 		key: "max_concurrent_deliveries",
-		label: "Max concurrent deliveries",
-		description: "Concurrent in-flight deliveries to this endpoint per node.",
+		label: "最大并发投递数",
+		description: "每个节点对此端点的并发在途投递数。",
 	},
 ];
 
@@ -153,7 +153,7 @@ export function WebhookSheet({ open, endpoint, onClose, onSecret }: WebhookSheet
 		for (const [name, value] of Object.entries(headers)) {
 			if (!name.trim()) continue;
 			if (!value?.value?.trim() && !value?.ref?.trim()) {
-				setHeadersError(`Header "${name}" must have a value`);
+				setHeadersError(`请求头 "${name}" 必须有值`);
 				return;
 			}
 			cleanedHeaders[name.trim()] = value;
@@ -178,11 +178,11 @@ export function WebhookSheet({ open, endpoint, onClose, onSecret }: WebhookSheet
 		try {
 			if (isEditing) {
 				await updateWebhookEndpoint({ id: endpoint.id, data: request }).unwrap();
-				toast.success("Webhook endpoint updated successfully");
+				toast.success("Webhook 端点已更新");
 				onClose();
 			} else {
 				const response = await createWebhookEndpoint(request).unwrap();
-				toast.success("Webhook endpoint created successfully");
+				toast.success("Webhook 端点已创建");
 				onClose();
 				onSecret({ endpointName: response.endpoint.name, secret: response.secret });
 			}
@@ -195,21 +195,21 @@ export function WebhookSheet({ open, endpoint, onClose, onSecret }: WebhookSheet
 		<Sheet open={open} onOpenChange={(sheetOpen) => !sheetOpen && onClose()}>
 			<SheetContent className="flex w-full flex-col overflow-x-hidden px-0" data-testid="webhook-sheet-content">
 				<SheetHeader className="flex flex-col items-start px-7 pt-8">
-					<SheetTitle>{isEditing ? endpoint.name : "Add Webhook Endpoint"}</SheetTitle>
+					<SheetTitle>{isEditing ? endpoint.name : "添加 Webhook 端点"}</SheetTitle>
 					<SheetDescription>
 						{isEditing
-							? "Update the endpoint's URL, subscriptions, and delivery behavior."
-							: "Register an HTTPS endpoint to receive signed notifications when async jobs finish."}
+							? "更新端点的 URL、订阅事件和投递行为。"
+							: "注册一个 HTTPS 端点，在异步任务完成时接收带签名的通知。"}
 					</SheetDescription>
 				</SheetHeader>
 
 				<form onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
 					<div className="flex-1 space-y-4 overflow-y-auto px-8">
 						<div className="space-y-2">
-							<Label htmlFor="webhook-name">Name</Label>
+							<Label htmlFor="webhook-name">名称</Label>
 							<Input
 								id="webhook-name"
-								placeholder="e.g., billing-service"
+								placeholder="例如 billing-service"
 								data-testid="webhook-name-input"
 								{...register("name")}
 								className={errors.name ? "border-destructive" : ""}
@@ -230,7 +230,7 @@ export function WebhookSheet({ open, endpoint, onClose, onSecret }: WebhookSheet
 						</div>
 
 						<div className="space-y-2">
-							<Label>Events</Label>
+							<Label>事件</Label>
 							<div className="space-y-2 rounded-sm border p-4">
 								{WEBHOOK_EVENTS.map((event) => (
 									<div key={event.value}>
@@ -253,10 +253,10 @@ export function WebhookSheet({ open, endpoint, onClose, onSecret }: WebhookSheet
 						<div className="flex items-center justify-between gap-4 rounded-md border px-3 py-2">
 							<div className="space-y-0.5">
 								<Label htmlFor="webhook-include-response" className="text-sm font-normal">
-									Include response payload
+									包含响应负载
 								</Label>
 								<p className="text-muted-foreground text-xs">
-									Inline the job's result in the notification. Oversized or already-expired results are delivered as a thin payload instead.
+									在通知中内联任务结果。过大或已过期的结果将以精简负载的形式投递。
 								</p>
 							</div>
 							<Switch
@@ -270,10 +270,10 @@ export function WebhookSheet({ open, endpoint, onClose, onSecret }: WebhookSheet
 						<div className="flex items-center justify-between gap-4 rounded-md border px-3 py-2">
 							<div className="space-y-0.5">
 								<Label htmlFor="webhook-private-network" className="text-sm font-normal">
-									Allow private network
+									允许私有网络
 								</Label>
 								<p className="text-muted-foreground text-xs">
-									Permit deliveries to private IP ranges. Only enable this for receivers inside your own network.
+									允许向私有 IP 网段投递。仅在你自己的网络内部有接收方时才应启用。
 								</p>
 							</div>
 							<Switch
@@ -289,9 +289,9 @@ export function WebhookSheet({ open, endpoint, onClose, onSecret }: WebhookSheet
 								value={headers}
 								onChange={handleHeadersChange}
 								useSecretVarInput
-								label="Custom Headers"
-								keyPlaceholder="e.g., Authorization"
-								valuePlaceholder="Value or env.VARIABLE"
+								label="自定义请求头"
+								keyPlaceholder="例如 Authorization"
+								valuePlaceholder="值或 env.VARIABLE"
 							/>
 							{headersError && (
 								<p className="text-destructive text-xs" data-testid="webhook-headers-error">
@@ -299,13 +299,13 @@ export function WebhookSheet({ open, endpoint, onClose, onSecret }: WebhookSheet
 								</p>
 							)}
 							<p className="text-muted-foreground text-xs">
-								Sent with every delivery. Signing and content headers are reserved and cannot be overridden.
+								随每次投递一并发送。签名和内容相关的请求头为保留字段，无法覆盖。
 							</p>
 						</div>
 
 						<div className="space-y-4">
 							<h3 className="text-sm leading-none font-medium" data-testid="webhook-tuning-heading">
-								Delivery Tuning
+									投递调优
 							</h3>
 							{TUNING_FIELDS.map((field) => {
 								const fieldValue = watch(field.key);
@@ -317,7 +317,7 @@ export function WebhookSheet({ open, endpoint, onClose, onSecret }: WebhookSheet
 												{field.label}
 											</Label>
 											<p className="text-muted-foreground text-xs">{field.description}</p>
-											{isUsingDefault && <p className="text-muted-foreground text-xs">Using delivery worker default</p>}
+											{isUsingDefault && <p className="text-muted-foreground text-xs">使用投递工作线程默认值</p>}
 										</div>
 										<Input
 											id={`webhook-${field.key}`}
@@ -338,7 +338,7 @@ export function WebhookSheet({ open, endpoint, onClose, onSecret }: WebhookSheet
 								);
 							})}
 							<p className="text-muted-foreground pb-2 text-xs">
-								If retries extend past the job's result TTL, later deliveries carry a thin payload marked <code>result_expired</code>.
+								如果重试延续到任务的 result TTL 之后，后续投递将携带标记为 <code>result_expired</code> 的精简负载。
 							</p>
 						</div>
 					</div>
@@ -346,10 +346,10 @@ export function WebhookSheet({ open, endpoint, onClose, onSecret }: WebhookSheet
 					<div className="dark:bg-card border-border border-t bg-white px-8 py-4">
 						<div className="flex justify-end gap-2">
 							<Button type="button" variant="outline" onClick={onClose} disabled={isSaving} data-testid="webhook-cancel-btn">
-								Cancel
+								取消
 							</Button>
 							<Button type="submit" disabled={isSaving || !hasChanges} data-testid="webhook-save-btn">
-								{isSaving ? "Saving..." : isEditing ? "Update Endpoint" : "Create Endpoint"}
+								{isSaving ? "保存中…" : isEditing ? "更新端点" : "创建端点"}
 							</Button>
 						</div>
 					</div>

@@ -30,16 +30,16 @@ export function MCPLibraryDeleteDialog({ server, open, isDeleting, onOpenChange,
 		<AlertDialog open={open} onOpenChange={onOpenChange}>
 			<AlertDialogContent>
 				<AlertDialogHeader>
-					<AlertDialogTitle>Remove "{server?.name}" from library?</AlertDialogTitle>
+					<AlertDialogTitle>从服务器库移除“{server?.name}”？</AlertDialogTitle>
 					<AlertDialogDescription>
 						{isCustom
-							? "This custom server will no longer be available for members to install."
-							: "This server will be hidden from the library and will not reappear on the next catalog sync."}{" "}
-						Existing installations are not affected.
+							? "此后成员将无法再安装此自定义服务器。"
+							: "此服务器将从服务器库中隐藏，并且在下次目录同步时不会重新出现。"}{" "}
+						已有的安装不受影响。
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
-					<AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+					<AlertDialogCancel disabled={isDeleting}>取消</AlertDialogCancel>
 					<AlertDialogAction
 						onClick={(event) => {
 							event.preventDefault();
@@ -48,7 +48,7 @@ export function MCPLibraryDeleteDialog({ server, open, isDeleting, onOpenChange,
 						disabled={isDeleting}
 						data-testid={confirmTestId}
 					>
-						{isDeleting ? "Removing..." : "Remove"}
+						{isDeleting ? "正在移除..." : "移除"}
 					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>

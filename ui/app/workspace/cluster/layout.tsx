@@ -6,7 +6,7 @@ import ClusterPage from "./page";
 function RouteComponent() {
 	const hasClusterAccess = useRbac(RbacResource.Cluster, RbacOperation.View);
 	if (!hasClusterAccess) {
-		return <NoPermissionView entity="cluster configuration" />;
+		return <NoPermissionView entity="集群配置" />;
 	}
 	return <ClusterPage />;
 }

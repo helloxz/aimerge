@@ -24,10 +24,9 @@ export function WebhookSecretDialog({ reveal, onClose }: WebhookSecretDialogProp
 		<Dialog open={!!reveal} onOpenChange={(open) => !open && onClose()}>
 			<DialogContent data-testid="webhook-secret-dialog">
 				<DialogHeader>
-					<DialogTitle>Signing secret for {reveal?.endpointName}</DialogTitle>
+					<DialogTitle>用于 {reveal?.endpointName} 的签名密钥</DialogTitle>
 					<DialogDescription>
-						Use this secret to verify the <code>webhook-signature</code> header on deliveries. It is shown only once - copy it now and store
-						it securely. If you lose it, rotate the endpoint to get a new one.
+						使用此密钥验证投递请求中的 <code>webhook-signature</code> 请求头。它只显示一次，请立即复制并妥善保管。如果丢失，可轮换该端点以获取新密钥。
 					</DialogDescription>
 				</DialogHeader>
 				<div className="flex items-center gap-2 rounded-sm border p-3">
@@ -37,14 +36,14 @@ export function WebhookSecretDialog({ reveal, onClose }: WebhookSecretDialogProp
 					<Button
 						variant="ghost"
 						size="sm"
-						aria-label="Copy signing secret"
+						aria-label="复制签名密钥"
 						onClick={() => reveal && copy(reveal.secret)}
 						data-testid="webhook-secret-copy-btn"
 					>
 						{copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
 					</Button>
 					<span className="sr-only" aria-live="polite">
-						{copied ? "Signing secret copied" : ""}
+						{copied ? "签名密钥已复制" : ""}
 					</span>
 				</div>
 				<DialogFooter>
@@ -54,10 +53,10 @@ export function WebhookSecretDialog({ reveal, onClose }: WebhookSecretDialogProp
 							window.open(WEBHOOKS_VERIFICATION_DOCS_URL, "_blank", "noopener,noreferrer");
 						}}
 					>
-						Read more <ArrowUpRight className="text-muted-foreground h-3 w-3" />
+						了解更多 <ArrowUpRight className="text-muted-foreground h-3 w-3" />
 					</Button>
 					<Button onClick={onClose} data-testid="webhook-secret-done-btn">
-						I&apos;ve stored the secret
+						我已保存好密钥
 					</Button>
 				</DialogFooter>
 			</DialogContent>

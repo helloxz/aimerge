@@ -103,21 +103,21 @@ export function LogsHeaderView({
 			setRecalcDialogOpen(false);
 			const missingCostOnly = mode === "missing";
 			const toastId = "logs-recalculate-costs";
-			toast.loading("Starting cost recalculation...", { id: toastId });
+			toast.loading("正在启动费用重算…", { id: toastId });
 
 			try {
 				// Recalculation runs as a background job. Enqueue it (or attach to the one
 				// already running); the status query below polls it to a terminal state.
 				const { status, alreadyRunning } = await startRecalculateCostJob(filters, missingCostOnly);
 				if (!status.id) {
-					throw new Error("Recalculation job did not start");
+					throw new Error("重算任务未能启动");
 				}
 				if (alreadyRunning) {
-					toast.loading("A cost recalculation is already running...", { id: toastId });
+					toast.loading("费用重算已在进行中…", { id: toastId });
 				}
 				setActiveRecalcJobId(status.id);
 			} catch (err) {
-				toast.error("Cost recalculation failed", { id: toastId, description: getErrorMessage(err) });
+				toast.error("费用重算失败", { id: toastId, description: getErrorMessage(err) });
 			}
 		},
 		[filters],
@@ -127,9 +127,9 @@ export function LogsHeaderView({
 	// user isn't left with a loading toast that never resolves.
 	useEffect(() => {
 		if (!activeRecalcJobId || !recalcJobStatusError) return;
-		toast.error("Cost recalculation failed", {
+		toast.error("费用重算失败", {
 			id: "logs-recalculate-costs",
-			description: "Lost track of the recalculation job status. Please refresh and try again.",
+			description: "无法获取重算任务状态，请刷新后重试。",
 		});
 		setActiveRecalcJobId(null);
 	}, [activeRecalcJobId, recalcJobStatusError]);
@@ -150,14 +150,14 @@ export function LogsHeaderView({
 
 		if (recalcJobStatus.status === "completed" || recalcJobStatus.status === "failed") {
 			if (recalcJobStatus.status === "failed") {
-				toast.error("Cost recalculation failed", {
+				toast.error("费用重算失败", {
 					id: toastId,
-					description: recalcJobStatus.last_error || recalcJobStatus.message || "The job did not complete",
+					description: recalcJobStatus.last_error || recalcJobStatus.message || "任务未完成",
 				});
 			} else {
-				toast.success("Cost recalculation complete", {
+				toast.success("费用重算完成", {
 					id: toastId,
-					description: recalcJobStatus.message || `${recalcJobStatus.updated} updated, ${recalcJobStatus.skipped} skipped`,
+					description: recalcJobStatus.message || `${recalcJobStatus.updated} 条已更新，${recalcJobStatus.skipped} 条已跳过`,
 					duration: 5000,
 				});
 			}
@@ -169,12 +169,12 @@ export function LogsHeaderView({
 
 		const total = recalcJobStatus.total || 0;
 		const processed = total > 0 ? Math.min(recalcJobStatus.processed, total) : recalcJobStatus.processed;
-		toast.loading("Recalculating log costs...", {
+		toast.loading("正在重算日志费用…", {
 			id: toastId,
 			description:
 				total > 0
-					? `${processed}/${total} checked, ${recalcJobStatus.updated} updated, ${recalcJobStatus.skipped} skipped`
-					: `${recalcJobStatus.processed} checked, ${recalcJobStatus.updated} updated, ${recalcJobStatus.skipped} skipped`,
+					? `${processed}/${total} 条已检查，${recalcJobStatus.updated} 条已更新，${recalcJobStatus.skipped} 条已跳过`
+					: `${recalcJobStatus.processed} 条已检查，${recalcJobStatus.updated} 条已更新，${recalcJobStatus.skipped} 条已跳过`,
 		});
 	}, [activeRecalcJobId, recalcJobStatus, fetchLogs, fetchStats]);
 
@@ -204,7 +204,7 @@ export function LogsHeaderView({
 				disabled={loading}
 			>
 				<RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-				Refresh
+				刷新
 			</Button>
 			<Button
 				data-testid="logs-live-btn"
@@ -214,14 +214,14 @@ export function LogsHeaderView({
 				onClick={() => onPollToggle(!polling)}
 			>
 				{polling ? <Radio className="h-4 w-4 animate-pulse" /> : <Radio className="h-4 w-4" />}
-				Live
+				实时
 			</Button>
 			<div className="border-input flex h-7.5 flex-1 items-center gap-2 rounded-sm border">
 				<Search className="mr-0.5 ml-2 size-4" />
 				<Input
 					type="text"
 					className="!h-7 rounded-tl-none rounded-tr-sm rounded-br-sm rounded-bl-none border-none bg-slate-50 shadow-none outline-none focus-visible:ring-0"
-					placeholder="Search logs"
+					placeholder="搜索日志"
 					value={localSearch}
 					onChange={(e) => handleSearchChange(e.target.value)}
 				/>
@@ -273,10 +273,8 @@ export function LogsHeaderView({
 									<Calculator className="text-muted-foreground size-4" />
 								)}
 								<div className="flex flex-col">
-									<span className="text-sm">{isRecalcRunning ? "Recalculating costs…" : "Recalculate costs"}</span>
-									<span className="text-muted-foreground text-xs">
-										{isRecalcRunning ? "A recalculation is already running" : "Recompute cost for logs in this view"}
-									</span>
+									<span className="text-sm">{isRecalcRunning ? "正在重算费用…" : "重新计算费用"}</span>
+									<span className="text-muted-foreground text-xs">{isRecalcRunning ? "重算已在进行中" : "重新计算当前视图日志的费用"}</span>
 								</div>
 							</CommandItem>
 						</CommandList>
@@ -336,15 +334,15 @@ async function readRecalculateCostError(response: Response): Promise<Error> {
 	try {
 		return parseRecalculateCostStreamError(await response.text());
 	} catch {
-		return new Error(`Failed to recalculate costs (${response.status})`);
+		return new Error(`费用重算失败（${response.status}）`);
 	}
 }
 
 function parseRecalculateCostStreamError(data: string): Error {
 	try {
 		const parsed = JSON.parse(data) as { error?: { message?: string }; message?: string };
-		return new Error(parsed.error?.message || parsed.message || "Failed to recalculate costs");
+		return new Error(parsed.error?.message || parsed.message || "费用重算失败");
 	} catch {
-		return new Error(data || "Failed to recalculate costs");
+		return new Error(data || "费用重算失败");
 	}
 }

@@ -465,7 +465,7 @@ export default function DashboardPage() {
 				{/* Header */}
 				<div className="flex items-center justify-between p-4">
 					<div className="flex items-center gap-2">
-						<h1 className="text-lg font-semibold">Dashboard</h1>
+						<h1 className="text-lg font-semibold">仪表盘</h1>
 					</div>
 					<div className="flex items-center gap-2">
 						<ExportPopover
@@ -488,7 +488,7 @@ export default function DashboardPage() {
 												setUrlState({ mcp_tool_names: value });
 											}
 										}}
-										placeholder="All Tools"
+										placeholder="所有工具"
 										data-testid="dashboard-mcp-tool-filter"
 									/>
 								)}
@@ -503,7 +503,7 @@ export default function DashboardPage() {
 												setUrlState({ mcp_server_labels: value });
 											}
 										}}
-										placeholder="All Servers"
+										placeholder="所有服务器"
 										data-testid="dashboard-mcp-server-filter"
 									/>
 								)}
@@ -530,31 +530,31 @@ export default function DashboardPage() {
 						<div className="mb-2 max-w-full overflow-x-auto">
 							<TabsList className="w-max min-w-max">
 								<TabsTrigger className="shrink-0" value="overview" data-testid="dashboard-tab-overview">
-									Overview
+									总览
 								</TabsTrigger>
 								<TabsTrigger className="shrink-0" value="provider-usage" data-testid="dashboard-tab-provider-usage">
-									Provider Usage
+									提供商用量
 								</TabsTrigger>
 								<TabsTrigger className="shrink-0" value="rankings" data-testid="dashboard-tab-rankings">
-									Model Rankings
+									模型排行
 								</TabsTrigger>
 								<TabsTrigger className="shrink-0" value="mcp" data-testid="dashboard-tab-mcp">
-									MCP usage
+									MCP 用量
 								</TabsTrigger>
 								<TabsTrigger className="shrink-0" value="team-rankings" data-testid="dashboard-tab-team-rankings">
-									Team Rankings
+									团队排行
 								</TabsTrigger>
 								<TabsTrigger className="shrink-0" value="user-rankings" data-testid="dashboard-tab-user-rankings">
-									User Rankings
+									用户排行
 								</TabsTrigger>
 								<TabsTrigger className="shrink-0" value="virtual-key-rankings" data-testid="dashboard-tab-virtual-key-rankings">
-									Virtual Key Rankings
+									虚拟密钥排行
 								</TabsTrigger>
 								<TabsTrigger className="shrink-0" value="customer-rankings" data-testid="dashboard-tab-customer-rankings">
-									Customer Rankings
+									客户排行
 								</TabsTrigger>
 								<TabsTrigger className="shrink-0" value="bu-rankings" data-testid="dashboard-tab-bu-rankings">
-									BU Rankings
+									业务单元排行
 								</TabsTrigger>
 							</TabsList>
 						</div>
@@ -656,7 +656,7 @@ export default function DashboardPage() {
 									filters={filters}
 									active={activeTab === "team-rankings" || exportingAll}
 									dimension="team"
-									dimensionLabel="Team"
+									dimensionLabel="团队"
 									testIdPrefix="dashboard-team-rankings"
 									dataKey="teamRankingsData"
 									pdfMode={isExportingTab("team-rankings")}
@@ -672,7 +672,7 @@ export default function DashboardPage() {
 									filters={filters}
 									active={activeTab === "customer-rankings" || exportingAll}
 									dimension="customer"
-									dimensionLabel="Customer"
+									dimensionLabel="客户"
 									testIdPrefix="dashboard-customer-rankings"
 									dataKey="customerRankingsData"
 									pdfMode={isExportingTab("customer-rankings")}
@@ -688,7 +688,7 @@ export default function DashboardPage() {
 									filters={filters}
 									active={activeTab === "bu-rankings" || exportingAll}
 									dimension="business_unit"
-									dimensionLabel="Business Unit"
+									dimensionLabel="业务单元"
 									testIdPrefix="dashboard-bu-rankings"
 									dataKey="buRankingsData"
 									pdfMode={isExportingTab("bu-rankings")}
@@ -704,7 +704,7 @@ export default function DashboardPage() {
 									filters={filters}
 									active={activeTab === "user-rankings" || exportingAll}
 									dimension="user"
-									dimensionLabel="User"
+									dimensionLabel="用户"
 									testIdPrefix="dashboard-user-rankings"
 									dataKey="userRankingsData"
 									pdfMode={isExportingTab("user-rankings")}
@@ -720,7 +720,7 @@ export default function DashboardPage() {
 									filters={filters}
 									active={activeTab === "virtual-key-rankings" || exportingAll}
 									dimension="virtual_key"
-									dimensionLabel="Virtual Key"
+									dimensionLabel="虚拟密钥"
 									testIdPrefix="dashboard-virtual-key-rankings"
 									dataKey="virtualKeyRankingsData"
 									pdfMode={isExportingTab("virtual-key-rankings")}

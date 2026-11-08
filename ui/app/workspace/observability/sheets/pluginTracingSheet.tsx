@@ -89,11 +89,11 @@ export default function PluginTracingSheet({ open, onClose, pluginName, destinat
 			// Toggles haven't been initialized from persisted config yet (e.g. the plugin list
 			// is still loading for an include-mode filter). Saving now would build an empty
 			// filter and wipe the stored plugin_span_filter, so block until init completes.
-			toast.error("Plugin list is still loading. Please wait before saving.");
+			toast.error("插件列表仍在加载，请稍候再保存。");
 			return;
 		}
 		if (!targetPlugin) {
-			toast.error(`${destination} is not configured yet. Save its configuration before configuring plugin tracing.`);
+			toast.error(`${destination}尚未配置，请先保存其配置，再配置插件追踪。`);
 			return;
 		}
 		const filter = buildFilter(toggles);
@@ -105,7 +105,7 @@ export default function PluginTracingSheet({ open, onClose, pluginName, destinat
 					config: { plugin_span_filter: filter },
 				},
 			}).unwrap();
-			toast.success("Plugin tracing configuration saved");
+			toast.success("插件追踪配置已保存");
 			onClose();
 		} catch (error) {
 			toast.error(getErrorMessage(error));
@@ -116,10 +116,9 @@ export default function PluginTracingSheet({ open, onClose, pluginName, destinat
 		<Sheet open={open} onOpenChange={onClose}>
 			<SheetContent className="flex w-full flex-col overflow-hidden p-8">
 				<SheetHeader className="flex flex-col items-start p-0">
-					<SheetTitle>Configure Plugin Tracing</SheetTitle>
+					<SheetTitle>配置插件追踪</SheetTitle>
 					<SheetDescription>
-						Choose which plugin hook spans are exported to {destination}. Disabling a plugin removes its spans from traces without affecting
-						execution.
+						选择要导出到 {destination} 的插件 Hook span。禁用某个插件只会从追踪中移除其 span，不影响执行。
 					</SheetDescription>
 				</SheetHeader>
 
@@ -127,7 +126,7 @@ export default function PluginTracingSheet({ open, onClose, pluginName, destinat
 					<div className="flex flex-col gap-4">
 						<div>
 							<div className="mb-2 flex items-center justify-between">
-								<p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">Plugins</p>
+								<p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">插件</p>
 								<TriStateCheckbox
 									allIds={allPlugins}
 									selectedIds={allPlugins.filter((n) => toggles[n] ?? true)}
@@ -139,7 +138,7 @@ export default function PluginTracingSheet({ open, onClose, pluginName, destinat
 											return updated;
 										});
 									}}
-									ariaLabel="Toggle all plugin tracing"
+									ariaLabel="切换全部插件追踪"
 									data-testid="plugin-tracing-select-all"
 								/>
 							</div>
@@ -156,14 +155,14 @@ export default function PluginTracingSheet({ open, onClose, pluginName, destinat
 					<Alert variant="info">
 						<AlertDescription>
 							<span>
-								If <strong className="inline">plugin_span_filter</strong> is set in the <strong className="inline">{pluginName}</strong>{" "}
-								plugin config in config.json, it takes precedence over these settings after restarting Bifrost.
+								如果在 config.json 中 <strong className="inline">{pluginName}</strong> 插件的配置里设置了{" "}
+								<strong className="inline">plugin_span_filter</strong>，重启 Bifrost 后它将优先于此处设置。
 							</span>
 						</AlertDescription>
 					</Alert>
 					<div className="flex justify-end gap-2 pt-2">
 						<Button type="button" variant="outline" onClick={onClose} disabled={isLoading} data-testid="plugin-tracing-cancel-button">
-							Cancel
+							取消
 						</Button>
 						<Button
 							onClick={handleSave}
@@ -172,7 +171,7 @@ export default function PluginTracingSheet({ open, onClose, pluginName, destinat
 							data-testid="plugin-tracing-save-button"
 							type="button"
 						>
-							Save
+							保存
 						</Button>
 					</div>
 				</div>

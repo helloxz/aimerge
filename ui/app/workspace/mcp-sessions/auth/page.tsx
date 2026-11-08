@@ -79,10 +79,9 @@ function OAuthAuthView() {
 	if (!flowId) {
 		return (
 			<CenteredCard>
-				<h1 className="text-xl font-semibold">Missing flow identifier</h1>
+				<h1 className="text-xl font-semibold">缺少流程标识符</h1>
 				<p className="text-muted-foreground mt-2 text-sm">
-					This URL is missing the <code className="bg-muted rounded px-1 py-0.5">flow</code> query parameter. Open the link from your
-					inference response or the sessions tab.
+					此 URL 缺少 <code className="bg-muted rounded px-1 py-0.5">flow</code> 查询参数。请从推理响应或会话标签页中打开该链接。
 				</p>
 				<div className="mt-6">
 					<SessionsTabLink />
@@ -103,10 +102,9 @@ function OAuthAuthView() {
 		if (status === 403) {
 			return (
 				<CenteredCard>
-					<h1 className="text-xl font-semibold">This authentication flow isn't yours</h1>
+					<h1 className="text-xl font-semibold">此认证流程不属于您</h1>
 					<p className="text-muted-foreground mt-2 text-sm">
-						The pending flow belongs to a different identity. Ask the teammate whose VK or user identity triggered the original request to
-						complete it, or trigger a new request yourself.
+						待处理的流程属于另一个身份。请让触发原始请求的同事（其虚拟密钥或用户身份）完成该流程，或由您重新发起请求。
 					</p>
 					<div className="mt-6">
 						<SessionsTabLink />
@@ -117,10 +115,9 @@ function OAuthAuthView() {
 		if (status === 404) {
 			return (
 				<CenteredCard>
-					<h1 className="text-xl font-semibold">This authentication flow has expired or been completed</h1>
+					<h1 className="text-xl font-semibold">此认证流程已过期或已完成</h1>
 					<p className="text-muted-foreground mt-2 text-sm">
-						Pending flows expire after a short window. If you still need to authenticate, trigger the original action again so a fresh flow
-						is created.
+						待处理的流程会在短时间窗口后过期。如果您仍需要认证，请重新触发原始操作以创建新流程。
 					</p>
 					<div className="mt-6">
 						<SessionsTabLink />
@@ -130,7 +127,7 @@ function OAuthAuthView() {
 		}
 		return (
 			<CenteredCard>
-				<h1 className="text-xl font-semibold">Could not load this authentication flow</h1>
+				<h1 className="text-xl font-semibold">无法加载此认证流程</h1>
 				<p className="text-muted-foreground mt-2 text-sm">{getErrorMessage(error)}</p>
 			</CenteredCard>
 		);
@@ -149,14 +146,14 @@ function OAuthAuthView() {
 			window.location.href = res.authorize_url;
 		} catch (err) {
 			toast({
-				title: "Failed to start authentication",
+				title: "启动认证失败",
 				description: getErrorMessage(err),
 				variant: "destructive",
 			});
 		}
 	};
 
-	const mcpClientName = flow.mcp_client?.name || flow.mcp_client?.client_id || "MCP server";
+	const mcpClientName = flow.mcp_client?.name || flow.mcp_client?.client_id || "MCP 服务器";
 	const isReauth = flow.has_active_token === true;
 
 	return (
@@ -165,38 +162,36 @@ function OAuthAuthView() {
 				<ShieldCheck className="text-primary size-6" />
 			</div>
 			<h1 className="text-xl font-semibold tracking-tight">
-				{isReauth ? "Re-authenticate with" : "Authenticate with"} {mcpClientName}
+				使用 {mcpClientName} {isReauth ? "重新认证" : "认证"}
 			</h1>
 			<p className="text-muted-foreground mt-2 text-sm">
 				{isReauth ? (
 					<>
-						An active credential already exists for the binding below. Completing this flow will <strong>replace</strong> it with a fresh
-						credential. You can also close this tab to keep using the existing one.
+						下方绑定已存在有效凭据。完成此流程会用新凭据<strong>替换</strong>它。您也可以关闭此标签页，继续使用现有凭据。
 					</>
 				) : (
 					<>
-						You'll be redirected to the provider to sign in and grant access. Bifrost stores the resulting credential against the binding
-						below so this request and future ones can proceed automatically.
+						您将被重定向到提供商以登录并授权。Bifrost 会将生成的凭据保存到下方绑定，以便本次及后续请求自动进行。
 					</>
 				)}
 			</p>
 
 			<dl className="bg-muted/40 mt-6 space-y-3 rounded-sm border p-4 text-sm">
-				<DetailRow label="MCP client" value={mcpClientName} mono={!flow.mcp_client?.name} />
-				<DetailRow label="Bound to" value={<BindingValue flow={flow} />} />
-				<DetailRow label="Flow expires" value={formatExpiry(flow.expires_at)} />
+				<DetailRow label="MCP 客户端" value={mcpClientName} mono={!flow.mcp_client?.name} />
+				<DetailRow label="绑定至" value={<BindingValue flow={flow} />} />
+				<DetailRow label="流程过期时间" value={formatExpiry(flow.expires_at)} />
 			</dl>
 
 			<div className="mt-6 flex gap-3">
 				<Button onClick={handleAuthenticate} disabled={starting} data-testid="mcp-auth-authenticate-button">
 					{starting ? <Loader2 className="size-4 animate-spin" /> : <ExternalLink className="size-4" />}
-					<span>{isReauth ? "Re-authenticate" : "Authenticate"}</span>
+					<span>{isReauth ? "重新认证" : "认证"}</span>
 				</Button>
 				{showLoginOption && !showTempTokenSSOWarning ? (
 					<Button asChild variant="outline" data-testid="mcp-auth-login-instead-inline-button">
 						<a href={loginHref}>
 							<LogIn className="size-4" />
-							Log in instead
+							改为登录
 						</a>
 					</Button>
 				) : null}
@@ -226,9 +221,9 @@ function HeadersAuthView({ flowId }: { flowId: string }) {
 				<div className="mb-5 flex size-12 items-center justify-center rounded-full bg-emerald-500/10">
 					<CheckCircle2 className="size-6 text-emerald-600" />
 				</div>
-				<h1 className="text-xl font-semibold tracking-tight">Headers saved</h1>
+				<h1 className="text-xl font-semibold tracking-tight">请求头已保存</h1>
 				<p className="text-muted-foreground mt-2 text-sm">
-					Bifrost verified the connection and stored your credentials. You can close this tab and retry the original action.
+					Bifrost 已验证连接并保存了您的凭据。您可以关闭此标签页并重试原始操作。
 				</p>
 				<div className="mt-6 flex gap-3">
 					<SessionsTabLink />
@@ -253,10 +248,9 @@ function HeadersAuthView({ flowId }: { flowId: string }) {
 		if (status === 403) {
 			return (
 				<CenteredCard>
-					<h1 className="text-xl font-semibold">This submission flow isn't yours</h1>
+					<h1 className="text-xl font-semibold">此提交流程不属于您</h1>
 					<p className="text-muted-foreground mt-2 text-sm">
-						The pending flow belongs to a different identity. Ask the teammate whose VK or user identity triggered the original request to
-						complete it, or trigger a new request yourself.
+						待处理的流程属于另一个身份。请让触发原始请求的同事（其虚拟密钥或用户身份）完成该流程，或由您重新发起请求。
 					</p>
 					<div className="mt-6">
 						<SessionsTabLink />
@@ -267,9 +261,9 @@ function HeadersAuthView({ flowId }: { flowId: string }) {
 		if (status === 404 || status === 410) {
 			return (
 				<CenteredCard>
-					<h1 className="text-xl font-semibold">This submission link has expired or been used</h1>
+					<h1 className="text-xl font-semibold">此提交链接已过期或已被使用</h1>
 					<p className="text-muted-foreground mt-2 text-sm">
-						Submission flows expire after a short window. Trigger the original request again to get a fresh link.
+						提交流程会在短时间窗口后过期。请重新触发原始请求以获取新链接。
 					</p>
 					<div className="mt-6">
 						<SessionsTabLink />
@@ -279,7 +273,7 @@ function HeadersAuthView({ flowId }: { flowId: string }) {
 		}
 		return (
 			<CenteredCard>
-				<h1 className="text-xl font-semibold">Could not load this submission link</h1>
+				<h1 className="text-xl font-semibold">无法加载此提交链接</h1>
 				<p className="text-muted-foreground mt-2 text-sm">{getErrorMessage(error)}</p>
 			</CenteredCard>
 		);
@@ -291,16 +285,16 @@ function HeadersAuthView({ flowId }: { flowId: string }) {
 			void setSubmitted("true");
 		} catch (err) {
 			toast({
-				title: "Submission failed",
+				title: "提交失败",
 				description: getErrorMessage(err),
 				variant: "destructive",
 			});
 		}
 	};
 
-	const mcpClientName = detail.mcp_client?.name || detail.mcp_client?.client_id || "MCP server";
+	const mcpClientName = detail.mcp_client?.name || detail.mcp_client?.client_id || "MCP 服务器";
 	const isEdit = detail.has_active_credential;
-	const title = isEdit ? `Update credentials for ${mcpClientName}` : `Submit credentials for ${mcpClientName}`;
+	const title = isEdit ? `更新 ${mcpClientName} 的凭据` : `提交 ${mcpClientName} 的凭据`;
 
 	return (
 		<CenteredCard>
@@ -311,21 +305,19 @@ function HeadersAuthView({ flowId }: { flowId: string }) {
 			<p className="text-muted-foreground mt-2 text-sm">
 				{isEdit ? (
 					<>
-						This server already has stored credentials for you. Submitting new values <strong>replaces</strong> the existing entry; the
-						server will be re-verified before saving.
+						此服务器已为您保存了凭据。提交新值会<strong>替换</strong>现有记录；保存前将重新验证服务器。
 					</>
 				) : (
 					<>
-						This server requires you to supply your own API keys / tokens. The values you submit are stored encrypted and only used to
-						authenticate your own requests.
+						此服务器要求您提供自己的 API 密钥/令牌。您提交的值会加密存储，仅用于认证您自己的请求。
 					</>
 				)}
 			</p>
 
 			<dl className="bg-muted/40 mt-6 space-y-3 rounded-sm border p-4 text-sm">
-				<DetailRow label="MCP client" value={mcpClientName} mono={!detail.mcp_client?.name} />
-				<DetailRow label="Bound to" value={<HeadersBindingValue flow={detail} />} />
-				<DetailRow label="Flow expires" value={formatExpiry(detail.expires_at)} />
+				<DetailRow label="MCP 客户端" value={mcpClientName} mono={!detail.mcp_client?.name} />
+				<DetailRow label="绑定至" value={<HeadersBindingValue flow={detail} />} />
+				<DetailRow label="流程过期时间" value={formatExpiry(detail.expires_at)} />
 			</dl>
 
 			<div className="mt-6">
@@ -335,7 +327,7 @@ function HeadersAuthView({ flowId }: { flowId: string }) {
 					previouslySubmittedKeys={detail.submitted_keys}
 					onSubmit={handleSubmit}
 					busy={submitting}
-					submitLabel={isEdit ? "Save" : "Submit"}
+					submitLabel={isEdit ? "保存" : "提交"}
 					testIdPrefix="mcp-headers-submit"
 				/>
 			</div>
@@ -350,7 +342,7 @@ function HeadersBindingValue({ flow }: { flow: MCPHeadersFlowDetail }) {
 			return (
 				<span className="inline-flex items-center gap-2">
 					<UserRound className="text-muted-foreground size-3.5" />
-					<Badge variant="secondary">First signed-in user</Badge>
+					<Badge variant="secondary">首位登录用户</Badge>
 				</span>
 			);
 		}
@@ -378,29 +370,29 @@ function HeadersBindingValue({ flow }: { flow: MCPHeadersFlowDetail }) {
 			</span>
 		);
 	}
-	return <span className="text-muted-foreground italic">Unknown</span>;
+	return <span className="text-muted-foreground italic">未知</span>;
 }
 
 function CompletedFlowView({ flow }: { flow: MCPFlowDetail }) {
-	const mcpClientName = flow.mcp_client?.name || flow.mcp_client?.client_id || "this MCP server";
+	const mcpClientName = flow.mcp_client?.name || flow.mcp_client?.client_id || "此 MCP 服务器";
 	// has_active_token wins over the flow's row status: a pending flow with an
 	// existing active token means OAuth was re-initiated unnecessarily.
 	const effectivelyAuthorized = flow.status === "authorized" || flow.has_active_token;
 	const title = effectivelyAuthorized
-		? "Already authenticated"
+		? "已认证"
 		: flow.status === "expired"
-			? "This authentication flow has expired"
-			: "This authentication flow can no longer be completed";
+			? "此认证流程已过期"
+			: "此认证流程已无法完成";
 	const body = effectivelyAuthorized
-		? `The OAuth credential for ${mcpClientName} is already stored. You can close this tab.`
-		: "Trigger the original action again so a fresh flow is created.";
+		? `${mcpClientName} 的 OAuth 凭据已保存。您可以关闭此标签页。`
+		: "请重新触发原始操作以创建新流程。";
 	return (
 		<CenteredCard>
 			<h1 className="text-xl font-semibold tracking-tight">{title}</h1>
 			<p className="text-muted-foreground mt-2 text-sm">{body}</p>
 			<dl className="bg-muted/40 mt-6 space-y-3 rounded-sm border p-4 text-sm">
-				<DetailRow label="MCP client" value={mcpClientName} mono={!flow.mcp_client?.name} />
-				<DetailRow label="Bound to" value={<BindingValue flow={flow} />} />
+				<DetailRow label="MCP 客户端" value={mcpClientName} mono={!flow.mcp_client?.name} />
+				<DetailRow label="绑定至" value={<BindingValue flow={flow} />} />
 			</dl>
 			<div className="mt-6">
 				<SessionsTabLink />
@@ -425,7 +417,7 @@ function BindingValue({ flow }: { flow: MCPFlowDetail }) {
 			return (
 				<span className="inline-flex items-center gap-2">
 					<UserRound className="text-muted-foreground size-3.5" />
-					<Badge variant="secondary">First signed-in user</Badge>
+					<Badge variant="secondary">首位登录用户</Badge>
 				</span>
 			);
 		}
@@ -453,7 +445,7 @@ function BindingValue({ flow }: { flow: MCPFlowDetail }) {
 			</span>
 		);
 	}
-	return <span className="text-muted-foreground italic">Unknown</span>;
+	return <span className="text-muted-foreground italic">未知</span>;
 }
 
 function formatExpiry(iso: string): string {
@@ -461,11 +453,11 @@ function formatExpiry(iso: string): string {
 		const t = new Date(iso).getTime();
 		if (Number.isNaN(t)) return iso;
 		const diffMs = t - Date.now();
-		if (diffMs < 0) return "Expired";
+		if (diffMs < 0) return "已过期";
 		const mins = Math.floor(diffMs / 60_000);
-		if (mins < 1) return "in less than a minute";
-		if (mins === 1) return "in 1 minute";
-		return `in ${mins} minutes`;
+		if (mins < 1) return "不到 1 分钟后";
+		if (mins === 1) return "1 分钟后";
+		return `${mins} 分钟后`;
 	} catch {
 		return iso;
 	}
@@ -490,7 +482,7 @@ function SessionsTabLink({ variant = "outline" }: { variant?: "outline" | "ghost
 	}
 	return (
 		<Button asChild variant={variant} data-testid="mcp-auth-sessions-tab-link">
-			<Link to="/workspace/mcp-sessions">Open sessions tab</Link>
+			<Link to="/workspace/mcp-sessions">打开会话标签页</Link>
 		</Button>
 	);
 }
@@ -504,10 +496,9 @@ function SessionsTabLink({ variant = "outline" }: { variant?: "outline" | "ghost
 function InvalidLinkView() {
 	return (
 		<CenteredCard>
-			<h1 className="text-xl font-semibold tracking-tight">This authentication link is no longer valid</h1>
+			<h1 className="text-xl font-semibold tracking-tight">此认证链接已失效</h1>
 			<p className="text-muted-foreground mt-2 text-sm">
-				The link may have expired, been used already, invalid, or had its short-lived token stripped. Trigger the original action again so a
-				fresh authentication link is created.
+				该链接可能已过期、已被使用、无效，或其短期令牌已被移除。请重新触发原始操作以创建新的认证链接。
 			</p>
 		</CenteredCard>
 	);

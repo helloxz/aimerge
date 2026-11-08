@@ -165,12 +165,12 @@ export function MCPLogsDataTable({
 										{polling ? (
 											<>
 												<RefreshCw className="h-4 w-4 animate-spin" />
-												Waiting for new MCP logs...
+												正在等待新的 MCP 日志…
 											</>
 										) : (
 											<Button variant="ghost" size="sm" onClick={onRefresh} disabled={loading} data-testid="mcp-logs-table-refresh-btn">
 												<RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
-												Refresh
+												刷新
 											</Button>
 										)}
 									</div>
@@ -204,7 +204,7 @@ export function MCPLogsDataTable({
 							) : loading ? null : (
 								<TableRow>
 									<TableCell colSpan={columns.length} className="h-24 text-center">
-										No results found. Try adjusting your filters and/or time range.
+										未找到结果，请尝试调整筛选条件和/或时间范围。
 									</TableCell>
 								</TableRow>
 							)}
@@ -214,7 +214,7 @@ export function MCPLogsDataTable({
 				{/* Pagination Footer */}
 				<div className="flex items-center justify-between text-xs" data-testid="pagination">
 					<div className="text-muted-foreground flex items-center gap-2">
-						{startItemDisplay.toLocaleString()}-{endItemDisplay.toLocaleString()} of {totalItems.toLocaleString()} entries
+						{startItemDisplay.toLocaleString()}-{endItemDisplay.toLocaleString()}，共 {totalItems.toLocaleString()} 条
 					</div>
 
 					<div className="flex items-center gap-2">
@@ -224,15 +224,15 @@ export function MCPLogsDataTable({
 							onClick={() => goToPage(currentPage - 1)}
 							disabled={currentPage <= 1}
 							data-testid="prev-page"
-							aria-label="Previous page"
+							aria-label="上一页"
 						>
 							<ChevronLeft className="size-3" />
 						</Button>
 
 						<div className="flex items-center gap-1">
-							<span>Page</span>
+							<span>第</span>
 							<span>{currentPage}</span>
-							<span>of {totalPages}</span>
+							<span>/ {totalPages} 页</span>
 						</div>
 
 						<Button
@@ -241,7 +241,7 @@ export function MCPLogsDataTable({
 							onClick={() => goToPage(currentPage + 1)}
 							disabled={totalPages === 0 || currentPage >= totalPages}
 							data-testid="next-page"
-							aria-label="Next page"
+							aria-label="下一页"
 						>
 							<ChevronRight className="size-3" />
 						</Button>

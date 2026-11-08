@@ -59,7 +59,7 @@ function CodeBlock({ code, language, onLanguageChange, showLanguageSelect = fals
 						</SelectContent>
 					</Select>
 				)}
-				<Button variant="ghost" size="icon" onClick={() => copyToClipboard(code)} aria-label="Copy to clipboard">
+				<Button variant="ghost" size="icon" onClick={() => copyToClipboard(code)} aria-label="复制到剪贴板">
 					<Copy className="size-4" />
 				</Button>
 			</div>
@@ -248,30 +248,28 @@ if (response.choices[0].message.tool_calls) {
 			{error && (
 				<Alert>
 					<AlertTriangle className="h-4 w-4" />
-					<AlertDescription>
-						{isUnexpectedError ? "Looks like you haven't configured the log store in your config file." : error}
-					</AlertDescription>
+					<AlertDescription>{isUnexpectedError ? "看起来你还没有在配置文件中配置日志存储。" : error}</AlertDescription>
 				</Alert>
 			)}
 
 			<div className="w-full space-y-6">
 				<div className="flex flex-row items-center gap-2">
 					<div>
-						<h3 className="text-lg font-semibold">Get Started with MCP Tool Execution</h3>
-						<p className="text-muted-foreground text-sm">Execute your first MCP tool call to see logs appear</p>
+						<h3 className="text-lg font-semibold">开始使用 MCP 工具执行</h3>
+						<p className="text-muted-foreground text-sm">执行第一次 MCP 工具调用，即可看到日志</p>
 					</div>
 					<div className="ml-auto">{statusIndicator}</div>
 				</div>
 
 				<Tabs defaultValue="manual" className="w-full rounded-lg border">
 					<TabsList className="grid h-10 w-full grid-cols-2 rounded-t-lg rounded-b-none">
-						<TabsTrigger value="manual">Manual Tool Execution</TabsTrigger>
-						<TabsTrigger value="agent">Agent Mode (Auto-Execute)</TabsTrigger>
+						<TabsTrigger value="manual">手动执行工具</TabsTrigger>
+						<TabsTrigger value="agent">Agent 模式（自动执行）</TabsTrigger>
 					</TabsList>
 
 					<TabsContent value="manual" className="px-4">
 						<div className="text-muted-foreground mb-3 text-sm">
-							<p>Full control over tool approval. You explicitly execute each tool call via the API.</p>
+							<p>完全掌控工具审批。每次工具调用都需要你通过 API 显式执行。</p>
 						</div>
 						<CodeBlock
 							code={examples.manual[language]}
@@ -283,7 +281,7 @@ if (response.choices[0].message.tool_calls) {
 
 					<TabsContent value="agent" className="px-4">
 						<div className="text-muted-foreground mb-3 text-sm">
-							<p>Autonomous execution for pre-approved tools. Configure auto-executable tools in MCP Gateway settings.</p>
+							<p>对预先批准的工具自动执行。可在 MCP Gateway 设置中配置自动执行的工具。</p>
 						</div>
 						<CodeBlock
 							code={examples.agentMode[language]}
@@ -295,22 +293,22 @@ if (response.choices[0].message.tool_calls) {
 				</Tabs>
 
 				<div className="bg-muted/50 rounded-lg border p-4">
-					<h4 className="mb-2 text-sm font-semibold">Prerequisites</h4>
+					<h4 className="mb-2 text-sm font-semibold">前置条件</h4>
 					<ul className="text-muted-foreground space-y-1 text-sm">
 						<li className="flex items-start gap-2">
 							<span className="text-primary">1.</span>
-							<span>Configure MCP servers in the MCP Gateway (e.g., filesystem, web_search)</span>
+							<span>在 MCP Gateway 中配置 MCP 服务器（例如 filesystem、web_search）</span>
 						</li>
 						<li className="flex items-start gap-2">
 							<span className="text-primary">2.</span>
 							<span>
-								Set <code className="bg-muted rounded px-1">tools_to_execute</code> to whitelist available tools
+								将 <code className="bg-muted rounded px-1">tools_to_execute</code> 设置为可用工具的白名单
 							</span>
 						</li>
 						<li className="flex items-start gap-2">
 							<span className="text-primary">3.</span>
 							<span>
-								For Agent Mode: Configure <code className="bg-muted rounded px-1">tools_to_auto_execute</code> for autonomous execution
+								Agent 模式：配置 <code className="bg-muted rounded px-1">tools_to_auto_execute</code> 以启用自动执行
 							</span>
 						</li>
 					</ul>

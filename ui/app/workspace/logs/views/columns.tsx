@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { formatCompactNumber } from "@/lib/utils/numbers";
 import { ColumnDef } from "@tanstack/react-table";
 import { format, formatDistanceToNow } from "date-fns";
+import { zhCN } from "date-fns/locale";
 import { ArrowUpDown, MoreHorizontal, Trash2 } from "lucide-react";
 import { useState } from "react";
 
@@ -18,7 +19,7 @@ function LogActionsMenu({ log, onDelete }: { log: LogEntry; onDelete: (log: LogE
 	return (
 		<DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
 			<DropdownMenuTrigger asChild onClick={(event) => event.stopPropagation()}>
-				<Button variant="ghost" size="icon" data-testid="log-actions-btn" aria-label="Log actions" className="h-7 w-7">
+				<Button variant="ghost" size="icon" data-testid="log-actions-btn" aria-label="日志操作" className="h-7 w-7">
 					<MoreHorizontal className="h-4 w-4" />
 				</Button>
 			</DropdownMenuTrigger>
@@ -34,7 +35,7 @@ function LogActionsMenu({ log, onDelete }: { log: LogEntry; onDelete: (log: LogE
 					}}
 				>
 					<Trash2 className="h-4 w-4" />
-					Delete
+					删除
 				</DropdownMenuItem>
 			</DropdownMenuContent>
 		</DropdownMenu>
@@ -103,10 +104,10 @@ export function getMessage(log?: LogEntry) {
 	if (log?.object === "realtime.turn") {
 		const messages = getRealtimeTurnMessages(log);
 		const parts = [
-			messages.tool ? `Tool Result: ${messages.tool}` : "",
-			messages.user ? `User: ${messages.user}` : "",
-			messages.assistantToolCall ? `Assistant Tool Call: ${messages.assistantToolCall}` : "",
-			messages.assistant ? `Assistant: ${messages.assistant}` : "",
+			messages.tool ? `工具结果：${messages.tool}` : "",
+			messages.user ? `用户：${messages.user}` : "",
+			messages.assistantToolCall ? `助手工具调用：${messages.assistantToolCall}` : "",
+			messages.assistant ? `助手：${messages.assistant}` : "",
 		].filter(Boolean);
 		if (parts.length > 0) {
 			return parts.join("\n");
@@ -148,13 +149,13 @@ export function getMessage(log?: LogEntry) {
 	} else if (log?.speech_input) {
 		return log.speech_input.input;
 	} else if (log?.transcription_input) {
-		return "Audio file";
+		return "音频文件";
 	} else if (log?.image_generation_input?.prompt) {
 		return log.image_generation_input.prompt;
 	}
 	const obj = log?.object as string | undefined;
 	if (obj === "image_edit" || obj === "image_edit_stream" || obj === "image_variation") {
-		return "Image file";
+		return "图片文件";
 	}
 	if (log?.content_summary) {
 		return log.content_summary;
@@ -172,7 +173,7 @@ export function LogMessageCell({ log, contentClassName = "max-w-full" }: { log: 
 			{isLargePayload && (
 				<span
 					className="shrink-0 rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-700 dark:bg-amber-900/50 dark:text-amber-400"
-					title="Large payload - streamed directly to provider"
+					title="大负载：直接流式发送至提供商"
 				>
 					LP
 				</span>
@@ -180,18 +181,16 @@ export function LogMessageCell({ log, contentClassName = "max-w-full" }: { log: 
 			{realtimeMessages &&
 				(realtimeMessages.tool || realtimeMessages.user || realtimeMessages.assistantToolCall || realtimeMessages.assistant) ? (
 				<div className={cn(contentClassName, "font-mono text-sm font-normal leading-5")}>
-					{realtimeMessages.tool ? <div className="truncate">Tool Result: {realtimeMessages.tool}</div> : null}
-					{realtimeMessages.user ? <div className="truncate">User: {realtimeMessages.user}</div> : null}
-					{realtimeMessages.assistantToolCall ? (
-						<div className="truncate">Assistant Tool Call: {realtimeMessages.assistantToolCall}</div>
-					) : null}
-					{realtimeMessages.assistant ? <div className="truncate">Assistant: {realtimeMessages.assistant}</div> : null}
+					{realtimeMessages.tool ? <div className="truncate">工具结果：{realtimeMessages.tool}</div> : null}
+					{realtimeMessages.user ? <div className="truncate">用户：{realtimeMessages.user}</div> : null}
+					{realtimeMessages.assistantToolCall ? <div className="truncate">助手工具调用：{realtimeMessages.assistantToolCall}</div> : null}
+					{realtimeMessages.assistant ? <div className="truncate">助手：{realtimeMessages.assistant}</div> : null}
 				</div>
 			) : (
 				<div className={cn(contentClassName, "truncate font-mono text-[12px] font-normal")}>
 					{input ||
 						(isLargePayload
-							? `Large payload ${log.is_large_payload_request && log.is_large_payload_response ? "request & response" : log.is_large_payload_request ? "request" : "response"}`
+							? `大负载（${log.is_large_payload_request && log.is_large_payload_response ? "请求与响应" : log.is_large_payload_request ? "请求" : "响应"}）`
 							: "-")}
 				</div>
 			)}
@@ -241,7 +240,7 @@ function AttributionCell({
 					{value}
 				</span>
 			))}
-			{remaining > 0 && <span className="text-muted-foreground">+{remaining} more</span>}
+			{remaining > 0 && <span className="text-muted-foreground">+{remaining} 项</span>}
 		</div>
 	);
 }
@@ -266,7 +265,7 @@ export const createColumns = (
 			accessorKey: "timestamp",
 			header: ({ column }) => (
 				<Button variant="ghost" data-testid="logs-time-sort-btn" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-					Time
+					时间
 					<ArrowUpDown className="ml-2 h-4 w-4" />
 				</Button>
 			),
@@ -280,15 +279,17 @@ export const createColumns = (
 				}
 				return (
 					<div className="flex flex-col leading-tight">
-						<span className="font-mono text-xs tabular-nums">{format(date, "MMM dd  HH:mm:ss")}</span>
-						<span className="text-muted-foreground text-[10.5px] tabular-nums">{formatDistanceToNow(date, { addSuffix: true })}</span>
+						<span className="font-mono text-xs tabular-nums">{format(date, "MM-dd HH:mm:ss")}</span>
+						<span className="text-muted-foreground text-[10.5px] tabular-nums">
+							{formatDistanceToNow(date, { addSuffix: true, locale: zhCN })}
+						</span>
 					</div>
 				);
 			},
 		},
 		{
 			id: "request_type",
-			header: "Type",
+			header: "类型",
 			size: 150,
 			cell: ({ row }) => {
 				return (
@@ -306,13 +307,13 @@ export const createColumns = (
 		},
 		{
 			accessorKey: "input",
-			header: "Message",
+			header: "消息",
 			size: 350,
 			cell: ({ row }) => <LogMessageCell log={row.original} />,
 		},
 		{
 			accessorKey: "model",
-			header: "Model",
+			header: "模型",
 			size: 190,
 			cell: ({ row }) => {
 				const provider = row.original.provider as ProviderName | undefined;
@@ -332,7 +333,7 @@ export const createColumns = (
 			accessorKey: "latency",
 			header: ({ column }) => (
 				<Button variant="ghost" data-testid="logs-latency-sort-btn" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-					Latency
+					延迟
 					<ArrowUpDown className="ml-2 h-4 w-4" />
 				</Button>
 			),
@@ -358,7 +359,7 @@ export const createColumns = (
 			accessorKey: "tokens",
 			header: ({ column }) => (
 				<Button variant="ghost" data-testid="logs-tokens-sort-btn" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-					Tokens
+					Token
 					<ArrowUpDown className="ml-2 h-4 w-4" />
 				</Button>
 			),
@@ -400,7 +401,7 @@ export const createColumns = (
 			accessorKey: "cost",
 			header: ({ column }) => (
 				<Button variant="ghost" data-testid="logs-cost-sort-btn" onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}>
-					Cost
+					费用
 					<ArrowUpDown className="ml-2 h-4 w-4" />
 				</Button>
 			),
@@ -417,19 +418,19 @@ export const createColumns = (
 	const attributionColumns: ColumnDef<LogEntry>[] = [
 		{
 			id: "virtual_key",
-			header: "Virtual Key",
+			header: "虚拟密钥",
 			size: 170,
 			cell: ({ row }) => <AttributionCell name={row.original.virtual_key_name} id={row.original.virtual_key_id} />,
 		},
 		{
 			id: "routing_rule",
-			header: "Routing Rule",
+			header: "路由规则",
 			size: 170,
 			cell: ({ row }) => <AttributionCell name={row.original.routing_rule_name} id={row.original.routing_rule_id} />,
 		},
 		{
 			id: "team",
-			header: "Team",
+			header: "团队",
 			size: 150,
 			cell: ({ row }) => (
 				<AttributionCell
@@ -442,7 +443,7 @@ export const createColumns = (
 		},
 		{
 			id: "customer",
-			header: "Customer",
+			header: "客户",
 			size: 150,
 			cell: ({ row }) => (
 				<AttributionCell
@@ -455,13 +456,13 @@ export const createColumns = (
 		},
 		{
 			id: "user",
-			header: "User",
+			header: "用户",
 			size: 150,
 			cell: ({ row }) => <AttributionCell name={row.original.user_name} id={row.original.user_id} />,
 		},
 		{
 			id: "business_unit",
-			header: "Business Unit",
+			header: "业务单元",
 			size: 150,
 			cell: ({ row }) => (
 				<AttributionCell

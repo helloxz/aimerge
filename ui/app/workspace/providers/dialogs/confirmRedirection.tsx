@@ -20,17 +20,17 @@ export default function ConfirmRedirectionDialog({ show, onContinue, onCancel }:
 		<AlertDialog open={show}>
 			<AlertDialogContent>
 				<AlertDialogHeader>
-					<AlertDialogTitle>Confirm Redirection</AlertDialogTitle>
-					<AlertDialogDescription>You have unsaved data. Are you sure you want to continue?</AlertDialogDescription>
+					<AlertDialogTitle>确认跳转</AlertDialogTitle>
+					<AlertDialogDescription>你有未保存的数据，确定要继续吗？</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter className="mt-4">
-					<AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
+					<AlertDialogCancel onClick={onCancel}>取消</AlertDialogCancel>
 					<AlertDialogAction
 						onClick={() => {
 							onContinue();
 						}}
 					>
-						Continue
+						继续
 					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>

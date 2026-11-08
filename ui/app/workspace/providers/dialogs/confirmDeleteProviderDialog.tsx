@@ -31,7 +31,7 @@ export default function ConfirmDeleteProviderDialog({ show, onCancel, onDelete, 
 				onDelete();
 			})
 			.catch((err) => {
-				toast.error("Failed to delete provider", {
+				toast.error("删除提供商失败", {
 					description: getErrorMessage(err),
 				});
 			});
@@ -41,13 +41,13 @@ export default function ConfirmDeleteProviderDialog({ show, onCancel, onDelete, 
 		<AlertDialog open={show}>
 			<AlertDialogContent>
 				<AlertDialogHeader>
-					<AlertDialogTitle>Delete Provider</AlertDialogTitle>
-					<AlertDialogDescription>Are you sure you want to delete this provider? This action cannot be undone.</AlertDialogDescription>
+					<AlertDialogTitle>删除提供商</AlertDialogTitle>
+					<AlertDialogDescription>确定要删除该提供商吗？此操作无法撤销。</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
-					<AlertDialogCancel onClick={onCancel}>Cancel</AlertDialogCancel>
+					<AlertDialogCancel onClick={onCancel}>取消</AlertDialogCancel>
 					<AlertDialogAction onClick={onDeleteHandler} disabled={isDeletingProvider || !hasDeleteAccess}>
-						{isDeletingProvider ? "Deleting..." : "Delete"}
+						{isDeletingProvider ? "删除中…" : "删除"}
 					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>

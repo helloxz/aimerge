@@ -56,7 +56,7 @@ function MCPClientActionsMenu({
 					variant="ghost"
 					size="icon"
 					className="h-8 w-8"
-					aria-label="MCP server actions"
+					aria-label="MCP 服务器操作"
 					data-testid={`mcp-client-actions-${client.config.client_id}-btn`}
 				>
 					{isReconnecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <MoreHorizontal className="h-4 w-4" />}
@@ -83,7 +83,7 @@ function MCPClientActionsMenu({
 						}}
 					>
 						<PencilIcon className="h-4 w-4" />
-						Edit
+						编辑
 					</DropdownMenuItem>
 				)}
 				{hasUpdateAccess && (
@@ -97,7 +97,7 @@ function MCPClientActionsMenu({
 						}}
 					>
 						<RefreshCcw className="h-4 w-4" />
-						Reconnect
+						重连
 					</DropdownMenuItem>
 				)}
 				{hasDeleteAccess && (
@@ -111,7 +111,7 @@ function MCPClientActionsMenu({
 						}}
 					>
 						<Trash2 className="h-4 w-4" />
-						Delete
+						删除
 					</DropdownMenuItem>
 				)}
 			</DropdownMenuContent>
@@ -175,25 +175,25 @@ export default function MCPClientsTable({
 			setReconnectingClients((prev) => [...prev, client.config.client_id]);
 			await reconnectMCPClient(client.config.client_id).unwrap();
 			setReconnectingClients((prev) => prev.filter((id) => id !== client.config.client_id));
-			toast({ title: "Reconnected", description: `Client ${client.config.name} reconnected successfully.` });
+			toast({ title: "已重连", description: `客户端 ${client.config.name} 重连成功。` });
 			if (refetch) {
 				await refetch();
 			}
 		} catch (error) {
 			setReconnectingClients((prev) => prev.filter((id) => id !== client.config.client_id));
-			toast({ title: "Error", description: getErrorMessage(error), variant: "destructive" });
+			toast({ title: "错误", description: getErrorMessage(error), variant: "destructive" });
 		}
 	};
 
 	const handleDelete = async (client: MCPClient) => {
 		try {
 			await deleteMCPClient(client.config.client_id).unwrap();
-			toast({ title: "Deleted", description: `Client ${client.config.name} removed successfully.` });
+			toast({ title: "已删除", description: `客户端 ${client.config.name} 已成功移除。` });
 			if (refetch) {
 				await refetch();
 			}
 		} catch (error) {
-			toast({ title: "Error", description: getErrorMessage(error), variant: "destructive" });
+			toast({ title: "错误", description: getErrorMessage(error), variant: "destructive" });
 		}
 	};
 
@@ -222,10 +222,10 @@ export default function MCPClientsTable({
 			case "none":
 			case undefined:
 			case "":
-				return "None";
+				return "无";
 			case "headers":
 			case "per_user_headers":
-				return "Headers";
+				return "请求头";
 			case "oauth":
 			case "per_user_oauth":
 				return "OAuth";
@@ -238,10 +238,10 @@ export default function MCPClientsTable({
 		switch (type) {
 			case "per_user_oauth":
 			case "per_user_headers":
-				return "Per-User";
+				return "按用户";
 			case "oauth":
 			case "headers":
-				return "Shared";
+				return "共享";
 			default:
 				return "-";
 		}
@@ -320,21 +320,20 @@ export default function MCPClientsTable({
 			<AlertDialog open={!!clientToDelete} onOpenChange={(open) => !open && setClientToDelete(null)}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Remove MCP Server</AlertDialogTitle>
+						<AlertDialogTitle>移除 MCP 服务器</AlertDialogTitle>
 						<AlertDialogDescription>
-							Are you sure you want to remove MCP server {clientToDelete?.config.name}? You will need to reconnect the server to continue
-							using it.
+							确定要移除 MCP 服务器 {clientToDelete?.config.name} 吗？移除后需要重新连接才能继续使用。
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogCancel>取消</AlertDialogCancel>
 						<AlertDialogAction
 							onClick={() => {
 								if (clientToDelete) void handleDelete(clientToDelete);
 							}}
 							className="bg-destructive hover:bg-destructive/90"
 						>
-							Delete
+							删除
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
@@ -342,26 +341,26 @@ export default function MCPClientsTable({
 
 			<div className="mb-4 flex items-center justify-between gap-4">
 				<div>
-					<h2 className="text-lg font-semibold tracking-tight">MCP Server Catalog</h2>
-					<p className="text-muted-foreground text-sm">Manage servers that can connect to the MCP Tools endpoint.</p>
+					<h2 className="text-lg font-semibold tracking-tight">MCP 服务器目录</h2>
+					<p className="text-muted-foreground text-sm">管理可连接到 MCP 工具端点的服务器。</p>
 				</div>
 				<div className="flex gap-2">
 					<MCPUsageGuideSheet />
 					<Button asChild variant="outline" data-testid="mcp-library-link-btn" className="h-8">
 						<Link to="/workspace/mcp-registry/library">
 							<Box />
-							<span className="hidden sm:inline">Library</span>
+							<span className="hidden sm:inline">服务器库</span>
 						</Link>
 					</Button>
 					<Button
 						onClick={handleCreate}
 						disabled={!hasCreateMCPClientAccess}
 						data-testid="create-mcp-client-btn"
-						aria-label="New MCP Server"
+						aria-label="新建 MCP 服务器"
 						className="h-8 gap-2"
 					>
 						<Plus />
-						<span className="hidden sm:inline">New MCP Server</span>
+						<span className="hidden sm:inline">新建 MCP 服务器</span>
 					</Button>
 				</div>
 			</div>
@@ -371,8 +370,8 @@ export default function MCPClientsTable({
 				<div className="relative max-w-sm flex-1">
 					<Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
 					<Input
-						aria-label="Search MCP servers by name"
-						placeholder="Search by name..."
+						aria-label="按名称搜索 MCP 服务器"
+						placeholder="按名称搜索..."
 						value={search}
 						onChange={(e) => onSearchChange(e.target.value)}
 						className="pl-9"
@@ -387,7 +386,7 @@ export default function MCPClientsTable({
 						onClick={onServerFilterClear}
 						data-testid="mcp-client-server-filter-clear-btn"
 					>
-						Server filter
+						服务器筛选
 						<X className="size-3" />
 					</Button>
 				)}
@@ -398,16 +397,16 @@ export default function MCPClientsTable({
 					<Table data-testid="mcp-clients-table" className="w-full min-w-[1516px] table-fixed">
 						<TableHeader className="sticky top-0">
 							<TableRow className="bg-muted/50">
-								<TableHead className="w-[260px] font-semibold">Name</TableHead>
-								<TableHead className="w-[150px] font-semibold">Connection Type</TableHead>
-								<TableHead className="w-[150px] font-semibold">Auth Type</TableHead>
-								<TableHead className="w-[140px] font-semibold">Auth Scope</TableHead>
-								<TableHead className="w-[120px] font-semibold">Code Mode</TableHead>
-								<TableHead className="w-[120px] font-semibold">VK Access</TableHead>
-								<TableHead className="w-[130px] font-semibold">Enabled Tools</TableHead>
-								<TableHead className="w-[160px] font-semibold">Auto-execute Tools</TableHead>
-								<TableHead className="w-[140px] font-semibold">State</TableHead>
-								<TableHead className="w-[90px] font-semibold">Status</TableHead>
+								<TableHead className="w-[260px] font-semibold">名称</TableHead>
+								<TableHead className="w-[150px] font-semibold">连接类型</TableHead>
+								<TableHead className="w-[150px] font-semibold">认证类型</TableHead>
+								<TableHead className="w-[140px] font-semibold">认证范围</TableHead>
+								<TableHead className="w-[120px] font-semibold">代码模式</TableHead>
+								<TableHead className="w-[120px] font-semibold">虚拟密钥访问</TableHead>
+								<TableHead className="w-[130px] font-semibold">已启用工具</TableHead>
+								<TableHead className="w-[160px] font-semibold">自动执行工具</TableHead>
+								<TableHead className="w-[140px] font-semibold">状态</TableHead>
+								<TableHead className="w-[90px] font-semibold">启用状态</TableHead>
 								<TableHead className={`bg-muted/50 sticky right-0 z-10 w-14 text-right ${PIN_SHADOW_RIGHT}`}></TableHead>
 							</TableRow>
 						</TableHeader>
@@ -415,7 +414,7 @@ export default function MCPClientsTable({
 							{mcpClients.length === 0 ? (
 								<TableRow>
 									<TableCell colSpan={11} className="h-24 text-center">
-										<span className="text-muted-foreground text-sm">No matching MCP servers found.</span>
+										<span className="text-muted-foreground text-sm">未找到匹配的 MCP 服务器。</span>
 									</TableCell>
 								</TableRow>
 							) : (
@@ -456,15 +455,15 @@ export default function MCPClientsTable({
 														c.state == "connected" ? MCP_STATUS_COLORS[c.config.is_code_mode_client ? "connected" : "disconnected"] : ""
 													}
 												>
-													{c.state == "connected" ? <>{c.config.is_code_mode_client ? "Enabled" : "Disabled"}</> : "-"}
+													{c.state == "connected" ? <>{c.config.is_code_mode_client ? "已启用" : "已禁用"}</> : "-"}
 												</Badge>
 											</TableCell>
 											<TableCell data-testid="mcp-client-vk-access">
 												{c.config.allow_on_all_virtual_keys
-													? "All"
+													? "全部"
 													: c.vk_configs?.length
-														? `${c.vk_configs.length} ${c.vk_configs.length === 1 ? "VK" : "VKs"}`
-														: "None"}
+														? `${c.vk_configs.length} 个虚拟密钥`
+														: "无"}
 											</TableCell>
 											<TableCell>
 												{c.state == "connected" ? (
@@ -507,11 +506,11 @@ export default function MCPClientsTable({
 														})
 															.unwrap()
 															.then(() => {
-																toast({ title: `Server ${checked ? "enabled" : "disabled"} successfully` });
+																toast({ title: checked ? "服务器已启用" : "服务器已停用" });
 																if (refetch) refetch();
 															})
 															.catch((err) => {
-																toast({ title: "Error", description: getErrorMessage(err), variant: "destructive" });
+																toast({ title: "错误", description: getErrorMessage(err), variant: "destructive" });
 															})
 															.finally(() => {
 																setTogglingClientIds((prev) => {
@@ -550,8 +549,8 @@ export default function MCPClientsTable({
 				{totalCount > 0 && (
 					<div className="flex shrink-0 items-center justify-between text-xs" data-testid="pagination">
 						<div className="text-muted-foreground flex items-center gap-2">
-							{(offset + 1).toLocaleString()}-{Math.min(offset + limit, totalCount).toLocaleString()} of {totalCount.toLocaleString()}{" "}
-							entries
+							第 {(offset + 1).toLocaleString()}-{Math.min(offset + limit, totalCount).toLocaleString()} 条，共{" "}
+							{totalCount.toLocaleString()} 条
 						</div>
 
 						<div className="flex items-center gap-2">
@@ -561,15 +560,15 @@ export default function MCPClientsTable({
 								onClick={() => onOffsetChange(Math.max(0, offset - limit))}
 								disabled={offset === 0}
 								data-testid="mcp-clients-pagination-prev-btn"
-								aria-label="Previous page"
+								aria-label="上一页"
 							>
 								<ChevronLeft className="size-3" />
 							</Button>
 
 							<div className="flex items-center gap-1">
-								<span>Page</span>
+								<span>第</span>
 								<span>{Math.floor(offset / limit) + 1}</span>
-								<span>of {Math.ceil(totalCount / limit)}</span>
+								<span>/ {Math.ceil(totalCount / limit)} 页</span>
 							</div>
 
 							<Button
@@ -578,7 +577,7 @@ export default function MCPClientsTable({
 								onClick={() => onOffsetChange(offset + limit)}
 								disabled={offset + limit >= totalCount}
 								data-testid="mcp-clients-pagination-next-btn"
-								aria-label="Next page"
+								aria-label="下一页"
 							>
 								<ChevronRight className="size-3" />
 							</Button>

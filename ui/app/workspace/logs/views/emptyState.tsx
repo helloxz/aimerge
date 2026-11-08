@@ -244,17 +244,15 @@ const result = await chain.invoke({ input: "What is LangChain?" });`,
 			{error && (
 				<Alert>
 					<AlertTriangle className="h-4 w-4" />
-					<AlertDescription>
-						{isUnexpectedError ? "Looks like you haven't configured the log store in your config file." : error}
-					</AlertDescription>
+					<AlertDescription>{isUnexpectedError ? "看起来你还没有在配置文件中配置日志存储。" : error}</AlertDescription>
 				</Alert>
 			)}
 
 			<div className="w-full space-y-6 p-4">
 				<div className="flex flex-row items-center gap-2">
 					<div>
-						<h3 className="text-lg font-semibold">Integrate under 60 seconds</h3>
-						<p className="text-muted-foreground text-sm">Send your first request to get started</p>
+						<h3 className="text-lg font-semibold">60 秒内完成接入</h3>
+						<p className="text-muted-foreground text-sm">发送第一个请求即可开始</p>
 					</div>
 				</div>
 

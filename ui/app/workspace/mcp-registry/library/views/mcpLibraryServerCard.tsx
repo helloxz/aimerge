@@ -41,15 +41,15 @@ export function transportIcon(connectionType: string) {
 export function authLabel(authType?: string): string {
 	switch (authType) {
 		case "headers":
-			return "Headers";
+			return "请求头";
 		case "oauth":
 			return "OAuth";
 		case "per_user_headers":
-			return "User headers";
+			return "用户请求头";
 		case "per_user_oauth":
-			return "User OAuth";
+			return "用户 OAuth";
 		default:
-			return "No auth";
+			return "无认证";
 	}
 }
 
@@ -69,7 +69,7 @@ export function MCPLibraryServerCard({ server, isInstalled, canCreateMCPClient, 
 	const handleDelete = async () => {
 		try {
 			await deleteEntry(server.id).unwrap();
-			toast.success(`"${server.name}" removed from the library.`);
+			toast.success(`已从服务器库移除“${server.name}”。`);
 			setConfirmOpen(false);
 		} catch (error) {
 			toast.error(getErrorMessage(error));
@@ -104,8 +104,8 @@ export function MCPLibraryServerCard({ server, isInstalled, canCreateMCPClient, 
 								<span className="block truncate">{server.name}</span>
 							</CardTitle>
 							<div className="flex shrink-0 items-center gap-1.5">
-								{isCustom && <Badge variant="outline">Custom</Badge>}
-								{isInstalled && <Badge variant="success">Installed</Badge>}
+								{isCustom && <Badge variant="outline">自定义</Badge>}
+								{isInstalled && <Badge variant="success">已安装</Badge>}
 							</div>
 						</div>
 						<div className="flex min-w-0 flex-wrap items-center gap-1.5">
@@ -114,13 +114,13 @@ export function MCPLibraryServerCard({ server, isInstalled, canCreateMCPClient, 
 									{server.category}
 								</Badge>
 							)}
-							{server.publisher && <span className="text-muted-foreground min-w-0 truncate text-xs">by {server.publisher}</span>}
+							{server.publisher && <span className="text-muted-foreground min-w-0 truncate text-xs">由 {server.publisher} 提供</span>}
 						</div>
 					</div>
 				</div>
 			</CardHeader>
 			<CardContent className="flex flex-1 flex-col gap-3 px-4 py-3">
-				<CardDescription className="line-clamp-2 min-h-10 leading-5">{server.description || "No description available."}</CardDescription>
+				<CardDescription className="line-clamp-2 min-h-10 leading-5">{server.description || "暂无描述。"}</CardDescription>
 				{server.tags && server.tags.length > 0 && (
 					<div className="flex min-w-0 flex-wrap items-center gap-1.5">
 						{server.tags.slice(0, MAX_VISIBLE_TAGS).map((tag) => (
@@ -165,13 +165,13 @@ export function MCPLibraryServerCard({ server, isInstalled, canCreateMCPClient, 
 										variant="outline"
 										size="sm"
 										onClick={() => setConfirmOpen(true)}
-										aria-label={`Remove ${server.name} from library`}
+										aria-label={`从服务器库移除 ${server.name}`}
 										data-testid={`mcp-library-delete-${server.slug}`}
 									>
 										<Trash2 className="h-4 w-4" />
 									</Button>
 								</TooltipTrigger>
-								<TooltipContent>Remove from library</TooltipContent>
+								<TooltipContent>从服务器库移除</TooltipContent>
 							</Tooltip>
 						</div>
 					)}
@@ -182,7 +182,7 @@ export function MCPLibraryServerCard({ server, isInstalled, canCreateMCPClient, 
 									asChild
 									variant="outline"
 									size="sm"
-									aria-label={`Open ${server.name} documentation`}
+									aria-label={`打开 ${server.name} 的文档`}
 									data-testid={`mcp-library-docs-${server.slug}`}
 								>
 									<a href={server.docs_url} target="_blank" rel="noreferrer">
@@ -190,12 +190,12 @@ export function MCPLibraryServerCard({ server, isInstalled, canCreateMCPClient, 
 									</a>
 								</Button>
 							</TooltipTrigger>
-							<TooltipContent>Documentation</TooltipContent>
+							<TooltipContent>文档</TooltipContent>
 						</Tooltip>
 					)}
 					{isInstalled ? (
 						<Button asChild size="sm" data-testid={`mcp-library-open-${server.slug}`}>
-							<Link to="/workspace/mcp-registry">Open</Link>
+							<Link to="/workspace/mcp-registry">打开</Link>
 						</Button>
 					) : (
 						<Button
@@ -204,7 +204,7 @@ export function MCPLibraryServerCard({ server, isInstalled, canCreateMCPClient, 
 							disabled={!canCreateMCPClient}
 							data-testid={`mcp-library-install-${server.slug}`}
 						>
-							Install
+							安装
 						</Button>
 					)}
 				</div>

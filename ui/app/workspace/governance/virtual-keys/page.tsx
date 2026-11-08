@@ -72,7 +72,7 @@ export default function GovernanceVirtualKeysPage() {
 		const errorKey = `${!!vkError}`;
 		if (shownErrorsRef.current.has(errorKey)) return;
 		shownErrorsRef.current.add(errorKey);
-		toast.error(`Failed to load virtual keys: ${getErrorMessage(vkError)}`);
+		toast.error(`加载虚拟密钥失败：${getErrorMessage(vkError)}`);
 	}, [vkError]);
 
 	if (isLoading) {

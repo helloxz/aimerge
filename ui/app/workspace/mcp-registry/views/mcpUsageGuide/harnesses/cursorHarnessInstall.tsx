@@ -46,16 +46,16 @@ export function CursorHarnessInstall({
 						<SelectValue />
 					</SelectTrigger>
 					<SelectContent>
-						<SelectItem value="global">Global</SelectItem>
-						<SelectItem value="project">Project</SelectItem>
+						<SelectItem value="global">全局</SelectItem>
+						<SelectItem value="project">项目</SelectItem>
 					</SelectContent>
 				</Select>
 			}
-			copySuccessMessage="Config copied"
+			copySuccessMessage="配置已复制"
 			deeplink={deeplink}
-			emptyMessage={virtualKey ? "Select servers or use Gateway root." : "Select a virtual key to generate the config."}
+			emptyMessage={virtualKey ? "请选择服务器，或使用网关根路径。" : "请选择虚拟密钥以生成配置。"}
 			harnessName="Cursor"
-			label="Config"
+			label="配置"
 			logoSrc="/images/harness/cursor.svg"
 			registrationLabel={`${configPath} · ${getRegistrationLabel(serverScope, selectedServers)}`}
 		/>

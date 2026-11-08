@@ -65,21 +65,21 @@ export default function PerformanceTuningView() {
 			const maxBodySize = Number.parseInt(localValues.max_request_body_size_mb);
 
 			if (isNaN(poolSize) || poolSize <= 0) {
-				toast.error("Initial pool size must be a positive number.");
+				toast.error("初始连接池大小必须为正数。");
 				return;
 			}
 
 			if (isNaN(maxBodySize) || maxBodySize <= 0) {
-				toast.error("Max request body size must be a positive number.");
+				toast.error("请求体最大大小必须为正数。");
 				return;
 			}
 
 			if (!bifrostConfig) {
-				toast.error("Configuration not loaded. Please refresh and try again.");
+				toast.error("配置尚未加载，请刷新后重试。");
 				return;
 			}
 			await updateCoreConfig({ ...bifrostConfig, client_config: localConfig }).unwrap();
-			toast.success("Performance settings updated successfully.");
+			toast.success("性能设置已更新。");
 		} catch (error) {
 			toast.error(getErrorMessage(error));
 		}
@@ -88,15 +88,14 @@ export default function PerformanceTuningView() {
 	return (
 		<div className="mx-auto w-full max-w-4xl space-y-4">
 			<div>
-				<h2 className="text-lg font-semibold tracking-tight">Performance Tuning</h2>
-				<p className="text-muted-foreground text-sm">Configure performance-related settings.</p>
+				<h2 className="text-lg font-semibold tracking-tight">性能调优</h2>
+				<p className="text-muted-foreground text-sm">配置与性能相关的设置。</p>
 			</div>
 
 			<Alert variant="destructive">
 				<AlertTriangle className="h-4 w-4" />
 				<AlertDescription>
-					These settings require a Bifrost service restart to take effect. Current connections will continue with existing settings until
-					restart.
+					这些设置需要重启 Bifrost 服务才能生效。重启前，现有连接将继续使用当前设置。
 				</AlertDescription>
 			</Alert>
 
@@ -106,9 +105,9 @@ export default function PerformanceTuningView() {
 					<div className="flex items-center justify-between space-x-2 rounded-sm border p-4">
 						<div className="space-y-0.5">
 							<label htmlFor="initial-pool-size" className="text-sm font-medium">
-								Initial Pool Size
+								初始连接池大小
 							</label>
-							<p className="text-muted-foreground text-sm">The initial connection pool size.</p>
+							<p className="text-muted-foreground text-sm">连接池的初始大小。</p>
 						</div>
 						<Input
 							id="initial-pool-size"
@@ -127,9 +126,9 @@ export default function PerformanceTuningView() {
 					<div className="flex items-center justify-between space-x-2 rounded-sm border p-4">
 						<div className="space-y-0.5">
 							<label htmlFor="max-request-body-size-mb" className="text-sm font-medium">
-								Max Request Body Size (MB)
+								请求体最大大小（MB）
 							</label>
-							<p className="text-muted-foreground text-sm">Maximum size of request body in megabytes.</p>
+							<p className="text-muted-foreground text-sm">请求体的最大大小，单位为 MB。</p>
 						</div>
 						<Input
 							id="max-request-body-size-mb"
@@ -145,7 +144,7 @@ export default function PerformanceTuningView() {
 			</div>
 			<div className="flex justify-end pt-2">
 				<Button onClick={handleSave} disabled={!hasChanges || isLoading || !hasSettingsUpdateAccess}>
-					{isLoading ? "Saving..." : "Save Changes"}
+					{isLoading ? "保存中…" : "保存更改"}
 				</Button>
 			</div>
 		</div>
@@ -153,5 +152,5 @@ export default function PerformanceTuningView() {
 }
 
 const RestartWarning = () => {
-	return <div className="text-muted-foreground mt-2 pl-4 text-xs font-semibold">Need to restart Bifrost to apply changes.</div>;
+	return <div className="text-muted-foreground mt-2 pl-4 text-xs font-semibold">需要重启 Bifrost 以应用更改。</div>;
 };

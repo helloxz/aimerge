@@ -5,7 +5,7 @@ import { RbacOperation, RbacResource, useRbac } from "@enterprise/lib";
 function RouteComponent() {
 	const hasAlertingAccess = useRbac(RbacResource.Governance, RbacOperation.View);
 	if (!hasAlertingAccess) {
-		return <NoPermissionView entity="alerting" />;
+		return <NoPermissionView entity="告警" />;
 	}
 	return <Outlet />;
 }

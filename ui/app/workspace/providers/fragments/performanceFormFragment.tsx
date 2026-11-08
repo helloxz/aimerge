@@ -58,11 +58,11 @@ export function PerformanceFormFragment({ provider }: PerformanceFormFragmentPro
 		updateProvider(updatedProvider)
 			.unwrap()
 			.then(() => {
-				toast.success("Provider configuration updated successfully");
+				toast.success("提供商配置已更新");
 				form.reset(data);
 			})
 			.catch((err) => {
-				toast.error("Failed to update provider configuration", {
+				toast.error("更新提供商配置失败", {
 					description: getErrorMessage(err),
 				});
 			});
@@ -80,7 +80,7 @@ export function PerformanceFormFragment({ provider }: PerformanceFormFragmentPro
 								name="concurrency_and_buffer_size.concurrency"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Concurrency</FormLabel>
+										<FormLabel>并发数</FormLabel>
 										<FormControl>
 											<Input
 												type="number"
@@ -113,7 +113,7 @@ export function PerformanceFormFragment({ provider }: PerformanceFormFragmentPro
 								name="concurrency_and_buffer_size.buffer_size"
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Buffer Size</FormLabel>
+										<FormLabel>缓冲区大小</FormLabel>
 										<FormControl>
 											<Input
 												type="number"
@@ -150,7 +150,7 @@ export function PerformanceFormFragment({ provider }: PerformanceFormFragmentPro
 						disabled={!form.formState.isDirty || !hasUpdateProviderAccess || isUpdatingProvider}
 						isLoading={isUpdatingProvider}
 					>
-						Save Performance Configuration
+						保存性能配置
 					</Button>
 				</div>
 			</form>

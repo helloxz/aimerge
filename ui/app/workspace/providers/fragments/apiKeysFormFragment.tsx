@@ -34,9 +34,9 @@ function BatchAPIFormField({ control }: { control: Control<any>; form: UseFormRe
 			render={({ field }) => (
 				<FormItem className="flex flex-row items-center justify-between rounded-sm border p-2">
 					<div className="space-y-1.5">
-						<FormLabel>Use for Batch APIs</FormLabel>
+						<FormLabel>用于 Batch API</FormLabel>
 						<FormDescription>
-							Enable this key for batch API operations. Only keys with this enabled will be used for batch requests.
+							为该密钥启用 Batch API 操作。只有启用了此项的密钥才会用于批处理请求。
 						</FormDescription>
 					</div>
 					<FormControl>
@@ -166,9 +166,9 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						name={`key.name`}
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Name</FormLabel>
+								<FormLabel>名称</FormLabel>
 								<FormControl>
-									<Input placeholder="Production Key" type="text" {...field} />
+									<Input placeholder="生产密钥" type="text" {...field} />
 								</FormControl>
 								<FormMessage />
 							</FormItem>
@@ -181,7 +181,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 					render={({ field }) => (
 						<FormItem>
 							<div className="flex items-center gap-2">
-								<FormLabel>Weight</FormLabel>
+								<FormLabel>权重</FormLabel>
 								<TooltipProvider>
 									<Tooltip>
 										<TooltipTrigger asChild>
@@ -191,8 +191,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 										</TooltipTrigger>
 										<TooltipContent className="max-w-sm">
 											<p>
-												Determines traffic distribution between keys. Higher weights receive more requests. Not used when adaptive load
-												balancing is enabled - key selection is then based on live performance.
+												决定密钥之间的流量分配。权重越高，收到的请求越多。启用自适应负载均衡后不再使用此值 —— 此时密钥选择基于实时性能。
 											</p>
 										</TooltipContent>
 									</Tooltip>
@@ -234,7 +233,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 					name={`key.value`}
 					render={({ field }) => (
 						<FormItem>
-							<FormLabel>API Key {isVLLM ? "(Optional)" : ""}</FormLabel>
+							<FormLabel>API Key {isVLLM ? "（可选）" : ""}</FormLabel>
 							<FormControl>
 								<SecretVarInput placeholder="API Key or env.MY_KEY" type="text" {...field} />
 							</FormControl>
@@ -251,7 +250,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						render={({ field }) => (
 							<FormItem>
 								<div className="flex items-center gap-2">
-									<FormLabel>Allowed Models</FormLabel>
+									<FormLabel>允许的模型</FormLabel>
 									<TooltipProvider>
 										<Tooltip>
 											<TooltipTrigger asChild>
@@ -261,9 +260,9 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 											</TooltipTrigger>
 											<TooltipContent className="max-w-sm">
 												<p>
-													Select specific models this key applies to, or choose "Allow All Models" to allow all. Leave empty to deny all.
-													Aliases must be added by their alias name - listing only the underlying model does not allow the alias (an alias
-													best-model → gpt-4o requires "best-model" here, not just "gpt-4o").
+													选择该密钥适用的具体模型，或选择“允许全部模型”以放行所有模型。留空则全部拒绝。
+													别名必须按别名添加 —— 仅列出底层模型不会放行别名（例如别名
+													best-model → gpt-4o 需要在此填写 "best-model"，而不只是 "gpt-4o"）。
 												</p>
 											</TooltipContent>
 										</Tooltip>
@@ -288,10 +287,10 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 										}}
 										placeholder={
 											(field.value || []).includes("*")
-												? "All models allowed"
+												? "允许全部模型"
 												: (field.value || []).length === 0
-													? "No models (deny all)"
-													: "Search models..."
+													? "无模型（全部拒绝）"
+													: "搜索模型…"
 										}
 										unfiltered={true}
 									/>
@@ -306,7 +305,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						render={({ field }) => (
 							<FormItem data-testid="apikey-blacklisted-models-field">
 								<div className="flex items-center gap-2">
-									<FormLabel>Blocked Models</FormLabel>
+									<FormLabel>屏蔽的模型</FormLabel>
 									<TooltipProvider>
 										<Tooltip>
 											<TooltipTrigger asChild>
@@ -316,9 +315,9 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 											</TooltipTrigger>
 											<TooltipContent className="max-w-sm">
 												<p>
-													Models this key must never serve. The denylist always wins - if a model appears in both Allowed Models and here,
-													it is blocked. Select "All Models" to block every model on this key. Aliases are matched by their alias name -
-													blocking only the underlying model does not block aliases that point to it.
+													该密钥绝不能提供的模型。拒绝列表始终优先 —— 若某个模型同时出现在允许的模型和此处，则会被屏蔽。
+													选择“全部模型”可屏蔽该密钥上的所有模型。别名按别名匹配 ——
+													仅屏蔽底层模型不会屏蔽指向它的别名。
 												</p>
 											</TooltipContent>
 										</Tooltip>
@@ -343,10 +342,10 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 										}}
 										placeholder={
 											(field.value || []).includes("*")
-												? "All models blocked"
+												? "已屏蔽全部模型"
 												: (field.value || []).length === 0
-													? "No models blocked"
-													: "Search models..."
+													? "未屏蔽任何模型"
+													: "搜索模型…"
 										}
 										unfiltered={true}
 									/>
@@ -360,11 +359,11 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						name={`key.aliases`}
 						render={({ field }) => (
 							<FormItem data-testid="apikey-deployments-field">
-								<FormLabel>Deployments (Optional)</FormLabel>
+								<FormLabel>部署（可选）</FormLabel>
 								<FormDescription>
-									Map a request model name to the provider&apos;s identifier (deployment name, inference profile ID, fine-tuned endpoint ID,
-									etc.). Expand a row to set the canonical model name, model family, and provider-specific overrides - these power
-									cost/pricing logs and family-based routing.
+									将请求中的模型名称映射到提供商的标识（部署名称、推理配置文件 ID、微调端点 ID 等）。
+									展开某一行可设置规范模型名称、模型家族和提供商专用覆盖 —— 这些信息用于成本/定价日志
+									以及基于家族的路由。
 								</FormDescription>
 								<FormControl>
 									<div data-testid="apikey-deployments-table">
@@ -389,7 +388,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 				<div className="space-y-4">
 					<Separator className="my-6" />
 					<div className="space-y-2">
-						<FormLabel>Authentication Method</FormLabel>
+						<FormLabel>认证方式</FormLabel>
 						<Tabs
 							value={azureAuthType}
 							onValueChange={(v) => {
@@ -410,13 +409,13 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						>
 							<TabsList className="grid w-full grid-cols-3">
 								<TabsTrigger data-testid="apikey-azure-default-credential-tab" value="default_credential">
-									Default Credential
+									默认凭证
 								</TabsTrigger>
 								<TabsTrigger data-testid="apikey-azure-api-key-tab" value="api_key">
 									API Key
 								</TabsTrigger>
 								<TabsTrigger data-testid="apikey-azure-entra-id-tab" value="entra_id">
-									Entra ID (Service Principal)
+									Entra ID（服务主体）
 								</TabsTrigger>
 							</TabsList>
 						</Tabs>
@@ -428,7 +427,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 							render={({ field }) => (
 								<FormItem>
 									<FormLabel>
-										API Key {isVertex ? "(Supported only for gemini and fine-tuned models)" : isVLLM ? "(Optional)" : ""}
+										API Key {isVertex ? "（仅支持 gemini 与微调模型）" : isVLLM ? "（可选）" : ""}
 									</FormLabel>
 									<FormControl>
 										<SecretVarInput placeholder="API Key or env.MY_KEY" type="text" {...field} />
@@ -440,8 +439,8 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 					)}
 					{azureAuthType === "default_credential" && (
 						<p className="text-muted-foreground text-sm">
-							Uses DefaultAzureCredential - automatically detects managed identity on Azure VMs and containers, workload identity in AKS,
-							environment variables, and Azure CLI. No credentials required.
+							使用 DefaultAzureCredential —— 自动检测 Azure VM 和容器中的托管标识、AKS 中的工作负载标识、
+							环境变量以及 Azure CLI。无需提供凭证。
 						</p>
 					)}
 
@@ -450,7 +449,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						name={`key.azure_key_config.endpoint`}
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Endpoint (Required)</FormLabel>
+								<FormLabel>端点（必填）</FormLabel>
 								<FormControl>
 									<SecretVarInput placeholder="https://your-resource.openai.azure.com or env.AZURE_ENDPOINT" {...field} />
 								</FormControl>
@@ -465,7 +464,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 								name={`key.azure_key_config.client_id`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Client ID (Required)</FormLabel>
+										<FormLabel>客户端 ID（必填）</FormLabel>
 										<FormControl>
 											<SecretVarInput placeholder="your-client-id or env.AZURE_CLIENT_ID" {...field} />
 										</FormControl>
@@ -478,7 +477,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 								name={`key.azure_key_config.client_secret`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Client Secret (Required)</FormLabel>
+										<FormLabel>客户端密钥（必填）</FormLabel>
 										<FormControl>
 											<SecretVarInput placeholder="your-client-secret or env.AZURE_CLIENT_SECRET" {...field} />
 										</FormControl>
@@ -491,7 +490,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 								name={`key.azure_key_config.tenant_id`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Tenant ID (Required)</FormLabel>
+										<FormLabel>租户 ID（必填）</FormLabel>
 										<FormControl>
 											<SecretVarInput placeholder="your-tenant-id or env.AZURE_TENANT_ID" {...field} />
 										</FormControl>
@@ -505,7 +504,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 								render={({ field }) => (
 									<FormItem>
 										<div className="flex items-center gap-2">
-											<FormLabel>Scopes (Optional)</FormLabel>
+											<FormLabel>作用域（可选）</FormLabel>
 											<TooltipProvider>
 												<Tooltip>
 													<TooltipTrigger asChild>
@@ -515,8 +514,8 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 													</TooltipTrigger>
 													<TooltipContent>
 														<p>
-															Optional OAuth scopes for token requests. By default we use https://cognitiveservices.azure.com/.default - add
-															additional scopes here if your setup requires extra permissions.
+															令牌请求的可选 OAuth 作用域。默认使用 https://cognitiveservices.azure.com/.default —— 如果你的
+															环境需要额外权限，可在此添加更多作用域。
 														</p>
 													</TooltipContent>
 												</Tooltip>
@@ -525,7 +524,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 										<FormControl>
 											<TagInput
 												data-testid="apikey-azure-scopes-input"
-												placeholder="Add scope (Enter or comma)"
+												placeholder="添加作用域（回车或逗号）"
 												value={field.value ?? []}
 												onValueChange={field.onChange}
 											/>
@@ -543,7 +542,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 				<div className="space-y-4">
 					<Separator className="my-6" />
 					<div className="space-y-2">
-						<FormLabel>Authentication Method</FormLabel>
+						<FormLabel>认证方式</FormLabel>
 						<Tabs
 							value={vertexAuthType}
 							onValueChange={(v) => {
@@ -561,10 +560,10 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						>
 							<TabsList className="grid w-full grid-cols-3">
 								<TabsTrigger data-testid="apikey-vertex-service-account-tab" value="service_account">
-									Service Account (Attached)
+									服务账号（已挂载）
 								</TabsTrigger>
 								<TabsTrigger data-testid="apikey-vertex-service-account-json-tab" value="service_account_json">
-									Service Account (JSON)
+									服务账号（JSON）
 								</TabsTrigger>
 								<TabsTrigger data-testid="apikey-vertex-api-key-tab" value="api_key">
 									API Key
@@ -573,7 +572,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						</Tabs>
 						{vertexAuthType === "service_account" && (
 							<p className="text-muted-foreground text-sm">
-								Uses the service account attached to your environment (GCE, GKE, Cloud Run). No credentials required.
+								使用挂载到环境（GCE、GKE、Cloud Run）的服务账号。无需提供凭证。
 							</p>
 						)}
 					</div>
@@ -583,7 +582,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						name={`key.vertex_key_config.project_id`}
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Project ID (Required)</FormLabel>
+								<FormLabel>项目 ID（必填）</FormLabel>
 								<FormControl>
 									<SecretVarInput placeholder="your-gcp-project-id or env.VERTEX_PROJECT_ID" {...field} />
 								</FormControl>
@@ -596,7 +595,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						name={`key.vertex_key_config.project_number`}
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Project Number (Required only for fine-tuned models)</FormLabel>
+								<FormLabel>项目编号（仅微调模型必填）</FormLabel>
 								<FormControl>
 									<SecretVarInput placeholder="your-gcp-project-number or env.VERTEX_PROJECT_NUMBER" {...field} />
 								</FormControl>
@@ -609,10 +608,10 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						name={`key.vertex_key_config.region`}
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Region (Required)</FormLabel>
+								<FormLabel>区域（必填）</FormLabel>
 								<FormDescription>
-									Multi-region-only models are automatically routed to Google&apos;s matching multi-region endpoint. Turn on{" "}
-									<span className="font-medium">Force single region</span> below to always use exactly this region.
+									仅支持多区域的模型会自动路由到 Google 对应的多区域端点。开启下方的{" "}
+									<span className="font-medium">强制单区域</span>可始终只使用此区域。
 								</FormDescription>
 								<FormControl>
 									<SecretVarInput placeholder="us-central1 or env.VERTEX_REGION" {...field} />
@@ -628,8 +627,8 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 							name={`key.vertex_key_config.auth_credentials`}
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Auth Credentials (Required)</FormLabel>
-									<FormDescription>Service account JSON object or env.VAR_NAME</FormDescription>
+									<FormLabel>认证凭证（必填）</FormLabel>
+									<FormDescription>服务账号 JSON 对象或 env.VAR_NAME</FormDescription>
 									<FormControl>
 										<SecretVarInput
 											data-testid="apikey-vertex-auth-credentials-input"
@@ -643,7 +642,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 									{isRedacted(field.value?.value ?? "") && (
 										<div className="text-muted-foreground mt-1 flex items-center gap-1 text-xs">
 											<Info className="h-3 w-3" />
-											<span>Credentials are stored securely. Edit to update.</span>
+											<span>凭证已安全存储，编辑后可更新。</span>
 										</div>
 									)}
 									<FormMessage />
@@ -658,7 +657,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 							name={`key.value`}
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>API Key (Supported only for gemini and fine-tuned models)</FormLabel>
+									<FormLabel>API Key（仅支持 gemini 与微调模型）</FormLabel>
 									<FormControl>
 										<SecretVarInput data-testid="apikey-vertex-api-key-input" placeholder="API Key or env.MY_KEY" type="text" {...field} />
 									</FormControl>
@@ -673,10 +672,10 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						render={({ field }) => (
 							<FormItem className="flex flex-row items-center justify-between rounded-sm border p-2">
 								<div className="space-y-1.5">
-									<FormLabel>Force single region</FormLabel>
+									<FormLabel>强制单区域</FormLabel>
 									<FormDescription>
-										Always call the region set above and skip automatic promotion of multi-region-only models to a multi-region endpoint.
-										Enable when serving these models from a single region via provisioned throughput.
+										始终调用上方设置的区域，并跳过将仅支持多区域的模型自动提升到多区域端点。
+										通过预置吞吐从单区域提供这些模型时启用。
 									</FormDescription>
 								</div>
 								<FormControl>
@@ -697,9 +696,9 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						render={({ field }) => (
 							<FormItem className="flex flex-row items-center justify-between rounded-sm border p-2">
 								<div className="space-y-1.5">
-									<FormLabel>Use Deployments Endpoint</FormLabel>
+									<FormLabel>使用 deployments 端点</FormLabel>
 									<FormDescription>
-										Route requests through the Replicate deployments endpoint instead of the models endpoint.
+										通过 Replicate 的 deployments 端点而非 models 端点发送请求。
 									</FormDescription>
 								</div>
 								<FormControl>
@@ -718,8 +717,8 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						name="key.vllm_key_config.url"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Server URL (Required)</FormLabel>
-								<FormDescription>Base URL of the vLLM server (e.g. http://vllm-server:8000 or env.VLLM_URL)</FormDescription>
+								<FormLabel>服务器 URL（必填）</FormLabel>
+								<FormDescription>vLLM 服务器的 Base URL（例如 http://vllm-server:8000 或 env.VLLM_URL）</FormDescription>
 								<FormControl>
 									<SecretVarInput data-testid="key-input-vllm-url" placeholder="http://vllm-server:8000" {...field} />
 								</FormControl>
@@ -732,8 +731,8 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						name="key.vllm_key_config.model_name"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Model Name (Required)</FormLabel>
-								<FormDescription>Exact model name served on this vLLM instance</FormDescription>
+								<FormLabel>模型名称（必填）</FormLabel>
+								<FormDescription>该 vLLM 实例提供的精确模型名称</FormDescription>
 								<FormControl>
 									<Input data-testid="key-input-vllm-model-name" placeholder="meta-llama/Llama-3-70b-hf" {...field} />
 								</FormControl>
@@ -750,10 +749,10 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						name={`key.${isOllama ? "ollama_key_config" : "sgl_key_config"}.url`}
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Server URL (Required)</FormLabel>
+								<FormLabel>服务器 URL（必填）</FormLabel>
 								<FormDescription>
-									Base URL of the {isOllama ? "Ollama" : "SGLang"} server (e.g.{" "}
-									{isOllama ? "http://localhost:11434" : "http://localhost:30000"} or {isOllama ? "env.OLLAMA_URL" : "env.SGL_URL"})
+									{isOllama ? "Ollama" : "SGLang"} 服务器的 Base URL（例如{" "}
+									{isOllama ? "http://localhost:11434" : "http://localhost:30000"} 或 {isOllama ? "env.OLLAMA_URL" : "env.SGL_URL"}）
 								</FormDescription>
 								<FormControl>
 									<SecretVarInput
@@ -776,8 +775,8 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						render={({ field }) => (
 							<FormItem className="flex flex-row items-center justify-between rounded-sm border p-2">
 								<div className="space-y-1.5">
-									<FormLabel htmlFor="use-anthropic-endpoints-alias-override-switch">Use Anthropic Endpoints</FormLabel>
-									<FormDescription>Routes chat completions and responses requests through Anthropic-compatible endpoints.</FormDescription>
+									<FormLabel htmlFor="use-anthropic-endpoints-alias-override-switch">使用 Anthropic 端点</FormLabel>
+									<FormDescription>通过 Anthropic 兼容端点发送对话补全与 Responses 请求。</FormDescription>
 								</div>
 								<FormControl>
 									<Switch
@@ -795,7 +794,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 				<div className="space-y-4">
 					<Separator className="my-6" />
 					<div className="space-y-2">
-						<FormLabel>Authentication Method</FormLabel>
+						<FormLabel>认证方式</FormLabel>
 						<Tabs
 							value={bedrockAuthType}
 							onValueChange={(v) => {
@@ -823,10 +822,10 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						>
 							<TabsList className="grid w-full grid-cols-3">
 								<TabsTrigger data-testid="apikey-bedrock-iam-role-tab" value="iam_role">
-									IAM Role (Inherited)
+									IAM 角色（继承）
 								</TabsTrigger>
 								<TabsTrigger data-testid="apikey-bedrock-explicit-credentials-tab" value="explicit">
-									Explicit Credentials
+									显式凭证
 								</TabsTrigger>
 								<TabsTrigger data-testid="apikey-bedrock-api-key-tab" value="api_key">
 									API Key
@@ -834,10 +833,10 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 							</TabsList>
 						</Tabs>
 						{bedrockAuthType === "iam_role" && (
-							<p className="text-muted-foreground text-sm">Uses IAM roles attached to your environment (EC2, Lambda, ECS, EKS).</p>
+							<p className="text-muted-foreground text-sm">使用挂载到环境（EC2、Lambda、ECS、EKS）的 IAM 角色。</p>
 						)}
 						{bedrockAuthType === "api_key" && (
-							<p className="text-muted-foreground text-sm">Uses a Bearer token for API key authentication.</p>
+							<p className="text-muted-foreground text-sm">使用 Bearer Token 进行 API Key 认证。</p>
 						)}
 					</div>
 
@@ -848,7 +847,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 								name={`key.bedrock_key_config.access_key`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Access Key (Required)</FormLabel>
+										<FormLabel>访问密钥（必填）</FormLabel>
 										<FormControl>
 											<SecretVarInput placeholder="your-aws-access-key or env.AWS_ACCESS_KEY_ID" {...field} />
 										</FormControl>
@@ -861,7 +860,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 								name={`key.bedrock_key_config.secret_key`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Secret Key (Required)</FormLabel>
+										<FormLabel>私有密钥（必填）</FormLabel>
 										<FormControl>
 											<SecretVarInput placeholder="your-aws-secret-key or env.AWS_SECRET_ACCESS_KEY" {...field} />
 										</FormControl>
@@ -874,7 +873,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 								name={`key.bedrock_key_config.session_token`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Session Token (Optional)</FormLabel>
+										<FormLabel>会话令牌（可选）</FormLabel>
 										<FormControl>
 											<SecretVarInput placeholder="your-aws-session-token or env.AWS_SESSION_TOKEN" {...field} />
 										</FormControl>
@@ -911,7 +910,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						name={`key.bedrock_key_config.region`}
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Region (Required)</FormLabel>
+								<FormLabel>区域（必填）</FormLabel>
 								<FormControl>
 									<SecretVarInput placeholder="us-east-1 or env.AWS_REGION" {...field} />
 								</FormControl>
@@ -924,10 +923,10 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						name={`key.bedrock_key_config.project_id`}
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Mantle Project ID (Optional)</FormLabel>
+								<FormLabel>Mantle 项目 ID（可选）</FormLabel>
 								<FormDescription>
-									Scopes Bedrock Mantle-routed models (OpenAI-family / Gemma) to a specific project via the OpenAI-Project header. Leave
-									empty to use the account&apos;s default project.
+									通过 OpenAI-Project 请求头将经 Bedrock Mantle 路由的模型（OpenAI 系列 / Gemma）限定到指定项目。
+									留空则使用账号的默认项目。
 								</FormDescription>
 								<FormControl>
 									<SecretVarInput
@@ -947,9 +946,9 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 								name={`key.bedrock_key_config.role_arn`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Assume Role ARN (Optional)</FormLabel>
+										<FormLabel>扮演角色 ARN（可选）</FormLabel>
 										<FormDescription>
-											Assume an IAM role before requests. Works with both explicit credentials and inherited IAM (EC2, ECS, EKS).
+											请求前先扮演 IAM 角色。显式凭证与继承的 IAM（EC2、ECS、EKS）均适用。
 										</FormDescription>
 										<FormControl>
 											<SecretVarInput
@@ -967,8 +966,8 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 								name={`key.bedrock_key_config.external_id`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>External ID (Optional)</FormLabel>
-										<FormDescription>Required by the role's trust policy when using cross-account access</FormDescription>
+										<FormLabel>外部 ID（可选）</FormLabel>
+										<FormDescription>使用跨账号访问时，角色的信任策略要求提供</FormDescription>
 										<FormControl>
 											<SecretVarInput
 												data-testid="apikey-bedrock-external-id-input"
@@ -985,8 +984,8 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 								name={`key.bedrock_key_config.session_name`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Session Name (Optional)</FormLabel>
-										<FormDescription>AssumeRole session name (defaults to bifrost-session)</FormDescription>
+										<FormLabel>会话名称（可选）</FormLabel>
+										<FormDescription>AssumeRole 会话名称（默认 bifrost-session）</FormDescription>
 										<FormControl>
 											<SecretVarInput
 												data-testid="apikey-bedrock-session-name-input"
@@ -1005,7 +1004,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						name={`key.bedrock_key_config.arn`}
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>ARN (Optional)</FormLabel>
+								<FormLabel>ARN（可选）</FormLabel>
 								<FormControl>
 									<SecretVarInput placeholder="arn:aws:bedrock:us-east-1:123:inference-profile or env.AWS_ARN" {...field} />
 								</FormControl>
@@ -1019,9 +1018,9 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 							name={`key.bedrock_key_config.batch_role_arn`}
 							render={({ field }) => (
 								<FormItem>
-									<FormLabel>Batch Role ARN (Optional)</FormLabel>
+									<FormLabel>Batch 角色 ARN（可选）</FormLabel>
 									<FormDescription>
-										Service role Bedrock assumes for batch S3 access. When set, it takes priority over the role_arn sent in requests.
+										Bedrock 访问批处理 S3 时扮演的服务角色。设置后将优先于请求中发送的 role_arn。
 									</FormDescription>
 									<FormControl>
 										<SecretVarInput
@@ -1043,7 +1042,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 				<div className="space-y-4">
 					<Separator className="my-6" />
 					<div className="space-y-2">
-						<FormLabel>Authentication Method</FormLabel>
+						<FormLabel>认证方式</FormLabel>
 						<Tabs
 							value={bedrockMantleAuthType}
 							onValueChange={(v) => {
@@ -1071,10 +1070,10 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						>
 							<TabsList className="grid w-full grid-cols-3">
 								<TabsTrigger data-testid="apikey-bedrock-mantle-iam-role-tab" value="iam_role">
-									IAM Role (Inherited)
+									IAM 角色（继承）
 								</TabsTrigger>
 								<TabsTrigger data-testid="apikey-bedrock-mantle-explicit-credentials-tab" value="explicit">
-									Explicit Credentials
+									显式凭证
 								</TabsTrigger>
 								<TabsTrigger data-testid="apikey-bedrock-mantle-api-key-tab" value="api_key">
 									API Key
@@ -1082,10 +1081,10 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 							</TabsList>
 						</Tabs>
 						{bedrockMantleAuthType === "iam_role" && (
-							<p className="text-muted-foreground text-sm">Uses IAM roles attached to your environment (EC2, Lambda, ECS, EKS).</p>
+							<p className="text-muted-foreground text-sm">使用挂载到环境（EC2、Lambda、ECS、EKS）的 IAM 角色。</p>
 						)}
 						{bedrockMantleAuthType === "api_key" && (
-							<p className="text-muted-foreground text-sm">Uses a Bedrock Mantle API key sent as a Bearer token.</p>
+							<p className="text-muted-foreground text-sm">使用以 Bearer Token 形式发送的 Bedrock Mantle API Key。</p>
 						)}
 					</div>
 
@@ -1096,7 +1095,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 								name={`key.bedrock_mantle_key_config.access_key`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Access Key (Required)</FormLabel>
+										<FormLabel>访问密钥（必填）</FormLabel>
 										<FormControl>
 											<SecretVarInput placeholder="your-aws-access-key or env.AWS_ACCESS_KEY_ID" {...field} />
 										</FormControl>
@@ -1109,7 +1108,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 								name={`key.bedrock_mantle_key_config.secret_key`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Secret Key (Required)</FormLabel>
+										<FormLabel>私有密钥（必填）</FormLabel>
 										<FormControl>
 											<SecretVarInput placeholder="your-aws-secret-key or env.AWS_SECRET_ACCESS_KEY" {...field} />
 										</FormControl>
@@ -1122,7 +1121,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 								name={`key.bedrock_mantle_key_config.session_token`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Session Token (Optional)</FormLabel>
+										<FormLabel>会话令牌（可选）</FormLabel>
 										<FormControl>
 											<SecretVarInput placeholder="your-aws-session-token or env.AWS_SESSION_TOKEN" {...field} />
 										</FormControl>
@@ -1159,7 +1158,7 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						name={`key.bedrock_mantle_key_config.region`}
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Region (Required)</FormLabel>
+								<FormLabel>区域（必填）</FormLabel>
 								<FormControl>
 									<SecretVarInput placeholder="us-east-1 or env.AWS_REGION" {...field} />
 								</FormControl>
@@ -1173,10 +1172,10 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 						name={`key.bedrock_mantle_key_config.project_id`}
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Project ID (Optional)</FormLabel>
+								<FormLabel>项目 ID（可选）</FormLabel>
 								<FormDescription>
-									Scopes inference and model listing to a specific Bedrock project (sent as the OpenAI-Project / anthropic-workspace-id
-									header). Leave empty to use the account&apos;s default project.
+									将推理与模型列表限定到指定 Bedrock 项目（以 OpenAI-Project / anthropic-workspace-id
+									请求头发送）。留空则使用账号的默认项目。
 								</FormDescription>
 								<FormControl>
 									<SecretVarInput
@@ -1197,9 +1196,9 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 								name={`key.bedrock_mantle_key_config.role_arn`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Assume Role ARN (Optional)</FormLabel>
+										<FormLabel>扮演角色 ARN（可选）</FormLabel>
 										<FormDescription>
-											Assume an IAM role before requests. Works with both explicit credentials and inherited IAM (EC2, ECS, EKS).
+											请求前先扮演 IAM 角色。显式凭证与继承的 IAM（EC2、ECS、EKS）均适用。
 										</FormDescription>
 										<FormControl>
 											<SecretVarInput placeholder="arn:aws:iam::123456789:role/MyRole or env.AWS_ROLE_ARN" {...field} />
@@ -1213,8 +1212,8 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 								name={`key.bedrock_mantle_key_config.external_id`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>External ID (Optional)</FormLabel>
-										<FormDescription>Required by the role&apos;s trust policy when using cross-account access.</FormDescription>
+										<FormLabel>外部 ID（可选）</FormLabel>
+										<FormDescription>使用跨账号访问时，角色的信任策略要求提供。</FormDescription>
 										<FormControl>
 											<SecretVarInput placeholder="external-id or env.AWS_EXTERNAL_ID" {...field} />
 										</FormControl>
@@ -1227,8 +1226,8 @@ export function ApiKeyFormFragment({ control, providerName, baseProviderType, fo
 								name={`key.bedrock_mantle_key_config.session_name`}
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Session Name (Optional)</FormLabel>
-										<FormDescription>AssumeRole session name (defaults to bifrost-session).</FormDescription>
+										<FormLabel>会话名称（可选）</FormLabel>
+										<FormDescription>AssumeRole 会话名称（默认 bifrost-session）。</FormDescription>
 										<FormControl>
 											<SecretVarInput placeholder="bifrost-session or env.AWS_SESSION_NAME" {...field} />
 										</FormControl>

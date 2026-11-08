@@ -55,7 +55,7 @@ export default function MCPSessionsPage() {
 		return (
 			<div className="mx-auto w-full max-w-7xl">
 				<div className="border-destructive bg-destructive/10 text-destructive rounded-lg border p-6 text-sm">
-					Failed to load MCP sessions: {getErrorMessage(error)}
+					加载 MCP 会话失败：{getErrorMessage(error)}
 				</div>
 			</div>
 		);

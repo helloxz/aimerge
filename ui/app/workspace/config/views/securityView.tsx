@@ -19,11 +19,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 const PASSWORD_REQUIREMENTS = [
-	{ label: "at least 12 characters", test: (password: string) => password.length >= 12 },
-	{ label: "one uppercase letter", test: (password: string) => /[A-Z]/.test(password) },
-	{ label: "one lowercase letter", test: (password: string) => /[a-z]/.test(password) },
-	{ label: "one number", test: (password: string) => /\d/.test(password) },
-	{ label: "one special character", test: (password: string) => /[^A-Za-z0-9]/.test(password) },
+	{ label: "至少 12 个字符", test: (password: string) => password.length >= 12 },
+	{ label: "一个大写字母", test: (password: string) => /[A-Z]/.test(password) },
+	{ label: "一个小写字母", test: (password: string) => /[a-z]/.test(password) },
+	{ label: "一个数字", test: (password: string) => /\d/.test(password) },
+	{ label: "一个特殊字符", test: (password: string) => /[^A-Za-z0-9]/.test(password) },
 ];
 
 const getPasswordPolicyFailures = (password?: string) => {
@@ -169,7 +169,7 @@ export default function SecurityView() {
 	const handleAuthFieldChange = useCallback((field: "admin_username" | "admin_password", value: SecretVar) => {
 		if (field === "admin_password") {
 			const passwordPolicyFailures = !value.ref && value.value ? getPasswordPolicyFailures(value.value) : [];
-			setPasswordError(passwordPolicyFailures.length > 0 ? `Password must include ${passwordPolicyFailures.join(", ")}.` : "");
+			setPasswordError(passwordPolicyFailures.length > 0 ? `密码必须包含：${passwordPolicyFailures.join("、")}。` : "");
 		}
 		setAuthConfig((prev) => ({ ...prev, [field]: value }));
 	}, []);
@@ -180,7 +180,7 @@ export default function SecurityView() {
 
 			if (!validation.isValid && localConfig.allowed_origins.length > 0) {
 				toast.error(
-					`Invalid origins: ${validation.invalidOrigins.join(", ")}. Origins must be valid URLs like https://example.com, wildcard patterns like https://*.example.com, or "*" to allow all origins`,
+					`无效的来源：${validation.invalidOrigins.join("、")}。来源必须是有效的 URL（如 https://example.com）、通配符模式（如 https://*.example.com），或使用 "*" 允许所有来源`,
 				);
 				return;
 			}
@@ -192,7 +192,7 @@ export default function SecurityView() {
 					: [];
 
 			if (passwordPolicyFailures.length > 0) {
-				setPasswordError(`Password must include ${passwordPolicyFailures.join(", ")}.`);
+				setPasswordError(`密码必须包含：${passwordPolicyFailures.join("、")}。`);
 				passwordInputRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
 				passwordInputRef.current?.focus({ preventScroll: true });
 				return;
@@ -208,7 +208,7 @@ export default function SecurityView() {
 					}
 					: {}),
 			}).unwrap();
-			toast.success("Security settings updated successfully.");
+			toast.success("安全设置已更新。");
 		} catch (error) {
 			toast.error(getErrorMessage(error));
 		}
@@ -217,8 +217,8 @@ export default function SecurityView() {
 	return (
 		<div className="mx-auto w-full max-w-4xl space-y-4">
 			<div>
-				<h2 className="text-lg font-semibold tracking-tight">Security Settings</h2>
-				<p className="text-muted-foreground text-sm">Configure security and access control settings.</p>
+				<h2 className="text-lg font-semibold tracking-tight">安全设置</h2>
+				<p className="text-muted-foreground text-sm">配置安全与访问控制设置。</p>
 			</div>
 
 			<div className="space-y-4">
@@ -226,14 +226,14 @@ export default function SecurityView() {
 				{IS_ENTERPRISE && authTypeLoading ? (
 					<div className="flex items-center justify-center rounded-sm border p-8" data-testid="security-auth-type-loading">
 						<Loader2 className="text-muted-foreground h-5 w-5 animate-spin" aria-hidden />
-						<span className="sr-only">Loading authentication settings</span>
+						<span className="sr-only">正在加载身份验证设置</span>
 					</div>
 				) : null}
 				{IS_ENTERPRISE && !authTypeLoading && authTypeError ? (
 					<Alert variant="destructive" data-testid="security-auth-type-error">
 						<AlertTriangle className="h-4 w-4" />
 						<AlertDescription>
-							Could not load authentication type. Dashboard password settings are hidden until this request succeeds.{" "}
+							无法加载身份验证类型。在请求成功之前，仪表盘密码设置将保持隐藏。{" "}
 							{getErrorMessage(authTypeError)}
 						</AlertDescription>
 					</Alert>
@@ -244,42 +244,41 @@ export default function SecurityView() {
 							<div className="flex items-center justify-between">
 								<div className="space-y-0.5">
 									<Label htmlFor="auth-enabled" className="text-sm font-medium">
-										Password protect the dashboard <Badge variant="secondary">BETA</Badge>
+										为仪表盘设置密码保护 <Badge variant="secondary">BETA</Badge>
 									</Label>
 									<p className="text-muted-foreground text-sm">
-										Set up authentication credentials to protect your Bifrost dashboard. Once configured, use the generated token for all
-										admin API calls.
+										设置身份验证凭据以保护 Bifrost 仪表盘。配置完成后，所有管理 API 调用都需要使用生成的令牌。
 									</p>
 								</div>
 								<Switch id="auth-enabled" checked={authConfig.is_enabled} onCheckedChange={handleAuthToggle} />
 							</div>
 							<div className="space-y-4">
 								<div className="space-y-2">
-									<Label htmlFor="admin-username">Username</Label>
+									<Label htmlFor="admin-username">用户名</Label>
 									<SecretVarInput
 										id="admin-username"
 										type="text"
-										placeholder="Enter admin username or env.VAR_NAME"
+										placeholder="输入管理员用户名或 env.VAR_NAME"
 										value={authConfig.admin_username}
 										disabled={!authConfig.is_enabled}
 										onChange={(value) => handleAuthFieldChange("admin_username", value)}
 									/>
 								</div>
 								<div className="space-y-2">
-									<Label htmlFor="admin-password">Password</Label>
+									<Label htmlFor="admin-password">密码</Label>
 									<SecretVarInput
 										ref={passwordInputRef}
 										id="admin-password"
 										aria-invalid={!!passwordError}
 										aria-describedby={passwordError ? "admin-password-error" : undefined}
 										type="password"
-										placeholder="Enter admin password or env.VAR_NAME"
+										placeholder="输入管理员密码或 env.VAR_NAME"
 										value={authConfig.admin_password}
 										disabled={!authConfig.is_enabled}
 										onChange={(value) => handleAuthFieldChange("admin_password", value)}
 									/>
 									<p className="text-muted-foreground text-xs">
-										Use at least 12 characters with uppercase, lowercase, number, and special character. Env var references are accepted.
+										至少 12 个字符，需包含大写字母、小写字母、数字和特殊字符。支持引用环境变量。
 									</p>
 									{passwordError ? (
 										<p id="admin-password-error" className="text-destructive text-xs" role="alert">
@@ -295,13 +294,13 @@ export default function SecurityView() {
 				<div className="flex items-center justify-between space-x-2 rounded-sm border p-4">
 					<div className="space-y-0.5">
 						<label htmlFor="enforce-auth-on-inference" className="text-sm font-medium">
-							{IS_ENTERPRISE ? "Enable Auth on Inference" : "Enforce Virtual Keys on Inference"}
+							{IS_ENTERPRISE ? "在推理时启用身份验证" : "在推理时强制使用虚拟密钥"}
 						</label>
 						<p className="text-muted-foreground text-sm">
 							{IS_ENTERPRISE
-								? "Require authentication (virtual key, API key, or user token) for all inference endpoints."
-								: "Require a virtual key for all inference requests."}{" "}
-							See{" "}
+								? "所有推理端点都需要身份验证（虚拟密钥、API 密钥或用户令牌）。"
+								: "所有推理请求都必须提供虚拟密钥。"}{" "}
+							详情请参阅{" "}
 							<a
 								href="https://docs.getbifrost.ai/features/governance/virtual-keys"
 								target="_blank"
@@ -309,9 +308,9 @@ export default function SecurityView() {
 								className="text-primary underline"
 								data-testid="security-virtual-keys-docs-link"
 							>
-								documentation
-							</a>{" "}
-							for details.
+								虚拟密钥文档
+							</a>
+							。
 						</p>
 					</div>
 					<Switch
@@ -321,17 +320,15 @@ export default function SecurityView() {
 						onCheckedChange={(checked) => handleConfigChange("enforce_auth_on_inference", checked)}
 					/>
 				</div>
-				{/* Dual Credential Conflict Behavior */}
+				{/* 双凭据冲突处理方式 */}
 				{IS_ENTERPRISE && (
 					<div className="flex items-center justify-between space-x-2 rounded-sm border p-4">
 						<div className="space-y-0.5">
 							<label htmlFor="dual-credential-conflict-behavior" className="text-sm font-medium">
-								Dual Credential Conflict Behavior
+								双凭据冲突处理方式
 							</label>
 							<p className="text-muted-foreground text-sm">
-								How to handle inference requests that present both an identity provider access token (<b>Authorization: Bearer</b>) and a
-								virtual key (<b>x-bf-vk</b>). <b>Prefer IDP token</b> uses the user token for identity, <b>Prefer virtual key</b> drops the
-								IDP token and authenticates via the virtual key, and <b>Reject request</b> returns a 400 error.
+								当推理请求同时携带身份提供商访问令牌（<b>Authorization: Bearer</b>）和虚拟密钥（<b>x-bf-vk</b>）时如何处理。<b>优先使用 IDP 令牌</b>会以用户令牌作为身份，<b>优先使用虚拟密钥</b>会丢弃 IDP 令牌并改用虚拟密钥认证，<b>拒绝请求</b>会返回 400 错误。
 							</p>
 						</div>
 						<Select
@@ -344,9 +341,9 @@ export default function SecurityView() {
 								<SelectValue />
 							</SelectTrigger>
 							<SelectContent>
-								<SelectItem value="prefer_idp">Prefer IDP token</SelectItem>
-								<SelectItem value="prefer_vk">Prefer virtual key</SelectItem>
-								<SelectItem value="error">Reject request</SelectItem>
+								<SelectItem value="prefer_idp">优先使用 IDP 令牌</SelectItem>
+								<SelectItem value="prefer_vk">优先使用虚拟密钥</SelectItem>
+								<SelectItem value="error">拒绝请求</SelectItem>
 							</SelectContent>
 						</Select>
 					</div>
@@ -355,12 +352,11 @@ export default function SecurityView() {
 				<div className="flex items-center justify-between space-x-2 rounded-sm border p-4">
 					<div className="space-y-0.5">
 						<label htmlFor="allow-direct-keys" className="text-sm font-medium">
-							Allow Direct API Keys
+							允许直接使用 API 密钥
 						</label>
 						<p className="text-muted-foreground text-sm">
-							When enabled, callers can pass a provider API key directly in the <b>Authorization</b>, <b>x-api-key</b>, or{" "}
-							<b>x-goog-api-key</b> header alongside <b>x-bf-direct-key: true</b>. Bifrost will use that key directly, bypassing the
-							registered key pool.
+							启用后，调用方可以在 <b>Authorization</b>、<b>x-api-key</b> 或{" "}
+							<b>x-goog-api-key</b> 请求头中直接传入提供商 API 密钥，并附带 <b>x-bf-direct-key: true</b>。Bifrost 将直接使用该密钥，跳过已注册的密钥池。
 						</p>
 					</div>
 					<Switch
@@ -376,12 +372,10 @@ export default function SecurityView() {
 					<div className="space-y-2 rounded-sm border p-4">
 						<div className="space-y-0.5">
 							<label htmlFor="allowed-origins" className="text-sm font-medium">
-								Allowed Origins
+								允许的来源
 							</label>
 							<p className="text-muted-foreground text-sm">
-								Comma-separated list of allowed origins for CORS and WebSocket connections. Localhost origins are always allowed. Each
-								origin must be a complete URL with protocol (e.g., https://app.example.com, http://10.0.0.100:3000). Wildcards are supported
-								for subdomains (e.g., https://*.example.com) or use "*" to allow all origins.
+								CORS 和 WebSocket 连接允许的来源列表，以逗号分隔。localhost 来源始终被允许。每个来源必须是包含协议的完整 URL（如 https://app.example.com、http://10.0.0.100:3000）。子域名支持通配符（如 https://*.example.com），也可以使用 "*" 允许所有来源。
 							</p>
 						</div>
 						<Textarea
@@ -398,9 +392,9 @@ export default function SecurityView() {
 					<div className="space-y-2 rounded-sm border p-4">
 						<div className="space-y-0.5">
 							<label htmlFor="allowed-headers" className="text-sm font-medium">
-								Allowed Headers
+								允许的请求头
 							</label>
-							<p className="text-muted-foreground text-sm">Comma-separated list of allowed headers for CORS.</p>
+							<p className="text-muted-foreground text-sm">CORS 允许的请求头列表，以逗号分隔。</p>
 						</div>
 						<Textarea
 							id="allowed-headers"
@@ -416,11 +410,10 @@ export default function SecurityView() {
 					<div className="space-y-2 rounded-sm border p-4">
 						<div className="space-y-0.5">
 							<label htmlFor="required-headers" className="text-sm font-medium">
-								Required Headers
+								必需的请求头
 							</label>
 							<p className="text-muted-foreground text-sm">
-								Comma-separated list of headers that must be present on every request. Requests missing any of these headers will be
-								rejected with a 400 error. Header names are case-insensitive.
+								每个请求都必须携带的请求头列表，以逗号分隔。缺少任一请求头的请求将返回 400 错误。请求头名称不区分大小写。
 							</p>
 						</div>
 						<Textarea
@@ -438,12 +431,10 @@ export default function SecurityView() {
 					<div className="space-y-2 rounded-sm border p-4">
 						<div className="space-y-0.5">
 							<label htmlFor="whitelisted-routes" className="text-sm font-medium">
-								Whitelisted Routes
+								白名单路由
 							</label>
 							<p className="text-muted-foreground text-sm">
-								Comma-separated list of routes that bypass the auth middleware. Requests to these routes will not require authentication.
-								System routes like <b>/health</b>, <b>/api/session/login</b>, and <b>/api/session/is-auth-enabled</b> are always whitelisted
-								regardless of this setting.
+								绕过身份验证中间件的路由列表，以逗号分隔。访问这些路由的请求无需身份验证。无论此设置如何，<b>/health</b>、<b>/api/session/login</b> 和 <b>/api/session/is-auth-enabled</b> 等系统路由始终在白名单中。
 							</p>
 						</div>
 						<Textarea
@@ -459,7 +450,7 @@ export default function SecurityView() {
 			</div>
 			<div className="bg-card sticky bottom-0 flex justify-end py-2">
 				<Button onClick={handleSave} disabled={!hasChanges || isLoading || !hasSettingsUpdateAccess}>
-					{isLoading ? "Saving..." : "Save Changes"}
+					{isLoading ? "保存中…" : "保存更改"}
 				</Button>
 			</div>
 		</div>
@@ -470,7 +461,7 @@ const RestartWarning = () => {
 	return (
 		<Alert variant="destructive" className="mt-2">
 			<AlertTriangle className="h-4 w-4" />
-			<AlertDescription>Need to restart Bifrost to apply changes.</AlertDescription>
+			<AlertDescription>需要重启 Bifrost 以应用更改。</AlertDescription>
 		</Alert>
 	);
 };

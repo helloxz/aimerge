@@ -155,7 +155,7 @@ export function FilePreview({
 	if (source.unavailable && kind !== "text") {
 		return (
 			<FallbackBlock fileName={fileName} file={file} downloadUrl={resolvedDownloadUrl}>
-				Preview available after saving.
+				保存后可预览。
 			</FallbackBlock>
 		);
 	}
@@ -197,14 +197,14 @@ export function FilePreview({
 			return (
 				<div className="text-muted-foreground flex h-full items-center justify-center gap-2 text-xs">
 					<Loader2 className="h-4 w-4 animate-spin" />
-					Loading…
+					加载中…
 				</div>
 			);
 		}
 		if (fetchState === "error") {
 			return (
 				<FallbackBlock fileName={fileName} file={file} downloadUrl={resolvedDownloadUrl}>
-					Could not load file contents.
+					无法加载文件内容。
 				</FallbackBlock>
 			);
 		}
@@ -213,7 +213,7 @@ export function FilePreview({
 
 		return (
 			<ScrollArea className="h-full" bidirectionalScroll>
-				<pre className="p-4 font-mono text-xs leading-5 whitespace-pre-wrap">{textContent || "(empty)"}</pre>
+				<pre className="p-4 font-mono text-xs leading-5 whitespace-pre-wrap">{textContent || "（空）"}</pre>
 			</ScrollArea>
 		);
 	}
@@ -280,7 +280,7 @@ export function FilePreviewPane({
 			<div className="bg-muted/30 flex h-9 shrink-0 items-center justify-between gap-2 border-b px-3">
 				<span className="flex min-w-0 items-center gap-1.5 truncate font-mono text-xs" title={file.path}>
 					{file.path}
-					{dirty && <span className="bg-primary inline-block size-1.5 shrink-0 rounded-full" aria-label="Unsaved changes" />}
+					{dirty && <span className="bg-primary inline-block size-1.5 shrink-0 rounded-full" aria-label="未保存的更改" />}
 				</span>
 				<div className="flex shrink-0 items-center gap-1">
 					{isEditable && (
@@ -293,12 +293,12 @@ export function FilePreviewPane({
 							onClick={saveFile}
 						>
 							<Save className="h-3.5 w-3.5" />
-							Save file
+							保存文件
 						</Button>
 					)}
 					{resolved && (
 						<Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground h-7 px-2" asChild>
-							<a href={resolved} download={fileName} aria-label={`Download ${fileName}`}>
+							<a href={resolved} download={fileName} aria-label={`下载 ${fileName}`}>
 								<Download className="h-3.5 w-3.5" />
 							</a>
 						</Button>
@@ -374,13 +374,12 @@ function FileSourceEditor({
 				<div className="flex flex-col gap-0.5">
 					<p className="max-w-full truncate font-mono text-sm">{fileName}</p>
 					<p className="text-muted-foreground text-xs">
-						{file.mime_type || "uploaded file"}
+						{file.mime_type || "已上传文件"}
 						{file.file_size_bytes ? ` · ${formatFileSize(file.file_size_bytes)}` : ""}
 					</p>
 				</div>
 				<p className="text-muted-foreground max-w-md text-xs">
-					Uploaded files cannot be edited here. The preview is available on the view page; to change this file, delete it and upload a
-					replacement.
+					已上传的文件无法在此编辑。可在查看页面预览；如需修改此文件，请删除后重新上传。
 				</p>
 			</div>
 		);
@@ -390,7 +389,7 @@ function FileSourceEditor({
 		return (
 			<div className="flex h-full flex-col gap-4 p-4">
 				<div className="flex flex-col gap-1.5">
-					<Label className="text-muted-foreground text-xs">Source URL</Label>
+					<Label className="text-muted-foreground text-xs">源 URL</Label>
 					<Input
 						data-testid="skill-file-url-input"
 						value={file.source_url ?? ""}
@@ -401,7 +400,7 @@ function FileSourceEditor({
 				</div>
 				<div className="flex items-start gap-2 rounded-sm border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-900 dark:border-blue-900/50 dark:bg-blue-950/30 dark:text-blue-200">
 					<Info className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
-					<span>This source is saved as a live reference. Bifrost reads from this URL when the skill file is retrieved.</span>
+					<span>此来源会保存为实时引用。当获取技能文件时，Bifrost 会从该 URL 读取内容。</span>
 				</div>
 			</div>
 		);
@@ -417,7 +416,7 @@ function FileSourceEditor({
 		);
 	}
 	if (needsFetch && fetchState === "error") {
-		return <div className="text-muted-foreground flex h-full items-center justify-center gap-2 text-xs">Could not load file contents.</div>;
+		return <div className="text-muted-foreground flex h-full items-center justify-center gap-2 text-xs">无法加载文件内容。</div>;
 	}
 
 	if (file.source_type === "dataurl") {
@@ -427,7 +426,7 @@ function FileSourceEditor({
 		if (!file.dataurl && kind !== "text") {
 			return (
 				<FallbackBlock fileName={fileName} file={file} downloadUrl={source.url}>
-					Binary data URLs can&apos;t be edited as text. Download to inspect, or delete and re-upload to replace this file.
+					二进制 Data URL 无法作为文本编辑。请下载后查看，或删除并重新上传以替换此文件。
 				</FallbackBlock>
 			);
 		}
@@ -438,7 +437,7 @@ function FileSourceEditor({
 			(fetchedContent != null ? `data:${file.mime_type || "text/plain"};base64,${btoa(unescape(encodeURIComponent(fetchedContent)))}` : "");
 		return (
 			<div className="flex h-full min-h-0 flex-col gap-2 p-4">
-				<Label className="text-muted-foreground text-xs">Data URL</Label>
+				<Label className="text-muted-foreground text-xs">数据 URL</Label>
 				<Textarea
 					data-testid="skill-file-dataurl-textarea"
 					value={currentValue}
@@ -457,7 +456,7 @@ function FileSourceEditor({
 			data-testid="skill-file-content-textarea"
 			value={currentContent}
 			onChange={(e) => onFileUpdate?.({ content: e.target.value, blob_id: undefined, storage_key: undefined })}
-			placeholder="File content..."
+			placeholder="文件内容..."
 			className="h-full w-full resize-none rounded-none border-0 font-mono text-xs focus-visible:ring-0"
 		/>
 	);
@@ -480,7 +479,7 @@ function FallbackBlock({
 			<div className="flex flex-col gap-0.5">
 				<p className="max-w-full truncate font-mono text-sm">{fileName}</p>
 				<p className="text-muted-foreground text-xs">
-					{file.mime_type || "unknown type"}
+					{file.mime_type || "未知类型"}
 					{file.file_size_bytes ? ` · ${formatFileSize(file.file_size_bytes)}` : ""}
 				</p>
 			</div>
@@ -489,7 +488,7 @@ function FallbackBlock({
 				<Button variant="outline" size="sm" asChild>
 					<a href={downloadUrl} download={fileName}>
 						<Download className="h-3.5 w-3.5" />
-						Download
+						下载
 					</a>
 				</Button>
 			)}

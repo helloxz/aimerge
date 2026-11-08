@@ -208,12 +208,12 @@ export default function MCPView() {
 			const toolTimeout = Number.parseInt(localValues.mcp_tool_execution_timeout);
 
 			if (isNaN(agentDepth) || agentDepth <= 0) {
-				toast.error("Max agent depth must be a positive number.");
+				toast.error("智能体最大深度必须为正数。");
 				return;
 			}
 
 			if (isNaN(toolTimeout) || toolTimeout <= 0) {
-				toast.error("Tool execution timeout must be a positive number.");
+				toast.error("工具执行超时时间必须为正数。");
 				return;
 			}
 
@@ -235,18 +235,18 @@ export default function MCPView() {
         (isNaN(authCodeTTL) || authCodeTTL < 1 || authCodeTTL > 900)
       ) {
         toast.error(
-          "Authorization code TTL must be between 1 and 900 seconds (15 minutes).",
+          "授权码 TTL 必须在 1 到 900 秒（15 分钟）之间。",
         );
         return;
       }
 
       if (oauthModeActive && (isNaN(accessTokenTTL) || accessTokenTTL < 60)) {
-        toast.error("Access token TTL must be at least 60 seconds.");
+        toast.error("访问令牌 TTL 至少为 60 秒。");
         return;
       }
 
 			if (!bifrostConfig) {
-				toast.error("Configuration not loaded. Please refresh and try again.");
+				toast.error("配置尚未加载，请刷新后重试。");
 				return;
 			}
 
@@ -271,7 +271,7 @@ export default function MCPView() {
 				...bifrostConfig,
 				client_config: clientConfigToSave,
 			}).unwrap();
-			toast.success("MCP settings updated successfully.");
+			toast.success("MCP 设置已更新。");
 		} catch (error) {
 			toast.error(getErrorMessage(error));
 		}
@@ -280,17 +280,17 @@ export default function MCPView() {
 	return (
 		<div className="mx-auto w-full max-w-7xl space-y-4" data-testid="mcp-settings-view">
 			<div>
-				<h2 className="text-lg font-semibold tracking-tight">MCP Settings</h2>
-				<p className="text-muted-foreground text-sm">Configure MCP (Model Context Protocol) agent and tool settings.</p>
+				<h2 className="text-lg font-semibold tracking-tight">MCP 设置</h2>
+				<p className="text-muted-foreground text-sm">配置 MCP（Model Context Protocol）智能体与工具设置。</p>
 			</div>
 			<div className="space-y-4">
 				{/* Max Agent Depth */}
 				<div className="flex items-center justify-between space-x-2 rounded-sm border p-4">
 					<div className="space-y-0.5">
 						<label htmlFor="mcp-agent-depth" className="text-sm font-medium">
-							Max Agent Depth
+							智能体最大深度
 						</label>
-						<p className="text-muted-foreground text-sm">Maximum depth for MCP agent execution.</p>
+						<p className="text-muted-foreground text-sm">MCP 智能体执行的最大深度。</p>
 					</div>
 					<Input
 						id="mcp-agent-depth"
@@ -307,9 +307,9 @@ export default function MCPView() {
 				<div className="flex items-center justify-between space-x-2 rounded-sm border p-4">
 					<div className="space-y-0.5">
 						<label htmlFor="mcp-tool-execution-timeout" className="text-sm font-medium">
-							Tool Execution Timeout (seconds)
+							工具执行超时时间（秒）
 						</label>
-						<p className="text-muted-foreground text-sm">Maximum time in seconds for tool execution.</p>
+						<p className="text-muted-foreground text-sm">工具执行的最长时间，单位为秒。</p>
 					</div>
 					<Input
 						id="mcp-tool-execution-timeout"
@@ -326,9 +326,9 @@ export default function MCPView() {
 				<div className="flex items-center justify-between space-x-2 rounded-sm border p-4">
 					<div className="space-y-0.5">
 						<label htmlFor="mcp-tool-sync-interval" className="text-sm font-medium">
-							Tool Sync Interval (minutes)
+							工具同步间隔（分钟）
 						</label>
-						<p className="text-muted-foreground text-sm">How often to refresh tool lists from MCP servers. Set to 0 to disable.</p>
+						<p className="text-muted-foreground text-sm">从 MCP 服务器刷新工具列表的频率。设为 0 可禁用。</p>
 					</div>
 					<Input
 						id="mcp-tool-sync-interval"
@@ -345,12 +345,10 @@ export default function MCPView() {
 				<div className="flex items-center justify-between space-x-2 rounded-sm border p-4">
 					<div className="space-y-0.5">
 						<label htmlFor="mcp-disable-auto-tool-inject" className="text-sm font-medium">
-							Disable Auto Tool Injection
+							禁用自动注入工具
 						</label>
 						<p className="text-muted-foreground text-sm">
-							When enabled, MCP tools are not automatically included in every request. Tools are only injected when explicitly specified via
-							request headers (<code className="text-xs">x-bf-mcp-include-tools</code>) and still must be allowed by the virtual key MCP
-							configuration.
+							启用后，MCP 工具不会自动加入每个请求。只有在请求头（<code className="text-xs">x-bf-mcp-include-tools</code>）中显式指定时才会注入工具，且仍需通过虚拟密钥的 MCP 配置允许。
 						</p>
 					</div>
 					<Switch
@@ -366,11 +364,10 @@ export default function MCPView() {
 				<div className="flex items-center justify-between space-x-2 rounded-sm border p-4">
 					<div className="space-y-0.5">
 						<label htmlFor="mcp-enable-temp-token-auth" className="text-sm font-medium">
-							Allow Temp Token Auth Links
+							允许临时令牌认证链接
 						</label>
 						<p className="text-muted-foreground text-sm">
-							When enabled, per-user MCP OAuth links can include a short-lived scoped token so someone without an active Bifrost dashboard
-							session can complete the flow. Keep disabled to require normal dashboard authentication.
+							启用后，按用户生成的 MCP OAuth 链接可携带一个短期且限定范围的令牌，使没有活跃 Bifrost 仪表盘会话的用户也能完成流程。保持关闭则要求正常的仪表盘身份验证。
 						</p>
 					</div>
 					<Switch
@@ -386,25 +383,25 @@ export default function MCPView() {
 				<div className="space-y-4 rounded-sm border p-4">
 					<div className="space-y-0.5">
 						<label htmlFor="mcp-binding-level" className="text-sm font-medium">
-							Code Mode Binding Level
+							代码模式绑定层级
 						</label>
 						<p className="text-muted-foreground text-sm">
-							How tools are exposed in the VFS: server-level (all tools per server) or tool-level (individual tools).
+							工具在 VFS 中的暴露方式：服务器级（每个服务器的所有工具）或工具级（单个工具）。
 						</p>
 					</div>
 					<Select value={localValues.mcp_code_mode_binding_level} onValueChange={handleCodeModeBindingLevelChange}>
 						<SelectTrigger id="mcp-binding-level" data-testid="mcp-binding-level" className="w-56">
-							<SelectValue placeholder="Select binding level" />
+							<SelectValue placeholder="选择绑定层级" />
 						</SelectTrigger>
 						<SelectContent>
-							<SelectItem value="server">Server-Level</SelectItem>
-							<SelectItem value="tool">Tool-Level</SelectItem>
+							<SelectItem value="server">服务器级</SelectItem>
+							<SelectItem value="tool">工具级</SelectItem>
 						</SelectContent>
 					</Select>
 
 					{/* Visual Example */}
 					<div className="mt-6 space-y-2">
-						<p className="text-foreground text-xs font-semibold tracking-wide uppercase">VFS Structure:</p>
+						<p className="text-foreground text-xs font-semibold tracking-wide uppercase">VFS 结构：</p>
 
 						{localValues.mcp_code_mode_binding_level === "server" ? (
 							<div className="bg-muted border-border rounded-sm border p-4">
@@ -414,7 +411,7 @@ export default function MCPView() {
 									<div className="pl-3">├─ youtube.py</div>
 									<div className="pl-3">└─ weather.py</div>
 								</div>
-								<p className="text-muted-foreground mt-3 text-xs">All tools per server in a single .py file</p>
+								<p className="text-muted-foreground mt-3 text-xs">每个服务器的所有工具放在单个 .py 文件中</p>
 							</div>
 						) : (
 							<div className="bg-muted border-border rounded-sm border p-4">
@@ -429,7 +426,7 @@ export default function MCPView() {
 									<div className="pl-3">└─ weather/</div>
 									<div className="pl-6">└─ get_forecast.py</div>
 								</div>
-								<p className="text-muted-foreground mt-3 text-xs">Individual .py file for each tool</p>
+								<p className="text-muted-foreground mt-3 text-xs">每个工具对应一个独立的 .py 文件</p>
 							</div>
 						)}
 					</div>
@@ -439,36 +436,30 @@ export default function MCPView() {
 				<Accordion type="single" collapsible className="rounded-sm border px-4">
 					<AccordionItem value="advanced-settings" className="border-b-0">
 						<AccordionTrigger data-testid="mcp-settings-advanced-trigger">
-							<span className="text-sm font-medium">Advanced Settings</span>
+							<span className="text-sm font-medium">高级设置</span>
 						</AccordionTrigger>
 						<AccordionContent className="space-y-2 pt-2">
 							<label htmlFor="external-client-url" className="text-sm font-medium">
-								External Client URL
+								外部客户端 URL
 							</label>
 							<p className="text-muted-foreground text-sm">
-								Override Bifrost's public base URL when it runs behind a reverse proxy. <b>Leave blank to derive the URL</b> from the
-								incoming <code className="text-xs">Host</code> header. Used as the <code className="text-xs">redirect_uri</code> Bifrost
-								registers with upstream OAuth providers when it acts as a client to an MCP server (e.g. Notion or Jira redirect the browser
-								to <code className="text-xs">{"<URL>/api/oauth/callback"}</code> after login). Supports env var syntax (e.g.{" "}
-								<code className="text-xs">env.BIFROST_EXTERNAL_URL</code>).
+								当 Bifrost 运行在反向代理之后时，覆盖其公开基础 URL。<b>留空则从传入的 <code className="text-xs">Host</code> 请求头推导 URL</b>。当 Bifrost 作为客户端访问 MCP 服务器时，该值用作向上游 OAuth 提供商注册的 <code className="text-xs">redirect_uri</code>（例如 Notion 或 Jira 会在登录后将浏览器重定向到 <code className="text-xs">{"<URL>/api/oauth/callback"}</code>）。支持环境变量语法（例如{" "}
+								<code className="text-xs">env.BIFROST_EXTERNAL_URL</code>）。
 							</p>
 							<SecretVarInput
 								id="external-client-url"
 								data-testid="mcp-external-client-url-input"
-								placeholder="https://bifrost.example.com or env.BIFROST_OAUTH_REDIRECT_URL"
+								placeholder="https://bifrost.example.com 或 env.BIFROST_OAUTH_REDIRECT_URL"
 								value={localConfig.mcp_external_client_url}
 								onChange={handleClientURLChange}
 								disabled={!hasSettingsUpdateAccess}
 							/>
 							<Alert variant="warning">
 								<AlertTriangle className="size-4" />
-								<AlertTitle>Changing this URL can break existing MCP clients</AlertTitle>
+								<AlertTitle>修改此 URL 可能导致现有 MCP 客户端无法使用</AlertTitle>
 								<AlertDescription>
 									<p>
-										Upstream OAuth providers lock the <code className="text-xs">redirect_uri</code> to whatever was registered initially, so
-										MCP clients that already completed OAuth will fail with <em>&quot;Invalid redirect URI&quot;</em>. To recover, clear the
-										stored OAuth client credentials for the affected MCP servers and re-authorize so Bifrost re-runs Dynamic Client
-										Registration with the new URL.
+										上游 OAuth 提供商会将 <code className="text-xs">redirect_uri</code> 锁定为最初注册的值，因此已完成 OAuth 的 MCP 客户端会因 <em>&quot;Invalid redirect URI&quot;</em> 而失败。如需恢复，请清除受影响 MCP 服务器已存储的 OAuth 客户端凭据并重新授权，以便 Bifrost 使用新 URL 重新执行动态客户端注册（Dynamic Client Registration）。
 									</p>
 								</AlertDescription>
 							</Alert>
@@ -478,17 +469,16 @@ export default function MCPView() {
                   htmlFor="mcp-server-auth-mode"
                   className="text-sm font-medium"
                 >
-                  MCP Server Authentication Mode
+                  MCP 服务器认证模式
                 </label>
                 <p className="text-muted-foreground text-sm">
-                  Controls how inbound MCP clients (e.g. Claude Code, Cursor)
-                  authenticate to the <code className="text-xs">/mcp</code>{" "}
-                  endpoint.{" "}
-                  <b>headers</b> (default) - VK / api-key / session headers
-                  only, OAuth discovery disabled.{" "}
-                  <b>both</b> - accepts header credentials and Bifrost-issued
-                  JWTs; existing integrations are unaffected.{" "}
-                  <b>oauth</b> - JWTs only; VK and header access is disabled.
+                  控制入站 MCP 客户端（例如 Claude Code、Cursor）如何认证到
+                  <code className="text-xs">/mcp</code>{" "}
+                  端点。{" "}
+                  <b>请求头</b>（默认）：仅接受虚拟密钥 / api-key / 会话请求头，禁用 OAuth 发现。{" "}
+                  <b>两者</b>：同时接受请求头凭据和 Bifrost 签发的
+                  JWT，现有集成不受影响。{" "}
+                  <b>OAuth</b>：仅接受 JWT；禁用虚拟密钥和请求头访问。
                 </p>
                 <Select
                   value={localConfig.mcp_server_auth_mode ?? "headers"}
@@ -503,8 +493,8 @@ export default function MCPView() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="headers">Headers</SelectItem>
-                    <SelectItem value="both">Both</SelectItem>
+                    <SelectItem value="headers">请求头</SelectItem>
+                    <SelectItem value="both">两者</SelectItem>
                     <SelectItem value="oauth">OAuth</SelectItem>
                   </SelectContent>
                 </Select>
@@ -512,12 +502,9 @@ export default function MCPView() {
                 {localConfig.mcp_server_auth_mode === "oauth" && (
                   <Alert variant="warning">
                     <AlertTriangle className="size-4" />
-                    <AlertTitle>VK / header MCP access will be disabled</AlertTitle>
+                    <AlertTitle>虚拟密钥 / 请求头的 MCP 访问将被禁用</AlertTitle>
                     <AlertDescription>
-                      All existing MCP integrations that use a virtual key,
-                      api-key, or session header will stop working immediately.
-                      Clients must re-authenticate via the OAuth consent flow to
-                      obtain a JWT before they can connect.
+                      所有使用虚拟密钥、api-key 或会话请求头的现有 MCP 集成会立即失效。客户端必须通过 OAuth 同意流程重新认证并获取 JWT 后才能连接。
                     </AlertDescription>
                   </Alert>
                 )}
@@ -528,12 +515,9 @@ export default function MCPView() {
                     config?.mcp_server_auth_mode === "oauth") && (
                   <Alert variant="warning">
                     <AlertTriangle className="size-4" />
-                    <AlertTitle>OAuth discovery will be disabled</AlertTitle>
+                    <AlertTitle>OAuth 发现将被禁用</AlertTitle>
                     <AlertDescription>
-                      All MCP clients that authenticated via the OAuth consent
-                      flow will lose access; their JWTs will be rejected and
-                      their refresh tokens will become unusable. They will need
-                      to reconfigure using a virtual key or api-key header.
+                      所有通过 OAuth 同意流程完成认证的 MCP 客户端将失去访问权限；它们的 JWT 会被拒绝，刷新令牌也会失效。这些客户端需要改用虚拟密钥或 api-key 请求头重新配置。
                     </AlertDescription>
                   </Alert>
                 )}
@@ -543,9 +527,7 @@ export default function MCPView() {
                   (config?.mcp_server_auth_mode ?? "headers") !== "both" && (
                   <Alert>
                     <AlertDescription>
-                      Existing VK / header integrations continue to work
-                      unchanged. New MCP clients can connect via OAuth - they'll
-                      be redirected to the consent page to pick an identity.
+                      现有的虚拟密钥 / 请求头集成不受影响，可继续正常工作。新的 MCP 客户端可以通过 OAuth 连接，它们会被重定向到同意页面选择身份。
                     </AlertDescription>
                   </Alert>
                 )}
@@ -555,7 +537,7 @@ export default function MCPView() {
               {(localConfig.mcp_server_auth_mode === "both" ||
                 localConfig.mcp_server_auth_mode === "oauth") && (
                 <div className="mt-4 space-y-4 border-t pt-4">
-                  <p className="text-sm font-medium">OAuth2 Server Settings</p>
+                  <p className="text-sm font-medium">OAuth2 服务器设置</p>
 
                   {/* Issuer URL */}
                   <div className="space-y-1.5">
@@ -563,21 +545,17 @@ export default function MCPView() {
                       htmlFor="oauth2-issuer-url"
                       className="text-sm font-medium"
                     >
-                      Issuer URL
+                      签发方 URL
                     </label>
                     <p className="text-muted-foreground text-sm">
-                      Stable public URL advertised in discovery documents and
-                      embedded as the <code className="text-xs">iss</code> claim
-                      in every JWT. Leave blank to derive it from the request{" "}
-                      <code className="text-xs">Host</code> header (sufficient
-                      for most deployments). Multi-host or reverse-proxy
-                      deployments might need this. Supports env var syntax (e.g.{" "}
-                      <code className="text-xs">env.BIFROST_ISSUER_URL</code>).
+                      在发现文档中公布并作为每个 JWT 中 <code className="text-xs">iss</code> 声明写入的稳定公开 URL。留空则从请求的{" "}
+                      <code className="text-xs">Host</code> 请求头推导（适用于大多数部署）。多主机或反向代理部署可能需要设置此项。支持环境变量语法（例如{" "}
+                      <code className="text-xs">env.BIFROST_ISSUER_URL</code>）。
                     </p>
                     <SecretVarInput
                       id="oauth2-issuer-url"
                       data-testid="oauth2-issuer-url-input"
-                      placeholder="https://bifrost.example.com or env.BIFROST_ISSUER_URL"
+                      placeholder="https://bifrost.example.com 或 env.BIFROST_ISSUER_URL"
                       value={localConfig.oauth2_server_config?.issuer_url}
                       onChange={handleIssuerURLChange}
                       disabled={!hasSettingsUpdateAccess}
@@ -591,12 +569,10 @@ export default function MCPView() {
                         htmlFor="oauth2-auth-code-ttl"
                         className="text-sm font-medium"
                       >
-                        Authorization code TTL (seconds)
+                        授权码 TTL（秒）
                       </label>
                       <p className="text-muted-foreground text-xs">
-                        How long the one-time code is valid after the consent
-                        page redirects back to the MCP client (default: 300, max
-                        900 = 15 min).
+                        同意页面重定向回 MCP 客户端后，一次性授权码的有效时长（默认 300，最大 900 即 15 分钟）。
                       </p>
                       <Input
                         id="oauth2-auth-code-ttl"
@@ -615,12 +591,10 @@ export default function MCPView() {
                         htmlFor="oauth2-access-token-ttl"
                         className="text-sm font-medium"
                       >
-                        Access token TTL (seconds)
+                        访问令牌 TTL（秒）
                       </label>
                       <p className="text-muted-foreground text-xs">
-                        Lifetime of issued JWT Bearer tokens. Clients silently
-                        refresh when expired (default: 600 = 10 min). Also bounds
-                        how long a revoked grant keeps working before it is cut off.
+                        签发的 JWT Bearer 令牌的生存期。客户端会在过期时静默刷新（默认 600 即 10 分钟）。该值也决定已撤销授权在被切断前还能继续工作多久。
                       </p>
                       <Input
                         id="oauth2-access-token-ttl"
@@ -648,15 +622,10 @@ export default function MCPView() {
                             htmlFor="oauth2-disable-vk-identity"
                             className="text-sm font-medium"
                           >
-                            Require identity-provider login
+                            要求通过身份提供商登录
                           </label>
                           <p className="text-muted-foreground text-sm">
-                            When enabled, the OAuth consent flow only offers
-                            identity-provider login. Virtual keys can no longer be
-                            used to obtain an MCP token, and existing virtual-key
-                            OAuth sessions lose access immediately. Anonymous session
-                            access is unaffected (controlled by Enforce Authentication
-                            on Inference).
+                            启用后，OAuth 同意流程仅提供身份提供商登录。虚拟密钥不能再用于获取 MCP 令牌，现有的虚拟密钥 OAuth 会话会立即失去访问权限。匿名会话访问不受影响（由“在推理时强制身份验证”控制）。
                           </p>
                         </div>
                         <Switch
@@ -674,12 +643,10 @@ export default function MCPView() {
                         <Alert variant="warning">
                           <AlertTriangle className="size-4" />
                           <AlertTitle>
-                            Virtual-key MCP access via OAuth will stop
+                            通过 OAuth 使用虚拟密钥的 MCP 访问将停止
                           </AlertTitle>
                           <AlertDescription>
-                            MCP clients that authenticated with a virtual key will
-                            lose access immediately and must sign in through your
-                            identity provider to reconnect.
+                            使用虚拟密钥认证的 MCP 客户端会立即失去访问权限，必须通过你的身份提供商重新登录才能连接。
                           </AlertDescription>
                         </Alert>
                       )}
@@ -693,7 +660,7 @@ export default function MCPView() {
 			</div>
 			<div className="flex justify-end pt-2">
 				<Button onClick={handleSave} disabled={!hasChanges || isLoading || !hasSettingsUpdateAccess} data-testid="mcp-settings-save-btn">
-					{isLoading ? "Saving..." : "Save Changes"}
+					{isLoading ? "保存中…" : "保存更改"}
 				</Button>
 			</div>
 		</div>

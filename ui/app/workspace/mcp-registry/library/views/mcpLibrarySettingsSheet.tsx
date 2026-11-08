@@ -16,12 +16,12 @@ const mcpLibrarySettingsSchema = z.object({
 		.trim()
 		.refine(
 			(value) => value === "" || value.startsWith("http://") || value.startsWith("https://"),
-			"URL must start with http:// or https://",
+			"URL 必须以 http:// 或 https:// 开头",
 		),
 	mcp_library_sync_interval_hours: z
-		.number({ message: "Sync interval is required" })
-		.min(1, "Sync interval must be at least 1 hour")
-		.max(8760, "Sync interval cannot exceed 8760 hours (1 year)"),
+		.number({ message: "同步间隔为必填项" })
+		.min(1, "同步间隔至少为 1 小时")
+		.max(8760, "同步间隔不能超过 8760 小时（1 年）"),
 });
 
 type MCPLibrarySettingsFormData = z.infer<typeof mcpLibrarySettingsSchema>;
@@ -71,7 +71,7 @@ export function MCPLibrarySettingsSheet({ open, onClose }: MCPLibrarySettingsShe
 
 	const onSubmit = async (data: MCPLibrarySettingsFormData) => {
 		if (!bifrostConfig) {
-			toast.error("Unable to load current settings. Please retry.");
+			toast.error("无法加载当前设置，请重试。");
 			return;
 		}
 		try {
@@ -83,7 +83,7 @@ export function MCPLibrarySettingsSheet({ open, onClose }: MCPLibrarySettingsShe
 					mcp_library_sync_interval: data.mcp_library_sync_interval_hours * 3600,
 				},
 			}).unwrap();
-			toast.success("MCP Library settings updated successfully.");
+			toast.success("MCP 服务器库设置已更新。");
 			reset(data);
 		} catch (error) {
 			toast.error(getErrorMessage(error));
@@ -93,7 +93,7 @@ export function MCPLibrarySettingsSheet({ open, onClose }: MCPLibrarySettingsShe
 	const handleForceSync = async () => {
 		try {
 			await forceSyncMCPLibrary().unwrap();
-			toast.success("MCP Library sync triggered successfully.");
+			toast.success("已触发 MCP 服务器库同步。");
 		} catch (error) {
 			toast.error(getErrorMessage(error));
 		}
@@ -103,17 +103,17 @@ export function MCPLibrarySettingsSheet({ open, onClose }: MCPLibrarySettingsShe
 		<Sheet open={open} onOpenChange={(sheetOpen) => !sheetOpen && onClose()}>
 			<SheetContent className="flex w-full flex-col overflow-x-hidden px-0">
 				<SheetHeader className="flex flex-col items-start px-7 pt-8">
-					<SheetTitle>MCP Library Settings</SheetTitle>
-					<SheetDescription>Configure the sync source and interval for the MCP server catalog.</SheetDescription>
+					<SheetTitle>MCP 服务器库设置</SheetTitle>
+					<SheetDescription>配置 MCP 服务器目录的同步源与同步间隔。</SheetDescription>
 				</SheetHeader>
 
 				<form onSubmit={handleSubmit(onSubmit)} className="flex min-h-0 flex-1 flex-col">
 					<div className="flex-1 space-y-4 overflow-y-auto px-8">
 						<div className="space-y-2 rounded-sm border p-4">
 							<div className="space-y-0.5">
-								<Label htmlFor="mcp-library-url">Library Sync URL</Label>
+								<Label htmlFor="mcp-library-url">服务器库同步 URL</Label>
 								<p className="text-muted-foreground text-sm">
-									URL to a custom MCP server catalog. Leave empty to use the default Bifrost catalog.
+									自定义 MCP 服务器目录的 URL。留空则使用 Bifrost 默认目录。
 								</p>
 							</div>
 							<Input
@@ -129,8 +129,8 @@ export function MCPLibrarySettingsSheet({ open, onClose }: MCPLibrarySettingsShe
 
 						<div className="space-y-2 rounded-sm border p-4">
 							<div className="space-y-0.5">
-								<Label htmlFor="mcp-library-sync-interval">Sync Interval (hours)</Label>
-								<p className="text-muted-foreground text-sm">How often to sync the MCP server catalog from the source URL.</p>
+								<Label htmlFor="mcp-library-sync-interval">同步间隔（小时）</Label>
+								<p className="text-muted-foreground text-sm">从源 URL 同步 MCP 服务器目录的频率。</p>
 							</div>
 							<Input
 								id="mcp-library-sync-interval"
@@ -154,17 +154,17 @@ export function MCPLibrarySettingsSheet({ open, onClose }: MCPLibrarySettingsShe
 								disabled={isForceSyncing || !hasSettingsUpdateAccess}
 								data-testid="mcp-library-force-sync-btn"
 							>
-								{isForceSyncing ? "Syncing..." : "Force Sync Now"}
+								{isForceSyncing ? "正在同步..." : "立即强制同步"}
 							</Button>
 							<Button type="button" variant="outline" onClick={onClose} disabled={isLoading} data-testid="mcp-library-settings-cancel-btn">
-								Cancel
+								取消
 							</Button>
 							<Button
 								type="submit"
 								disabled={!hasChanges || isLoading || isConfigLoading || isConfigError || !hasSettingsUpdateAccess}
 								data-testid="mcp-library-settings-save-btn"
 							>
-								{isLoading ? "Saving..." : "Save Changes"}
+								{isLoading ? "正在保存..." : "保存更改"}
 							</Button>
 						</div>
 					</div>

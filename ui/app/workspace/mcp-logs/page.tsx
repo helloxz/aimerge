@@ -243,7 +243,7 @@ export default function MCPLogsPage() {
 
 	const handleDelete = useCallback(
 		async (log: MCPToolLogEntry) => {
-			if (!hasDeleteAccess) throw new Error("No delete access");
+			if (!hasDeleteAccess) throw new Error("没有删除权限");
 			try {
 				await deleteLogs({ ids: [log.id] }).unwrap();
 				if (urlState.selected_log === log.id) {
@@ -291,26 +291,30 @@ export default function MCPLogsPage() {
 	const statCards = useMemo(
 		() => [
 			{
-				title: "Total Executions",
+				id: "total-executions",
+				title: "总执行次数",
 				value: <NumberFlow value={statsData?.total_executions ?? 0} format={COMPACT_NUMBER_FORMAT} />,
 				icon: <Hash className="size-4" />,
 			},
 			{
-				title: "Success Rate",
+				id: "success-rate",
+				title: "成功率",
 				value: (
 					<NumberFlow value={statsData?.success_rate ?? 0} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} suffix="%" />
 				),
 				icon: <CheckCircle className="size-4" />,
 			},
 			{
-				title: "Avg Latency",
+				id: "avg-latency",
+				title: "平均延迟",
 				value: (
 					<NumberFlow value={statsData?.average_latency ?? 0} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} suffix="ms" />
 				),
 				icon: <Clock className="size-4" />,
 			},
 			{
-				title: "Total Cost",
+				id: "total-cost",
+				title: "总费用",
 				value: (
 					<NumberFlow
 						value={statsData?.total_cost ?? 0}
@@ -353,12 +357,12 @@ export default function MCPLogsPage() {
 
 	const MCP_COLUMN_LABELS: Record<string, string> = useMemo(
 		() => ({
-			timestamp: "Time",
-			tool_name: "Tool Name",
-			server_label: "Server",
-			latency: "Latency",
-			cost: "Cost",
-			virtual_key: "Virtual Key",
+			timestamp: "时间",
+			tool_name: "工具名称",
+			server_label: "服务器",
+			latency: "延迟",
+			cost: "费用",
+			virtual_key: "虚拟密钥",
 		}),
 		[],
 	);
@@ -447,7 +451,7 @@ export default function MCPLogsPage() {
 						<div className="px-4">
 							<div className="grid shrink-0 grid-cols-1 gap-4 md:grid-cols-4">
 								{statCards.map((card) => (
-									<Card key={card.title} className="py-4 shadow-none">
+									<Card key={card.id} className="py-4 shadow-none">
 										<CardContent
 											className={`flex items-center justify-between px-4 transition-opacity duration-200 ${statsIsFetching ? "opacity-50" : "opacity-100"}`}
 										>

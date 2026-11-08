@@ -61,9 +61,9 @@ export default function OAuthGrantsPage() {
 		setPendingActionRowId(row.id);
 		try {
 			await revokeGrant(row.id).unwrap();
-			toast.success("Grant revoked");
+			toast.success("授权已撤销");
 		} catch (err) {
-			toast.error("Failed to revoke grant", { description: getErrorMessage(err) });
+			toast.error("撤销授权失败", { description: getErrorMessage(err) });
 		} finally {
 			setPendingActionRowId(null);
 		}
@@ -79,10 +79,9 @@ export default function OAuthGrantsPage() {
 
 			<div className="mb-4 flex items-center justify-between gap-4">
 				<div>
-					<h2 className="text-lg font-semibold tracking-tight">OAuth Grants</h2>
+					<h2 className="text-lg font-semibold tracking-tight">OAuth 授权</h2>
 					<p className="text-muted-foreground text-sm">
-						Active downstream OAuth grants issued to MCP clients that connected
-						via the OAuth consent flow.
+						通过 OAuth 授权同意流程连接的下游 MCP 客户端所持有的有效 OAuth 授权。
 					</p>
 				</div>
 			</div>
@@ -104,7 +103,7 @@ export default function OAuthGrantsPage() {
 				</div>
 			) : isError ? (
 				<div className="rounded-lg border border-destructive bg-destructive/10 p-6 text-sm text-destructive">
-					Failed to load OAuth grants: {getErrorMessage(error)}
+					加载 OAuth 授权失败：{getErrorMessage(error)}
 				</div>
 			) : (
 				<GrantsTable

@@ -43,7 +43,7 @@ function ExternalCacheTokenMeterChartImpl({ data }: ExternalCacheTokenMeterChart
 		<ChartErrorBoundary resetKey={`${data?.buckets?.length ?? 0}-${totalCachedRead}-${totalPromptTokens}`}>
 			<div className="grid h-full grid-rows-[104px_auto] items-start overflow-hidden pt-8">
 				<div ref={ref} className="relative h-full w-full grow">
-					{!hasData && <div className="text-muted-foreground flex h-full items-center justify-center text-sm">No data available</div>}
+					{!hasData && <div className="text-muted-foreground flex h-full items-center justify-center text-sm">暂无数据</div>}
 					{hasData && gaugeGeometry && (
 						<>
 							<ResponsiveContainer width="100%" height="100%">
@@ -77,30 +77,30 @@ function ExternalCacheTokenMeterChartImpl({ data }: ExternalCacheTokenMeterChart
 						<div className="flex shrink-0 flex-col items-center pt-1 leading-none">
 							<div className="text-muted-foreground text-3xl font-semibold tracking-tight">{percentage.toFixed(1)}%</div>
 							<div className="mt-1 flex items-center gap-1 text-[11px] text-zinc-400">
-								<span>of input tokens cached by provider</span>
+								<span>输入 Token 中由提供商缓存的比例</span>
 								<Tooltip>
 									<TooltipTrigger asChild>
 										<button
 											type="button"
 											data-testid="external-cache-meter-info-btn"
 											className="text-zinc-500 transition-colors hover:text-zinc-300"
-											aria-label="More information about external cache hit rate"
+											aria-label="关于外部缓存命中率的更多信息"
 										>
 											<Info className="h-3 w-3" />
 										</button>
 									</TooltipTrigger>
-									<TooltipContent side="top">This reflects provider-level caching, not Bifrost semantic cache hits.</TooltipContent>
+									<TooltipContent side="top">这里反映的是提供商级别的缓存，而非 Bifrost 语义缓存命中。</TooltipContent>
 								</Tooltip>
 							</div>
 						</div>
 						<div className="flex shrink-0 flex-wrap items-center justify-center gap-x-4 gap-y-1 pt-2 text-[11px] leading-none">
 							<span className="flex items-center gap-1.5">
 								<span className="h-2 w-2 rounded-full" style={{ backgroundColor: METER_COLORS.cached }} />
-								<span className="text-primary">Cached: {formatCompactNumber(totalCachedRead)}</span>
+								<span className="text-primary">缓存：{formatCompactNumber(totalCachedRead)}</span>
 							</span>
 							<span className="flex items-center gap-1.5">
 								<span className="h-2 w-2 rounded-full" style={{ backgroundColor: METER_COLORS.input }} />
-								<span className="text-muted-foreground">Input: {formatCompactNumber(totalPromptTokens)}</span>
+								<span className="text-muted-foreground">输入：{formatCompactNumber(totalPromptTokens)}</span>
 							</span>
 						</div>
 					</div>

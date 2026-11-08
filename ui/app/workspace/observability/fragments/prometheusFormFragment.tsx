@@ -185,15 +185,15 @@ export function PrometheusFormFragment({
 	const renderActions = (tabKey: "pull" | "push", tabDirty: boolean, onResetTab: () => void) => {
 		const thisTabHasErrors = tabKey === "pull" ? hasPullErrors : hasPushErrors;
 		const otherTabHasErrors = tabKey === "pull" ? hasPushErrors : hasPullErrors;
-		const otherTabLabel = tabKey === "pull" ? "Push-based" : "Pull-based";
+		const otherTabLabel = tabKey === "pull" ? "推送模式" : "拉取模式";
 		const saveDisabled = !hasPrometheusAccess || !tabDirty || formIsInvalid;
 		let tooltipMsg = "";
 		if (!tabDirty) {
-			tooltipMsg = "No changes made in this tab";
+			tooltipMsg = "此标签页未做任何更改";
 		} else if (formIsInvalid && otherTabHasErrors && !thisTabHasErrors) {
-			tooltipMsg = `Fix validation errors in the ${otherTabLabel} tab before saving`;
+			tooltipMsg = `请先修复${otherTabLabel}标签页中的校验错误再保存`;
 		} else if (formIsInvalid) {
-			tooltipMsg = "Fix validation errors before saving";
+			tooltipMsg = "保存前请先修复校验错误";
 		}
 
 		return (
@@ -206,8 +206,8 @@ export function PrometheusFormFragment({
 							onClick={onDelete}
 							disabled={isDeleting || !hasPrometheusAccess}
 							data-testid="prometheus-connector-delete-btn"
-							title="Delete connector"
-							aria-label="Delete connector"
+							title="删除连接器"
+							aria-label="删除连接器"
 						>
 							<Trash2 className="size-4" />
 						</Button>
@@ -219,13 +219,13 @@ export function PrometheusFormFragment({
 						disabled={!hasPrometheusAccess || isLoading || !tabDirty}
 						data-testid={`prometheus-${tabKey}-reset-btn`}
 					>
-						Reset
+						重置
 					</Button>
 					<TooltipProvider>
 						<Tooltip>
 							<TooltipTrigger asChild>
 								<Button type="submit" disabled={saveDisabled} isLoading={isSaving} data-testid={`prometheus-${tabKey}-save-btn`}>
-									Save Prometheus Configuration
+									保存 Prometheus 配置
 								</Button>
 							</TooltipTrigger>
 							{tooltipMsg && (
@@ -246,10 +246,10 @@ export function PrometheusFormFragment({
 				<Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "pull" | "push")}>
 					<TabsList className="gap-2">
 						<TabsTrigger value="pull" className="px-2 py-1" data-testid="prometheus-tab-pull">
-							Pull-based
+							拉取模式
 						</TabsTrigger>
 						<TabsTrigger value="push" className="px-2 py-1" data-testid="prometheus-tab-push">
-							Push-based
+							推送模式
 						</TabsTrigger>
 					</TabsList>
 
@@ -257,15 +257,15 @@ export function PrometheusFormFragment({
 					<TabsContent value="pull" className="mt-2 space-y-4">
 						<div className="flex items-center justify-between gap-4">
 							<div className="flex flex-col gap-1">
-								<h3 className="text-sm font-medium">Pull-based Scraping</h3>
-								<p className="text-muted-foreground text-xs">Prometheus can scrape metrics from the /metrics endpoint</p>
+								<h3 className="text-sm font-medium">拉取式抓取</h3>
+								<p className="text-muted-foreground text-xs">Prometheus 可从 /metrics 端点抓取指标</p>
 							</div>
 							<FormField
 								control={form.control}
 								name="metrics_enabled"
 								render={({ field }) => (
 									<FormItem className="flex items-center gap-2">
-										<FormLabel className="text-muted-foreground text-sm font-medium">Enabled</FormLabel>
+										<FormLabel className="text-muted-foreground text-sm font-medium">启用</FormLabel>
 										<FormControl>
 											<Switch
 												checked={field.value}
@@ -282,7 +282,7 @@ export function PrometheusFormFragment({
 						<div className="bg-muted/50 rounded-md p-4">
 							<div className="flex items-center justify-between">
 								<div className="flex flex-col gap-1">
-									<span className="text-sm font-medium">Metrics Endpoint</span>
+									<span className="text-sm font-medium">指标端点</span>
 									<code className="text-muted-foreground text-xs">{metricsEndpoint || "http://<bifrost-host>:<port>/metrics"}</code>
 								</div>
 								{metricsEndpoint && (
@@ -295,12 +295,12 @@ export function PrometheusFormFragment({
 										data-testid="prometheus-copy-endpoint"
 									>
 										<Copy className="mr-2 h-3 w-3" />
-										{copied ? "Copied!" : "Copy"}
+										{copied ? "已复制！" : "复制"}
 									</Button>
 								)}
 							</div>
 							<p className="text-muted-foreground mt-2 text-xs">
-								Configure your Prometheus server to scrape this endpoint. Served only while Pull-based scraping is enabled.
+								将你的 Prometheus 服务器配置为抓取此端点。仅在启用拉取式抓取时提供。
 							</p>
 						</div>
 
@@ -312,10 +312,10 @@ export function PrometheusFormFragment({
 						<div className="flex items-center justify-between gap-4">
 							<div className="flex flex-col gap-1">
 								<h3 className="flex flex-row items-center gap-2 text-sm font-medium">
-									Push-based (Push Gateway) <Badge variant="secondary">BETA</Badge>
+									推送模式（Push Gateway） <Badge variant="secondary">BETA</Badge>
 								</h3>
 								<p className="text-muted-foreground text-xs">
-									Push metrics to a Prometheus Push Gateway for proper aggregation in cluster deployments
+									将指标推送到 Prometheus Push Gateway，以便在集群部署中正确聚合
 								</p>
 							</div>
 							<FormField
@@ -323,7 +323,7 @@ export function PrometheusFormFragment({
 								name="push_gateway_enabled"
 								render={({ field }) => (
 									<FormItem className="flex items-center gap-2">
-										<FormLabel className="text-muted-foreground text-sm font-medium">Enabled</FormLabel>
+										<FormLabel className="text-muted-foreground text-sm font-medium">启用</FormLabel>
 										<FormControl>
 											<Switch
 												checked={field.value}
@@ -340,8 +340,7 @@ export function PrometheusFormFragment({
 						<Alert variant="info">
 							<AlertTriangle className="" />
 							<AlertDescription className="text-xs">
-								If you are running multiple Bifrost nodes, use push gateway for accurate metrics. Pull-based /metrics scraping may miss
-								nodes behind a load balancer.
+								如果你运行多个 Bifrost 节点，请使用 Push Gateway 以获得准确的指标。拉取式 /metrics 抓取可能遗漏负载均衡器后端的节点。
 							</AlertDescription>
 						</Alert>
 
@@ -351,16 +350,16 @@ export function PrometheusFormFragment({
 								name="prometheus_config.push_gateway_url"
 								render={({ field }) => (
 									<FormItem className="w-full">
-										<FormLabel>Push Gateway URL</FormLabel>
+										<FormLabel>Push Gateway 地址</FormLabel>
 										<FormControl>
 											<SecretVarInput
-												placeholder="http://pushgateway:9091 or env.PUSHGATEWAY_URL"
+												placeholder="http://pushgateway:9091 或 env.PUSHGATEWAY_URL"
 												disabled={!hasPrometheusAccess}
 												data-testid="prometheus-push-gateway-url"
 												{...field}
 											/>
 										</FormControl>
-										<FormDescription>URL of your Prometheus Push Gateway</FormDescription>
+										<FormDescription>你的 Prometheus Push Gateway 地址</FormDescription>
 										<FormMessage />
 									</FormItem>
 								)}
@@ -372,11 +371,11 @@ export function PrometheusFormFragment({
 									name="prometheus_config.job_name"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Job Name</FormLabel>
+											<FormLabel>Job 名称</FormLabel>
 											<FormControl>
 												<Input placeholder="bifrost" disabled={!hasPrometheusAccess} data-testid="prometheus-job-name" {...field} />
 											</FormControl>
-											<FormDescription>Job label for metrics</FormDescription>
+											<FormDescription>指标的 Job 标签</FormDescription>
 											<FormMessage />
 										</FormItem>
 									)}
@@ -387,7 +386,7 @@ export function PrometheusFormFragment({
 									name="prometheus_config.push_interval"
 									render={({ field }) => (
 										<FormItem>
-											<FormLabel>Push Interval (seconds)</FormLabel>
+											<FormLabel>推送间隔（秒）</FormLabel>
 											<FormControl>
 												<Input
 													type="number"
@@ -399,7 +398,7 @@ export function PrometheusFormFragment({
 													onChange={(e) => field.onChange(parseInt(e.target.value) || 15)}
 												/>
 											</FormControl>
-											<FormDescription>How often to push (1-300s)</FormDescription>
+											<FormDescription>推送频率（1-300 秒）</FormDescription>
 											<FormMessage />
 										</FormItem>
 									)}
@@ -412,7 +411,7 @@ export function PrometheusFormFragment({
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel className="flex items-center gap-2">
-											Instance ID
+											实例 ID
 											<TooltipProvider>
 												<Tooltip>
 													<TooltipTrigger asChild>
@@ -420,7 +419,7 @@ export function PrometheusFormFragment({
 													</TooltipTrigger>
 													<TooltipContent>
 														<p className="max-w-xs text-xs">
-															Used to identify this Bifrost instance in metrics. If not set, hostname is used automatically.
+															用于在指标中标识此 Bifrost 实例。未设置时将自动使用主机名。
 														</p>
 													</TooltipContent>
 												</Tooltip>
@@ -428,7 +427,7 @@ export function PrometheusFormFragment({
 										</FormLabel>
 										<FormControl>
 											<Input
-												placeholder="Auto-generated from hostname"
+												placeholder="根据主机名自动生成"
 												disabled={!hasPrometheusAccess}
 												data-testid="prometheus-instance-id"
 												{...field}
@@ -451,12 +450,12 @@ export function PrometheusFormFragment({
 										data-testid="prometheus-add-basic-auth"
 									>
 										<Plus className="mr-2 h-3 w-3" />
-										Add Basic Auth
+										添加 Basic Auth
 									</Button>
 								) : (
 									<>
 										<div className="flex items-center justify-between">
-											<span className="text-sm font-medium">Basic Authentication</span>
+											<span className="text-sm font-medium">Basic 认证</span>
 											<Button
 												type="button"
 												variant="ghost"
@@ -465,7 +464,7 @@ export function PrometheusFormFragment({
 												disabled={!hasPrometheusAccess}
 												className="text-muted-foreground hover:text-destructive h-auto p-1"
 												data-testid="prometheus-remove-basic-auth"
-												aria-label="Remove basic auth"
+												aria-label="移除 Basic Auth"
 											>
 												<Trash className="h-4 w-4" />
 											</Button>
@@ -476,10 +475,10 @@ export function PrometheusFormFragment({
 												name="prometheus_config.basic_auth_username"
 												render={({ field }) => (
 													<FormItem>
-														<FormLabel>Username</FormLabel>
+														<FormLabel>用户名</FormLabel>
 														<FormControl>
 															<SecretVarInput
-																placeholder="Username or env.PG_USER"
+																placeholder="用户名或 env.PG_USER"
 																disabled={!hasPrometheusAccess}
 																data-testid="prometheus-basic-auth-username"
 																{...field}
@@ -495,11 +494,11 @@ export function PrometheusFormFragment({
 												name="prometheus_config.basic_auth_password"
 												render={({ field }) => (
 													<FormItem>
-														<FormLabel>Password</FormLabel>
+														<FormLabel>密码</FormLabel>
 														<FormControl>
 															<SecretVarInput
 																type="password"
-																placeholder="Password or env.PG_PASS"
+																placeholder="密码或 env.PG_PASS"
 																disabled={!hasPrometheusAccess}
 																hideValueWhenEnv
 																redactNonEnvValue

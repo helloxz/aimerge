@@ -45,10 +45,10 @@ export default function ModelCatalogTable({
 	isLoadingModels,
 }: ModelCatalogTableProps) {
 	const summaryCards = [
-		{ label: "Total Providers", value: totalProviders.toLocaleString() },
-		{ label: "Total Models", value: totalModels.toLocaleString() },
-		{ label: "Total Requests (24h)", value: totalRequests24h.toLocaleString() },
-		{ label: "Total Cost (24h)", value: formatCost(totalCost24h) },
+		{ label: "提供商总数", value: totalProviders.toLocaleString() },
+		{ label: "模型总数", value: totalModels.toLocaleString() },
+		{ label: "总请求数（24 小时）", value: totalRequests24h.toLocaleString() },
+		{ label: "总费用（24 小时）", value: formatCost(totalCost24h) },
 	];
 
 	return (
@@ -68,8 +68,8 @@ export default function ModelCatalogTable({
 			{/* Header + Filter */}
 			<div className="flex items-center justify-between">
 				<div>
-					<h2 className="text-lg font-semibold">Model Catalog</h2>
-					<p className="text-muted-foreground text-sm">Overview of all configured providers, models, and usage.</p>
+					<h2 className="text-lg font-semibold">模型目录</h2>
+					<p className="text-muted-foreground text-sm">已配置的提供商、模型与用量总览。</p>
 				</div>
 				<Select
 					value={providerFilter || "all"}
@@ -77,10 +77,10 @@ export default function ModelCatalogTable({
 					data-testid="model-catalog-provider-filter"
 				>
 					<SelectTrigger className="w-[200px]" data-testid="model-catalog-provider-trigger">
-						<SelectValue placeholder="All Providers" />
+						<SelectValue placeholder="全部提供商" />
 					</SelectTrigger>
 					<SelectContent>
-						<SelectItem value="all">All Providers</SelectItem>
+						<SelectItem value="all">全部提供商</SelectItem>
 						{providers.map((p) => (
 							<SelectItem key={p} value={p}>
 								{ProviderLabels[p as keyof typeof ProviderLabels] || p}
@@ -101,29 +101,29 @@ export default function ModelCatalogTable({
 					</colgroup>
 					<TableHeader>
 						<TableRow>
-							<TableHead>Provider</TableHead>
+							<TableHead>提供商</TableHead>
 							<TableHead>
 								<TooltipProvider>
 									<div className="flex items-center gap-1">
-										Models
+										模型
 										<Tooltip>
 											<TooltipTrigger data-testid="model-catalog-models-info-trigger">
 												<Info className="text-muted-foreground h-3.5 w-3.5" />
 											</TooltipTrigger>
-											<TooltipContent side="bottom">Models used in the last 30 days</TooltipContent>
+											<TooltipContent side="bottom">最近 30 天使用的模型</TooltipContent>
 										</Tooltip>
 									</div>
 								</TooltipProvider>
 							</TableHead>
-							<TableHead className="text-right">Total Traffic (24h)</TableHead>
-							<TableHead className="text-right">Total Cost (24h)</TableHead>
+							<TableHead className="text-right">总流量（24 小时）</TableHead>
+							<TableHead className="text-right">总费用（24 小时）</TableHead>
 						</TableRow>
 					</TableHeader>
 					<TableBody>
 						{rows.length === 0 ? (
 							<TableRow>
 								<TableCell colSpan={4} className="h-24 text-center">
-									<span className="text-muted-foreground text-sm">No matching providers found.</span>
+									<span className="text-muted-foreground text-sm">未找到匹配的提供商。</span>
 								</TableCell>
 							</TableRow>
 						) : (
@@ -143,7 +143,7 @@ export default function ModelCatalogTable({
 											</span>
 											{row.isCustom && (
 												<Badge variant="secondary" className="text-muted-foreground shrink-0 px-1.5 py-0.5 text-[10px] font-bold">
-													CUSTOM
+													自定义
 												</Badge>
 											)}
 										</div>
@@ -200,7 +200,7 @@ function ModelsUsedCell({ models: rawModels }: { models: string[] }) {
 					<Tooltip>
 						<TooltipTrigger data-testid="model-catalog-models-overflow-trigger">
 							<Badge variant="outline" className="text-xs font-normal">
-								+{remaining} more
+								另有 {remaining} 个
 							</Badge>
 						</TooltipTrigger>
 						<TooltipContent side="bottom" className="max-w-xs">

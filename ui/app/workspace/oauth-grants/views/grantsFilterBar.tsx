@@ -8,9 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Fingerprint, KeyRound, Search, UserRound, X } from "lucide-react";
 
 const MODE_OPTIONS = [
-	{ label: "User", value: "user", icon: <UserRound className="size-3.5" /> },
-	{ label: "Virtual key", value: "vk", icon: <KeyRound className="size-3.5" /> },
-	{ label: "Session", value: "session", icon: <Fingerprint className="size-3.5" /> },
+	{ label: "用户", value: "user", icon: <UserRound className="size-3.5" /> },
+	{ label: "虚拟密钥", value: "vk", icon: <KeyRound className="size-3.5" /> },
+	{ label: "会话", value: "session", icon: <Fingerprint className="size-3.5" /> },
 ];
 
 interface GrantsFilterBarProps {
@@ -36,8 +36,8 @@ export default function GrantsFilterBar({
 				<Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
 				<Input
 					data-testid="oauth-grants-search-input"
-					aria-label="Search grants"
-					placeholder="Search client, identity..."
+					aria-label="搜索授权"
+					placeholder="搜索客户端、身份..."
 					value={search}
 					onChange={(e) => onSearchChange(e.target.value)}
 					className="pl-9"
@@ -51,13 +51,13 @@ export default function GrantsFilterBar({
 				options={MODE_OPTIONS}
 				value={modeFilter}
 				onValueChange={onModeChange}
-				placeholder="All identities"
+				placeholder="全部身份"
 				className="h-9 w-[180px]"
 			/>
 			{hasActiveFilters && (
 				<Button data-testid="oauth-grants-clear-filters-btn" variant="ghost" size="sm" onClick={onClearFilters} className="h-9">
 					<X className="h-4 w-4" />
-					Clear filters
+					清除筛选
 				</Button>
 			)}
 		</div>

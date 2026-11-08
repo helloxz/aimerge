@@ -90,7 +90,7 @@ function WebhookActionsMenu({
 					variant="ghost"
 					size="icon"
 					className="h-8 w-8"
-					aria-label="Webhook actions"
+					aria-label="Webhook 操作"
 					data-testid={`webhook-actions-btn-${endpoint.name}`}
 				>
 					<MoreHorizontal className="h-4 w-4" />
@@ -114,7 +114,7 @@ function WebhookActionsMenu({
 							onEdit(endpoint);
 						}}
 					>
-						<PencilIcon className="h-4 w-4" /> Edit
+						<PencilIcon className="h-4 w-4" /> 编辑
 					</DropdownMenuItem>
 				)}
 				{hasUpdateAccess && (
@@ -127,7 +127,7 @@ function WebhookActionsMenu({
 							onRotate(endpoint);
 						}}
 					>
-						<RotateCcw className="h-4 w-4" /> Rotate secret
+						<RotateCcw className="h-4 w-4" /> 轮换密钥
 					</DropdownMenuItem>
 				)}
 				{hasDeleteAccess && (
@@ -141,7 +141,7 @@ function WebhookActionsMenu({
 							onDelete(endpoint);
 						}}
 					>
-						<Trash2 className="h-4 w-4" /> Delete
+						<Trash2 className="h-4 w-4" /> 删除
 					</DropdownMenuItem>
 				)}
 			</DropdownMenuContent>
@@ -238,7 +238,7 @@ export default function WebhooksView() {
 		setTogglingIds((prev) => new Set(prev).add(endpoint.id));
 		try {
 			await updateWebhookEndpoint({ id: endpoint.id, data: toRequest(endpoint, { disabled: !enabled }) }).unwrap();
-			toast.success(`Endpoint ${enabled ? "enabled" : "disabled"} successfully`);
+			toast.success(`端点已${enabled ? "启用" : "禁用"}`);
 		} catch (err) {
 			toast.error(getErrorMessage(err));
 		} finally {
@@ -255,11 +255,11 @@ export default function WebhooksView() {
 		try {
 			const result = await testWebhookEndpoint({ id: endpoint.id, event }).unwrap();
 			if (result.delivered) {
-				toast.success(`Test delivered, receiver answered ${result.receiver_status_code}`);
+				toast.success(`测试已送达，接收方返回 ${result.receiver_status_code}`);
 			} else if (result.error) {
-				toast.error(`Test failed: ${result.error}`);
+				toast.error(`测试失败：${result.error}`);
 			} else {
-				toast.error(`Test rejected, receiver answered ${result.receiver_status_code}`);
+				toast.error(`测试被拒绝，接收方返回 ${result.receiver_status_code}`);
 			}
 		} catch (err) {
 			toast.error(getErrorMessage(err));
@@ -276,7 +276,7 @@ export default function WebhooksView() {
 		if (!deleteTarget) return;
 		try {
 			await deleteWebhookEndpoint(deleteTarget.id).unwrap();
-			toast.success("Webhook endpoint deleted successfully");
+			toast.success("Webhook 端点已删除");
 			if (detailsEndpoint?.id === deleteTarget.id) setDetailsEndpoint(null);
 		} catch (err) {
 			toast.error(getErrorMessage(err));
@@ -289,7 +289,7 @@ export default function WebhooksView() {
 		if (!rotateTarget) return;
 		try {
 			const response = await rotateWebhookEndpointSecret(rotateTarget.id).unwrap();
-			toast.success("Signing secret rotated successfully");
+			toast.success("签名密钥已轮换");
 			setSecretReveal({ endpointName: response.endpoint.name, secret: response.secret });
 		} catch (err) {
 			toast.error(getErrorMessage(err));
@@ -309,10 +309,10 @@ export default function WebhooksView() {
 	if (isError && !data) {
 		return (
 			<div className="flex flex-col items-center justify-center gap-3 py-16 text-center" data-testid="webhooks-load-error">
-				<p className="text-sm font-medium">Failed to load webhook endpoints.</p>
+				<p className="text-sm font-medium">加载 Webhook 端点失败。</p>
 				<p className="text-muted-foreground max-w-md text-sm">{getErrorMessage(error)}</p>
 				<Button variant="outline" size="sm" onClick={() => void refetch()}>
-					Retry
+					重试
 				</Button>
 			</div>
 		);
@@ -326,15 +326,15 @@ export default function WebhooksView() {
 				<>
 					<div className="flex items-center justify-between">
 						<div>
-							<h2 className="text-lg font-semibold tracking-tight">Webhooks</h2>
+							<h2 className="text-lg font-semibold tracking-tight">Webhook</h2>
 							<p className="text-muted-foreground text-sm">
-								Register endpoints to receive signed notifications when async inference jobs complete or fail. Pass the endpoint's name in
-								the <code>x-bf-async-webhook</code> header when submitting a job.
+								注册端点以在异步推理任务完成或失败时接收带签名的通知。提交任务时在{" "}
+								<code>x-bf-async-webhook</code> 请求头中传入端点名称。
 							</p>
 						</div>
 						<Button onClick={handleAdd} disabled={!hasCreateAccess} data-testid="create-webhook-btn">
 							<Plus className="h-4 w-4" />
-							Add Endpoint
+							添加端点
 						</Button>
 					</div>
 
@@ -353,10 +353,10 @@ export default function WebhooksView() {
 						<Table data-testid="webhooks-table">
 							<TableHeader className="bg-muted sticky top-0 z-10">
 								<TableRow>
-									<TableHead>Name</TableHead>
+									<TableHead>名称</TableHead>
 									<TableHead>URL</TableHead>
-									<TableHead>Events</TableHead>
-									<TableHead>Enabled</TableHead>
+									<TableHead>事件</TableHead>
+									<TableHead>启用</TableHead>
 									<TableHead className={`bg-muted/50 sticky right-0 z-10 w-14 text-right ${PIN_SHADOW_RIGHT}`}></TableHead>
 								</TableRow>
 							</TableHeader>
@@ -364,7 +364,7 @@ export default function WebhooksView() {
 								{endpoints.length === 0 ? (
 									<TableRow>
 										<TableCell colSpan={5} className="text-muted-foreground h-24 text-center">
-											No matching webhook endpoints found.
+											未找到匹配的 Webhook 端点。
 										</TableCell>
 									</TableRow>
 								) : (
@@ -419,8 +419,8 @@ export default function WebhooksView() {
 					{totalCount > 0 && (
 						<div className="flex shrink-0 items-center justify-between text-xs" data-testid="pagination">
 							<div className="text-muted-foreground flex items-center gap-2">
-								{(offset + 1).toLocaleString()}-{Math.min(offset + PAGE_SIZE, totalCount).toLocaleString()} of {totalCount.toLocaleString()}{" "}
-								entries
+								{(offset + 1).toLocaleString()}-{Math.min(offset + PAGE_SIZE, totalCount).toLocaleString()} / 共 {totalCount.toLocaleString()}{" "}
+								项
 							</div>
 							<div className="flex items-center gap-2">
 								<Button
@@ -429,14 +429,14 @@ export default function WebhooksView() {
 									onClick={() => setUrlState({ offset: Math.max(0, offset - PAGE_SIZE) || null })}
 									disabled={offset === 0}
 									data-testid="webhooks-pagination-prev-btn"
-									aria-label="Previous page"
+									aria-label="上一页"
 								>
 									<ChevronLeft className="size-3" />
 								</Button>
 								<div className="flex items-center gap-1">
-									<span>Page</span>
+									<span>第</span>
 									<span>{Math.floor(offset / PAGE_SIZE) + 1}</span>
-									<span>of {Math.ceil(totalCount / PAGE_SIZE)}</span>
+									<span>页，共 {Math.ceil(totalCount / PAGE_SIZE)} 页</span>
 								</div>
 								<Button
 									variant="ghost"
@@ -444,7 +444,7 @@ export default function WebhooksView() {
 									onClick={() => setUrlState({ offset: offset + PAGE_SIZE })}
 									disabled={offset + PAGE_SIZE >= totalCount}
 									data-testid="webhooks-pagination-next-btn"
-									aria-label="Next page"
+									aria-label="下一页"
 								>
 									<ChevronRight className="size-3" />
 								</Button>
@@ -477,21 +477,20 @@ export default function WebhooksView() {
 			<AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Delete webhook endpoint</AlertDialogTitle>
+						<AlertDialogTitle>删除 Webhook 端点</AlertDialogTitle>
 						<AlertDialogDescription>
-							Are you sure you want to delete <b>{deleteTarget?.name}</b>? Pending deliveries to it will be dropped and jobs referencing it
-							will be rejected. This action cannot be undone.
+							确定要删除 <b>{deleteTarget?.name}</b> 吗？发往该端点的待处理投递将被丢弃，引用它的任务将被拒绝。此操作无法撤销。
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel data-testid="webhook-delete-cancel-btn">Cancel</AlertDialogCancel>
+						<AlertDialogCancel data-testid="webhook-delete-cancel-btn">取消</AlertDialogCancel>
 						<AlertDialogAction
 							className="bg-destructive hover:bg-destructive/90"
 							onClick={() => void handleDelete()}
 							disabled={isDeleting}
 							data-testid="webhook-delete-confirm-btn"
 						>
-							Delete
+							删除
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>
@@ -500,16 +499,15 @@ export default function WebhooksView() {
 			<AlertDialog open={!!rotateTarget} onOpenChange={(open) => !open && setRotateTarget(null)}>
 				<AlertDialogContent>
 					<AlertDialogHeader>
-						<AlertDialogTitle>Rotate signing secret</AlertDialogTitle>
+						<AlertDialogTitle>轮换签名密钥</AlertDialogTitle>
 						<AlertDialogDescription>
-							The current secret for <b>{rotateTarget?.name}</b> stops working immediately and deliveries are signed with the new one from
-							now on. Update your receiver right after rotating.
+							<b>{rotateTarget?.name}</b> 当前的密钥将立即失效，此后投递将使用新密钥签名。请在轮换后立即更新你的接收方配置。
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter>
-						<AlertDialogCancel data-testid="webhook-rotate-cancel-btn">Cancel</AlertDialogCancel>
+						<AlertDialogCancel data-testid="webhook-rotate-cancel-btn">取消</AlertDialogCancel>
 						<AlertDialogAction onClick={() => void handleRotate()} disabled={isRotating} data-testid="webhook-rotate-confirm-btn">
-							Rotate
+							轮换
 						</AlertDialogAction>
 					</AlertDialogFooter>
 				</AlertDialogContent>

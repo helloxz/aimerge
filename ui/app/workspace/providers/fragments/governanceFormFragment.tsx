@@ -29,8 +29,8 @@ interface GovernanceFormFragmentProps {
 
 const budgetLineSchema = z.object({
 	id: z.string().optional(),
-	max_limit: z.number({ error: "Budget limit must be a number" }).nonnegative("Budget limit cannot be negative").optional(),
-	reset_duration: z.string().min(1, "Reset duration is required"),
+	max_limit: z.number({ error: "预算上限必须是数字" }).nonnegative("预算上限不能为负数").optional(),
+	reset_duration: z.string().min(1, "重置周期为必填项"),
 });
 
 const formSchema = z.object({
@@ -186,10 +186,10 @@ export function GovernanceFormFragment({ provider }: GovernanceFormFragmentProps
 				},
 			}).unwrap();
 
-			toast.success("Governance configuration saved successfully");
+			toast.success("治理配置已保存");
 			form.reset(data);
 		} catch (error) {
-			toast.error("Failed to update provider governance", {
+			toast.error("更新提供商治理失败", {
 				description: getErrorMessage(error),
 			});
 		}
@@ -198,10 +198,10 @@ export function GovernanceFormFragment({ provider }: GovernanceFormFragmentProps
 	const handleDelete = async () => {
 		try {
 			await deleteProviderGovernance(provider.name).unwrap();
-			toast.success("Governance removed successfully");
+			toast.success("治理已移除");
 			form.reset(DEFAULT_GOVERNANCE_FORM_VALUES);
 		} catch (error) {
-			toast.error("Failed to remove governance", {
+			toast.error("移除治理失败", {
 				description: getErrorMessage(error),
 			});
 		}
@@ -222,10 +222,10 @@ export function GovernanceFormFragment({ provider }: GovernanceFormFragmentProps
 					<div className="flex items-center justify-between gap-4">
 						<div className="space-y-1">
 							<Label className="text-sm" htmlFor="provider-calendar-aligned">
-								Align to calendar cycle
+								按自然周期对齐
 							</Label>
 							<p className="text-muted-foreground text-xs">
-								Reset budgets at the start of each period (e.g. 1st of month) instead of rolling from creation date. Quarterly budgets always align to fiscal quarter starts.
+								在每个周期开始时（例如每月 1 日）重置预算，而非从创建日期滚动计算。季度预算始终按财季起始对齐。
 							</p>
 						</div>
 						<Switch
@@ -241,11 +241,11 @@ export function GovernanceFormFragment({ provider }: GovernanceFormFragmentProps
 
 				{/* Rate Limiting Configuration */}
 				<div className="space-y-4">
-					<Label className="text-sm font-medium">Rate Limiting Configuration</Label>
+					<Label className="text-sm font-medium">速率限制配置</Label>
 					<NumberAndSelect
 						id="providerTokenMaxLimit"
 						labelClassName="font-normal"
-						label="Maximum Tokens"
+						label="最大 Token 数"
 						value={form.watch("tokenMaxLimit")}
 						selectValue={form.watch("tokenResetDuration") || "1h"}
 						onChangeNumber={(value) => form.setValue("tokenMaxLimit", value, { shouldDirty: true })}
@@ -254,7 +254,7 @@ export function GovernanceFormFragment({ provider }: GovernanceFormFragmentProps
 					<NumberAndSelect
 						id="providerRequestMaxLimit"
 						labelClassName="font-normal"
-						label="Maximum Requests"
+						label="最大请求数"
 						value={form.watch("requestMaxLimit")}
 						selectValue={form.watch("requestResetDuration") || "1h"}
 						onChangeNumber={(value) => form.setValue("requestMaxLimit", value, { shouldDirty: true })}
@@ -267,11 +267,11 @@ export function GovernanceFormFragment({ provider }: GovernanceFormFragmentProps
 					<>
 						<DottedSeparator />
 						<div className="space-y-4">
-							<Label className="text-sm font-medium">Current Usage</Label>
+							<Label className="text-sm font-medium">当前用量</Label>
 							<div className="bg-muted/50 grid grid-cols-2 gap-4 rounded-lg p-4">
 								{providerGovernance?.budgets?.map((b) => (
 									<div key={b.id} className="space-y-1">
-										<p className="text-muted-foreground text-xs">Budget ({b.reset_duration})</p>
+										<p className="text-muted-foreground text-xs">预算（{b.reset_duration}）</p>
 										<p className="text-sm font-medium">
 											${b.current_usage.toFixed(2)} / ${b.max_limit.toFixed(2)}
 										</p>
@@ -279,7 +279,7 @@ export function GovernanceFormFragment({ provider }: GovernanceFormFragmentProps
 								))}
 								{providerGovernance?.rate_limit?.token_max_limit && (
 									<div className="space-y-1">
-										<p className="text-muted-foreground text-xs">Token Usage</p>
+										<p className="text-muted-foreground text-xs">Token 用量</p>
 										<p className="text-sm font-medium">
 											{providerGovernance.rate_limit.token_current_usage.toLocaleString()} /{" "}
 											{providerGovernance.rate_limit.token_max_limit.toLocaleString()}
@@ -288,7 +288,7 @@ export function GovernanceFormFragment({ provider }: GovernanceFormFragmentProps
 								)}
 								{providerGovernance?.rate_limit?.request_max_limit && (
 									<div className="space-y-1">
-										<p className="text-muted-foreground text-xs">Request Usage</p>
+										<p className="text-muted-foreground text-xs">请求用量</p>
 										<p className="text-sm font-medium">
 											{providerGovernance.rate_limit.request_current_usage.toLocaleString()} /{" "}
 											{providerGovernance.rate_limit.request_max_limit.toLocaleString()}
@@ -308,16 +308,16 @@ export function GovernanceFormFragment({ provider }: GovernanceFormFragmentProps
 						onClick={handleDelete}
 						disabled={!hasUpdateProviderAccess || isDeleting || !hasExistingGovernance}
 					>
-						Remove configuration
+						移除配置
 					</Button>
 					<Button type="submit" disabled={!form.formState.isDirty || !hasUpdateProviderAccess || isUpdating} isLoading={isUpdating}>
-						Save Governance Configuration
+						保存治理配置
 					</Button>
 				</div>
 			</form>
 			<BudgetUsageResetDialog
 				data-testid="provider-governance-budget-reset-dialog"
-				ownerLabel="provider"
+				ownerLabel="提供商"
 				open={resetPrompt.isOpen}
 				onOpenChange={resetPrompt.setOpen}
 				onChoice={(resetUsage) => resetPrompt.resolve((data) => saveGovernance(data, resetUsage))}

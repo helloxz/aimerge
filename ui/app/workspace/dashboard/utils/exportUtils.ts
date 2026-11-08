@@ -24,28 +24,28 @@ import type {
 type CSVData = { headers: string[]; rows: unknown[][] };
 
 export function overviewVolumeToCSV(data: LogsHistogramResponse | null): CSVData {
-	const headers = ["Timestamp", "Total Requests", "Success", "Error", "Cancelled"];
+	const headers = ["时间戳", "总请求数", "成功", "错误", "已取消"];
 	const rows = (data?.buckets ?? []).map((b) => [b.timestamp, b.count, b.success, b.error, b.cancelled ?? 0]);
 	return { headers, rows };
 }
 
 export function overviewTokensToCSV(data: TokenHistogramResponse | null): CSVData {
-	const headers = ["Timestamp", "Prompt Tokens", "Completion Tokens", "Total Tokens", "Cached Read Tokens"];
+	const headers = ["时间戳", "输入 Token", "输出 Token", "总 Token", "缓存读取 Token"];
 	const rows = (data?.buckets ?? []).map((b) => [b.timestamp, b.prompt_tokens, b.completion_tokens, b.total_tokens, b.cached_read_tokens]);
 	return { headers, rows };
 }
 
 export function overviewCostToCSV(data: CostHistogramResponse | null): CSVData {
 	const models = data?.models ?? [];
-	const headers = ["Timestamp", "Total Cost", ...models];
+	const headers = ["时间戳", "总成本", ...models];
 	const rows = (data?.buckets ?? []).map((b) => [b.timestamp, b.total_cost, ...models.map((m) => b.by_model?.[m] ?? 0)]);
 	return { headers, rows };
 }
 
 export function overviewModelUsageToCSV(data: ModelHistogramResponse | null): CSVData {
 	const models = data?.models ?? [];
-	const modelHeaders = models.flatMap((m) => [`${m} Total`, `${m} Success`, `${m} Error`, `${m} Cancelled`]);
-	const headers = ["Timestamp", ...modelHeaders];
+	const modelHeaders = models.flatMap((m) => [`${m} 总计`, `${m} 成功`, `${m} 错误`, `${m} 已取消`]);
+	const headers = ["时间戳", ...modelHeaders];
 	const rows = (data?.buckets ?? []).map((b) => [
 		b.timestamp,
 		...models.flatMap((m) => {
@@ -57,7 +57,7 @@ export function overviewModelUsageToCSV(data: ModelHistogramResponse | null): CS
 }
 
 export function overviewLatencyToCSV(data: LatencyHistogramResponse | null): CSVData {
-	const headers = ["Timestamp", "Avg Latency (ms)", "P90 (ms)", "P95 (ms)", "P99 (ms)", "Total Requests"];
+	const headers = ["时间戳", "平均延迟（毫秒）", "P90（毫秒）", "P95（毫秒）", "P99（毫秒）", "总请求数"];
 	const rows = (data?.buckets ?? []).map((b) => [
 		b.timestamp,
 		b.avg_latency,
@@ -71,15 +71,15 @@ export function overviewLatencyToCSV(data: LatencyHistogramResponse | null): CSV
 
 export function providerCostToCSV(data: ProviderCostHistogramResponse | null): CSVData {
 	const providers = data?.providers ?? [];
-	const headers = ["Timestamp", "Total Cost", ...providers];
+	const headers = ["时间戳", "总成本", ...providers];
 	const rows = (data?.buckets ?? []).map((b) => [b.timestamp, b.total_cost, ...providers.map((p) => b.by_provider?.[p] ?? 0)]);
 	return { headers, rows };
 }
 
 export function providerTokensToCSV(data: ProviderTokenHistogramResponse | null): CSVData {
 	const providers = data?.providers ?? [];
-	const provHeaders = providers.flatMap((p) => [`${p} Prompt`, `${p} Completion`, `${p} Total`]);
-	const headers = ["Timestamp", ...provHeaders];
+	const provHeaders = providers.flatMap((p) => [`${p} 输入`, `${p} 输出`, `${p} 总计`]);
+	const headers = ["时间戳", ...provHeaders];
 	const rows = (data?.buckets ?? []).map((b) => [
 		b.timestamp,
 		...providers.flatMap((p) => {
@@ -92,8 +92,8 @@ export function providerTokensToCSV(data: ProviderTokenHistogramResponse | null)
 
 export function providerLatencyToCSV(data: ProviderLatencyHistogramResponse | null): CSVData {
 	const providers = data?.providers ?? [];
-	const provHeaders = providers.flatMap((p) => [`${p} Avg (ms)`, `${p} P90 (ms)`, `${p} P95 (ms)`, `${p} P99 (ms)`]);
-	const headers = ["Timestamp", ...provHeaders];
+	const provHeaders = providers.flatMap((p) => [`${p} 平均（毫秒）`, `${p} P90（毫秒）`, `${p} P95（毫秒）`, `${p} P99（毫秒）`]);
+	const headers = ["时间戳", ...provHeaders];
 	const rows = (data?.buckets ?? []).map((b) => [
 		b.timestamp,
 		...providers.flatMap((p) => {
@@ -106,21 +106,21 @@ export function providerLatencyToCSV(data: ProviderLatencyHistogramResponse | nu
 
 export function modelRankingsToCSV(data: ModelRankingsResponse | null): CSVData {
 	const headers = [
-		"Model",
-		"Canonical Model",
-		"Provider",
-		"Total Requests",
-		"Success Count",
-		"Success Rate (%)",
-		"Total Tokens",
-		"Total Cost ($)",
-		"Avg Latency (ms)",
-		"Throughput (tok/s)",
-		"Requests Trend (%)",
-		"Tokens Trend (%)",
-		"Cost Trend (%)",
-		"Latency Trend (%)",
-		"Throughput Trend (%)",
+		"模型",
+		"规范模型名",
+		"提供商",
+		"总请求数",
+		"成功数",
+		"成功率（%）",
+		"总 Token",
+		"总成本（$）",
+		"平均延迟（毫秒）",
+		"吞吐量（tok/s）",
+		"请求趋势（%）",
+		"Token 趋势（%）",
+		"成本趋势（%）",
+		"延迟趋势（%）",
+		"吞吐量趋势（%）",
 	];
 	const rows = (data?.rankings ?? []).map((r) => [
 		r.model,
@@ -133,11 +133,11 @@ export function modelRankingsToCSV(data: ModelRankingsResponse | null): CSVData 
 		r.total_cost,
 		r.avg_latency,
 		r.throughput,
-		r.trend.has_previous_period ? r.trend.requests_trend : "N/A",
-		r.trend.has_previous_period ? r.trend.tokens_trend : "N/A",
-		r.trend.has_previous_period ? r.trend.cost_trend : "N/A",
-		r.trend.has_previous_period ? r.trend.latency_trend : "N/A",
-		r.trend.has_previous_period ? r.trend.throughput_trend : "N/A",
+		r.trend.has_previous_period ? r.trend.requests_trend : "无",
+		r.trend.has_previous_period ? r.trend.tokens_trend : "无",
+		r.trend.has_previous_period ? r.trend.cost_trend : "无",
+		r.trend.has_previous_period ? r.trend.latency_trend : "无",
+		r.trend.has_previous_period ? r.trend.throughput_trend : "无",
 	]);
 	return { headers, rows };
 }
@@ -145,13 +145,13 @@ export function modelRankingsToCSV(data: ModelRankingsResponse | null): CSVData 
 export function dimensionRankingsToCSV(data: DimensionRankingsResponse | null, dimensionLabel: string): CSVData {
 	const headers = [
 		`${dimensionLabel} ID`,
-		`${dimensionLabel} Name`,
-		"Total Requests",
-		"Total Tokens",
-		"Total Cost ($)",
-		"Requests Trend (%)",
-		"Tokens Trend (%)",
-		"Cost Trend (%)",
+		`${dimensionLabel}名称`,
+		"总请求数",
+		"总 Token",
+		"总成本（$）",
+		"请求趋势（%）",
+		"Token 趋势（%）",
+		"成本趋势（%）",
 	];
 	const rows = (data?.rankings ?? []).map((r) => [
 		r.id,
@@ -159,27 +159,27 @@ export function dimensionRankingsToCSV(data: DimensionRankingsResponse | null, d
 		r.total_requests,
 		r.total_tokens,
 		r.total_cost,
-		r.trend.has_previous_period ? r.trend.requests_trend : "N/A",
-		r.trend.has_previous_period ? r.trend.tokens_trend : "N/A",
-		r.trend.has_previous_period ? r.trend.cost_trend : "N/A",
+		r.trend.has_previous_period ? r.trend.requests_trend : "无",
+		r.trend.has_previous_period ? r.trend.tokens_trend : "无",
+		r.trend.has_previous_period ? r.trend.cost_trend : "无",
 	]);
 	return { headers, rows };
 }
 
 export function mcpVolumeToCSV(data: MCPHistogramResponse | null): CSVData {
-	const headers = ["Timestamp", "Total Executions", "Success", "Error"];
+	const headers = ["时间戳", "总执行次数", "成功", "错误"];
 	const rows = (data?.buckets ?? []).map((b) => [b.timestamp, b.count, b.success, b.error]);
 	return { headers, rows };
 }
 
 export function mcpCostToCSV(data: MCPCostHistogramResponse | null): CSVData {
-	const headers = ["Timestamp", "Total Cost ($)"];
+	const headers = ["时间戳", "总成本（$）"];
 	const rows = (data?.buckets ?? []).map((b) => [b.timestamp, b.total_cost]);
 	return { headers, rows };
 }
 
 export function mcpTopToolsToCSV(data: MCPTopToolsResponse | null): CSVData {
-	const headers = ["Tool Name", "Execution Count", "Cost ($)"];
+	const headers = ["工具名称", "执行次数", "成本（$）"];
 	const rows = (data?.tools ?? []).map((t) => [t.tool_name, t.count, t.cost]);
 	return { headers, rows };
 }
@@ -227,18 +227,18 @@ export type ExportTab = DashboardTab | "all";
  * PDF section headings, and for the DOM ids the PDF capture reads.
  */
 export const DASHBOARD_EXPORT_TABS: { value: DashboardTab; label: string; sectionId: string }[] = [
-	{ value: "overview", label: "Overview", sectionId: "dashboard-section-overview" },
-	{ value: "provider-usage", label: "Provider Usage", sectionId: "dashboard-section-provider-usage" },
-	{ value: "rankings", label: "Model Rankings", sectionId: "dashboard-section-rankings" },
-	{ value: "mcp", label: "MCP Usage", sectionId: "dashboard-section-mcp" },
-	{ value: "team-rankings", label: "Team Rankings", sectionId: "dashboard-section-team-rankings" },
-	{ value: "customer-rankings", label: "Customer Rankings", sectionId: "dashboard-section-customer-rankings" },
-	{ value: "bu-rankings", label: "BU Rankings", sectionId: "dashboard-section-bu-rankings" },
-	{ value: "user-rankings", label: "User Rankings", sectionId: "dashboard-section-user-rankings" },
-	{ value: "virtual-key-rankings", label: "Virtual Key Rankings", sectionId: "dashboard-section-virtual-key-rankings" },
+	{ value: "overview", label: "总览", sectionId: "dashboard-section-overview" },
+	{ value: "provider-usage", label: "提供商用量", sectionId: "dashboard-section-provider-usage" },
+	{ value: "rankings", label: "模型排行", sectionId: "dashboard-section-rankings" },
+	{ value: "mcp", label: "MCP 用量", sectionId: "dashboard-section-mcp" },
+	{ value: "team-rankings", label: "团队排行", sectionId: "dashboard-section-team-rankings" },
+	{ value: "customer-rankings", label: "客户排行", sectionId: "dashboard-section-customer-rankings" },
+	{ value: "bu-rankings", label: "业务单元排行", sectionId: "dashboard-section-bu-rankings" },
+	{ value: "user-rankings", label: "用户排行", sectionId: "dashboard-section-user-rankings" },
+	{ value: "virtual-key-rankings", label: "虚拟密钥排行", sectionId: "dashboard-section-virtual-key-rankings" },
 ];
 
-export const getExportTabLabel = (tab: DashboardTab): string => DASHBOARD_EXPORT_TABS.find((t) => t.value === tab)?.label ?? "Current Tab";
+export const getExportTabLabel = (tab: DashboardTab): string => DASHBOARD_EXPORT_TABS.find((t) => t.value === tab)?.label ?? "当前标签页";
 
 /** Return all CSV sections for the selected scope. Each entry becomes its own sheet / file section. */
 export function getCSVSections(data: DashboardData, tab: ExportTab): { name: string; csv: CSVData }[] {
@@ -267,23 +267,23 @@ export function getCSVSections(data: DashboardData, tab: ExportTab): { name: str
 	}
 
 	if (tab === "all" || tab === "team-rankings") {
-		sections.push({ name: "team-rankings", csv: dimensionRankingsToCSV(data.teamRankingsData, "Team") });
+		sections.push({ name: "team-rankings", csv: dimensionRankingsToCSV(data.teamRankingsData, "团队") });
 	}
 
 	if (tab === "all" || tab === "customer-rankings") {
-		sections.push({ name: "customer-rankings", csv: dimensionRankingsToCSV(data.customerRankingsData, "Customer") });
+		sections.push({ name: "customer-rankings", csv: dimensionRankingsToCSV(data.customerRankingsData, "客户") });
 	}
 
 	if (tab === "all" || tab === "bu-rankings") {
-		sections.push({ name: "bu-rankings", csv: dimensionRankingsToCSV(data.buRankingsData, "Business Unit") });
+		sections.push({ name: "bu-rankings", csv: dimensionRankingsToCSV(data.buRankingsData, "业务单元") });
 	}
 
 	if (tab === "all" || tab === "user-rankings") {
-		sections.push({ name: "user-rankings", csv: dimensionRankingsToCSV(data.userRankingsData, "User") });
+		sections.push({ name: "user-rankings", csv: dimensionRankingsToCSV(data.userRankingsData, "用户") });
 	}
 
 	if (tab === "all" || tab === "virtual-key-rankings") {
-		sections.push({ name: "virtual-key-rankings", csv: dimensionRankingsToCSV(data.virtualKeyRankingsData, "Virtual Key") });
+		sections.push({ name: "virtual-key-rankings", csv: dimensionRankingsToCSV(data.virtualKeyRankingsData, "虚拟密钥") });
 	}
 
 	if (tab === "all" || tab === "mcp") {
