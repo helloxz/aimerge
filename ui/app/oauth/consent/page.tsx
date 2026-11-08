@@ -32,7 +32,7 @@ export default function OAuth2ConsentPage() {
 		return (
 			<Shell>
 				<div className="text-center">
-					<h1 className="text-xl font-semibold">Missing flow identifier</h1>
+					<h1 className="text-xl font-semibold">缺少流程标识</h1>
 					<p className="text-muted-foreground mt-2 text-sm">
 						This URL is missing the{" "}
 						<code className="bg-muted rounded px-1 py-0.5 text-xs">flow</code>{" "}
@@ -133,7 +133,7 @@ function ConsentView({ flowId }: { flowId: string }) {
 		return (
 			<Shell>
 				<div className="text-center">
-					<h1 className="text-xl font-semibold">Link unavailable</h1>
+					<h1 className="text-xl font-semibold">链接不可用</h1>
 					<p className="text-muted-foreground mt-2 text-sm">
 						This authorization link may have expired or already been used.
 						Restart the connection from your MCP client to get a fresh link.
@@ -191,7 +191,7 @@ function ConsentView({ flowId }: { flowId: string }) {
 								<p className="text-sm font-medium leading-tight">
 									{flow.logged_in_user.name || flow.logged_in_user.id}
 								</p>
-								<p className="text-muted-foreground text-xs">Signed-in account</p>
+								<p className="text-muted-foreground text-xs">已登录账号</p>
 							</div>
 						</div>
 						<Button
@@ -201,7 +201,7 @@ function ConsentView({ flowId }: { flowId: string }) {
 							disabled={submitting}
 						>
 							{submitting && selectedMode === "user" ? (
-								<><Loader2 className="mr-2 size-4 animate-spin" />Connecting…</>
+								<><Loader2 className="mr-2 size-4 animate-spin" />连接中…</>
 							) : (
 								<>Continue as {flow.logged_in_user.name || flow.logged_in_user.id}</>
 							)}
@@ -217,7 +217,7 @@ function ConsentView({ flowId }: { flowId: string }) {
 								<UserRound className="text-muted-foreground size-4" />
 							</div>
 							<div>
-								<p className="text-sm font-medium">Sign in with your account</p>
+								<p className="text-sm font-medium">使用你的账号登录</p>
 								<p className="text-muted-foreground text-xs">
 									Requires a Bifrost dashboard account
 								</p>
@@ -250,7 +250,7 @@ function ConsentView({ flowId }: { flowId: string }) {
 								<KeyRound className="text-muted-foreground size-4" />
 							</div>
 							<div>
-								<p className="text-sm font-medium">Virtual Key</p>
+								<p className="text-sm font-medium">虚拟密钥</p>
 								<p className="text-muted-foreground text-xs">
 									Use a Virtual Key from your Bifrost workspace
 								</p>
@@ -278,7 +278,7 @@ function ConsentView({ flowId }: { flowId: string }) {
 							disabled={submitting || !vkValue.trim()}
 						>
 							{submitting && selectedMode === "vk" ? (
-								<><Loader2 className="mr-2 size-4 animate-spin" />Connecting…</>
+								<><Loader2 className="mr-2 size-4 animate-spin" />连接中…</>
 							) : (
 								"Connect with key"
 							)}
