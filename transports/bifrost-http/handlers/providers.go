@@ -267,6 +267,13 @@ func (h *ProviderHandler) addProvider(ctx *fasthttp.RequestCtx) {
 		SendError(ctx, fasthttp.StatusBadRequest, "Missing provider")
 		return
 	}
+	// Reject path separators / dot segments / control characters outright.
+	// Provider names are persisted verbatim and are also used as routing keys;
+	// names like "../skills/serve/x" are never legitimate.
+	if err := lib.ValidateProviderName(payload.Provider); err != nil {
+		SendError(ctx, fasthttp.StatusBadRequest, fmt.Sprintf("Invalid provider: %v", err))
+		return
+	}
 	if payload.CustomProviderConfig != nil {
 		// custom provider key should not be same as standard provider names
 		if bifrost.IsStandardProvider(payload.Provider) {
@@ -394,6 +401,13 @@ func (h *ProviderHandler) updateProvider(ctx *fasthttp.RequestCtx) {
 	provider, err := getProviderFromCtx(ctx)
 	if err != nil {
 		// If not found, then first we create and then update
+		SendError(ctx, fasthttp.StatusBadRequest, fmt.Sprintf("Invalid provider: %v", err))
+		return
+	}
+	// This endpoint upserts, so the same name validation as POST /api/providers
+	// applies here. Without it a PUT to a traversal-shaped provider name could
+	// create a provider even after the auth bypass is fixed.
+	if err := lib.ValidateProviderName(provider); err != nil {
 		SendError(ctx, fasthttp.StatusBadRequest, fmt.Sprintf("Invalid provider: %v", err))
 		return
 	}

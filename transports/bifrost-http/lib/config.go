@@ -6645,8 +6645,45 @@ func (c *Config) GetVectorStoreConfigRedacted(ctx context.Context) (*vectorstore
 	return nil, nil
 }
 
+// maxProviderNameLength bounds the provider identifier persisted by the
+// management API. Names are used as routing keys ("provider/model") and echoed
+// by management clients, so they are kept short and conservative.
+const maxProviderNameLength = 64
+
+// ValidateProviderName rejects provider identifiers that can never be a valid
+// routing key. Provider names from the management API are persisted verbatim,
+// and a name containing a path separator or a dot segment (e.g.
+// "../skills/serve/x") has no legitimate use while broadening the blast radius
+// of any future path-building bug. Standard provider names all pass.
+func ValidateProviderName(provider schemas.ModelProvider) error {
+	name := string(provider)
+	if name == "" {
+		return fmt.Errorf("provider name is required")
+	}
+	if len(name) > maxProviderNameLength {
+		return fmt.Errorf("provider name must be at most %d characters", maxProviderNameLength)
+	}
+	for i, r := range name {
+		valid := (r >= 'a' && r <= 'z') ||
+			(r >= 'A' && r <= 'Z') ||
+			(r >= '0' && r <= '9') ||
+			r == '.' || r == '_' || r == '-'
+		if !valid {
+			return fmt.Errorf("provider name %q contains an invalid character %q", name, r)
+		}
+		if i == 0 && !((r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9')) {
+			return fmt.Errorf("provider name %q must start with a letter or digit", name)
+		}
+	}
+	return nil
+}
+
 // ValidateCustomProvider validates the custom provider configuration
 func ValidateCustomProvider(config configstore.ProviderConfig, provider schemas.ModelProvider) error {
+	if err := ValidateProviderName(provider); err != nil {
+		return fmt.Errorf("custom provider validation failed: %w", err)
+	}
+
 	if config.CustomProviderConfig == nil {
 		return nil
 	}
@@ -6677,6 +6714,13 @@ func ValidateCustomProvider(config configstore.ProviderConfig, provider schemas.
 
 // ValidateCustomProviderUpdate validates that immutable fields in CustomProviderConfig are not changed during updates
 func ValidateCustomProviderUpdate(newConfig, existingConfig configstore.ProviderConfig, provider schemas.ModelProvider) error {
+	// Validate the identifier before the early return below: a provider with no
+	// CustomProviderConfig on either side still must not be created/renamed to
+	// a name containing path separators or dot segments.
+	if err := ValidateProviderName(provider); err != nil {
+		return fmt.Errorf("invalid provider name: %w", err)
+	}
+
 	// If neither config has CustomProviderConfig, no validation needed
 	if newConfig.CustomProviderConfig == nil && existingConfig.CustomProviderConfig == nil {
 		return nil

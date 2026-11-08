@@ -859,7 +859,11 @@ func (m *AuthMiddleware) tryTempTokenOrUnauthorized(ctx *fasthttp.RequestCtx, ne
 	if m.tempTokensService != nil && m.tempTokensEnabled.Load() {
 		token := string(ctx.Request.Header.Peek("X-Bifrost-Temp-Token"))
 		if token != "" {
-			validated, err := m.tempTokensService.Validate(ctx, token, string(ctx.Method()), string(ctx.Path()))
+			// Validate against the raw path — the same view fasthttp/router
+			// dispatches on. ctx.Path() is decoded/normalized, so an encoded
+			// traversal could otherwise be checked as a path this token was
+			// never scoped to while the router sent it to a different handler.
+			validated, err := m.tempTokensService.Validate(ctx, token, string(ctx.Method()), string(ctx.Request.URI().PathOriginal()))
 			if err == nil && validated != nil {
 				ctx.SetUserValue(schemas.BifrostContextKeyTempTokenScope, validated.Scope)
 				ctx.SetUserValue(schemas.BifrostContextKeyTempTokenResourceID, validated.ResourceID)
@@ -975,8 +979,13 @@ func (m *AuthMiddleware) middleware(shouldSkip func(*configstore.AuthConfig, str
 				next(ctx)
 				return
 			}
-			// Match the whitelist against the path only
-			url := string(ctx.Path())
+			// Match the whitelist against the ORIGINAL request path — the same
+			// view fasthttp/router dispatches on. ctx.Path() is decoded and
+			// normalized: /api/providers/..%2Fskills%2Fserve%2Fx collapses to
+			// /api/skills/serve/x there, while the router still dispatches the
+			// request to the protected /api/providers/{provider} handler.
+			// Comparing the normalized form let that request skip auth entirely.
+			url := string(ctx.Request.URI().PathOriginal())
 			// We skip authorization for the login route
 			if shouldSkip(authConfig, url) {
 				next(ctx)
@@ -991,7 +1000,9 @@ func (m *AuthMiddleware) middleware(shouldSkip func(*configstore.AuthConfig, str
 			authorization := string(ctx.Request.Header.Peek("Authorization"))
 			if authorization == "" {
 				if string(ctx.Request.Header.Peek("Upgrade")) == "websocket" {
-					path := string(ctx.Path())
+					// Use the raw path here as well so an encoded traversal
+					// cannot be classified as an inference WS endpoint.
+					path := string(ctx.Request.URI().PathOriginal())
 					if isInferenceWSEndpoint(path) {
 						// Inference WS endpoints (/v1/responses, /v1/realtime) use the same
 						// auth as HTTP inference: Bearer/Basic headers or governance VK validation.

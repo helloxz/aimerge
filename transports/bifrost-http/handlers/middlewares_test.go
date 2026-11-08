@@ -734,6 +734,71 @@ func TestAuthMiddleware_SkillsPublicServeManagementSplit(t *testing.T) {
 	})
 }
 
+// TestAuthMiddleware_EncodedTraversalDoesNotBypassAuth is the regression guard
+// for the encoded-path-traversal auth bypass: fasthttp/router dispatches on
+// URI().PathOriginal(), while the middleware used to match the whitelist
+// against the decoded/normalized ctx.Path(). A request such as
+// /api/providers/..%2Fskills%2Fserve%2Fx therefore reached the protected
+// provider handler while the auth check saw the public /api/skills/serve/x.
+func TestAuthMiddleware_EncodedTraversalDoesNotBypassAuth(t *testing.T) {
+	SetLogger(&mockLogger{})
+
+	am := &AuthMiddleware{}
+	am.UpdateAuthConfig(&configstore.AuthConfig{
+		AdminUserName: schemas.NewSecretVar("admin"),
+		AdminPassword: schemas.NewSecretVar("hashedpassword"),
+		IsEnabled:     true,
+	})
+
+	// Each entry is a protected route whose encoded payload decodes onto a
+	// public whitelist prefix (`/api/skills/serve/`, `/api/dev`, `/.well-known/`).
+	encodedTraversals := []string{
+		"/api/providers/..%2Fskills%2Fserve%2Fattacker",
+		"/api/providers/..%2fskills%2fserve%2fattacker",
+		"/api/providers/..%2F..%2F.well-known%2Fattacker",
+		"/api/providers/..%2Fdev",
+		"/api/providers/%2e%2e%2Fskills%2Fserve%2Fattacker",
+		"/api/providers/..%252Fskills%252Fserve%252Fattacker", // double-encoded
+	}
+	for _, uri := range encodedTraversals {
+		t.Run(uri, func(t *testing.T) {
+			ctx := &fasthttp.RequestCtx{}
+			ctx.Request.SetRequestURI(uri)
+
+			nextCalled := false
+			am.APIMiddleware()(func(ctx *fasthttp.RequestCtx) { nextCalled = true })(ctx)
+
+			if nextCalled {
+				t.Fatalf("encoded traversal must not bypass auth: %s", uri)
+			}
+			if ctx.Response.StatusCode() != fasthttp.StatusUnauthorized {
+				t.Fatalf("expected %d, got %d", fasthttp.StatusUnauthorized, ctx.Response.StatusCode())
+			}
+		})
+	}
+
+	// Normal, unencoded public routes must keep bypassing auth.
+	publicRoutes := []string{
+		"/api/skills/serve/my-skill/files/README.md",
+		"/api/skills/serve/my-skill.git/info/refs?service=git-upload-pack",
+		"/.well-known/oauth-authorization-server",
+		"/api/dev/pprof",
+	}
+	for _, uri := range publicRoutes {
+		t.Run("public:"+uri, func(t *testing.T) {
+			ctx := &fasthttp.RequestCtx{}
+			ctx.Request.SetRequestURI(uri)
+
+			nextCalled := false
+			am.APIMiddleware()(func(ctx *fasthttp.RequestCtx) { nextCalled = true })(ctx)
+
+			if !nextCalled {
+				t.Fatalf("normal public route must still bypass auth: %s", uri)
+			}
+		})
+	}
+}
+
 // TestAuthMiddleware_WhitelistedRoutes tests that whitelisted routes bypass auth
 func TestAuthMiddleware_WhitelistedRoutes(t *testing.T) {
 	SetLogger(&mockLogger{})
