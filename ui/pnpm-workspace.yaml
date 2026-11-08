@@ -1,0 +1,16 @@
+packages: []
+
+# The UI was developed against npm's flat node_modules and vite runs with
+# preserveSymlinks: true (see vite.config.mts), so modules resolve from the
+# real `node_modules/<pkg>/...` path instead of following pnpm's symlinks into
+# .pnpm. A hoisted layout reproduces npm's resolution while keeping pnpm's
+# lockfile and store.
+nodeLinker: hoisted
+
+# pnpm >=10/11 blocks postinstall scripts by default. esbuild needs its
+# postinstall to place the platform binary; core-js's script only prints a
+# donation notice, but leaving it blocked makes `pnpm install` exit non-zero,
+# which in turn breaks `pnpm run` (verifyDepsBeforeRun).
+allowBuilds:
+  core-js: true
+  esbuild: true

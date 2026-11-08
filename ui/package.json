@@ -2,14 +2,15 @@
 	"name": "@maximhq/bifrost-ui",
 	"version": "0.1.0",
 	"private": true,
+	"packageManager": "pnpm@11.20.0",
 	"engines": {
 		"node": ">=22.12.0"
 	},
 	"scripts": {
 		"dev": "vite",
-		"build-enterprise": "vite build && npm run typecheck",
+		"build-enterprise": "vite build && pnpm run typecheck",
 		"typecheck": "tsc --noEmit",
-		"build": "vite build && npm run typecheck && npm run copy-build",
+		"build": "vite build && pnpm run typecheck && pnpm run copy-build",
 		"copy-build": "rm -rf ../transports/bifrost-http/ui && cp -r out ../transports/bifrost-http/ui",
 		"start": "vite preview",
 		"lint": "oxlint",
@@ -70,6 +71,7 @@
 		"react-hook-form": "7.62.0",
 		"react-hotkeys-hook": "5.2.4",
 		"react-querybuilder": "8.11.1",
+		"react-redux": "9.3.0",
 		"react-resizable-panels": "4.5.3",
 		"react-select": "5.10.2",
 		"react-textarea-autosize": "8.5.9",

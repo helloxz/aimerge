@@ -108,11 +108,11 @@ cleanup-enterprise: ## Clean up enterprise directories if present
 install-ui: cleanup-enterprise
 	@$(USE_NODE); \
 	 which node > /dev/null || ($(ECHO) "$(RED)Error: Node.js is not installed. Please install Node.js first.$(NC)" && exit 1); \
-	 which npm > /dev/null || ($(ECHO) "$(RED)Error: npm is not installed. Please install npm first.$(NC)" && exit 1); \
-	 $(ECHO) "$(GREEN)Node.js $$(node -v) and npm $$(npm -v) are installed$(NC)"; \
-	 if [ ! -d "ui/node_modules" ] || [ "ui/package.json" -nt "ui/node_modules/.package-lock.json" ] || [ "ui/package-lock.json" -nt "ui/node_modules/.package-lock.json" ]; then \
-	   $(ECHO) "$(YELLOW)Dependencies changed, running npm ci...$(NC)"; \
-	   cd ui && npm ci; \
+	 which pnpm > /dev/null || ($(ECHO) "$(RED)Error: pnpm is not installed. Run: corepack enable pnpm$(NC)" && exit 1); \
+	 $(ECHO) "$(GREEN)Node.js $$(node -v) and pnpm $$(pnpm -v) are installed$(NC)"; \
+	 if [ ! -d "ui/node_modules" ] || [ "ui/package.json" -nt "ui/node_modules/.modules.yaml" ] || [ "ui/pnpm-lock.yaml" -nt "ui/node_modules/.modules.yaml" ]; then \
+	   $(ECHO) "$(YELLOW)Dependencies changed, running pnpm install...$(NC)"; \
+	   cd ui && pnpm install --frozen-lockfile; \
 	 else \
 	   $(ECHO) "$(GREEN)UI dependencies up to date, skipping install$(NC)"; \
 	 fi
@@ -229,9 +229,9 @@ dev: install-ui install-air setup-workspace $(if $(DEBUG),install-delve) ## Star
 	$(ECHO) "$(YELLOW)Starting UI development server...$(NC)"; \
 	$(USE_NODE); if [ -n "$(DISABLE_PROFILER)" ]; then \
 		$(ECHO) "$(CYAN)DevProfiler disabled for testing$(NC)"; \
-		(cd ui && BIFROST_DISABLE_PROFILER=1 npm run dev) & \
+		(cd ui && BIFROST_DISABLE_PROFILER=1 pnpm run dev) & \
 	else \
-		(cd ui && npm run dev) & \
+		(cd ui && pnpm run dev) & \
 	fi; \
 	ui_pid="$$!"; \
 	$(ECHO) "$(YELLOW)[make dev] UI dev server started with pid $$ui_pid$(NC)"; \
@@ -315,9 +315,9 @@ dev-pulse: install-ui install-pulse setup-workspace $(if $(DEBUG),install-delve)
 	$(ECHO) "$(YELLOW)Starting UI development server...$(NC)"; \
 	$(USE_NODE); if [ -n "$(DISABLE_PROFILER)" ]; then \
 		$(ECHO) "$(CYAN)DevProfiler disabled for testing$(NC)"; \
-		(cd ui && BIFROST_DISABLE_PROFILER=1 npm run dev) & \
+		(cd ui && BIFROST_DISABLE_PROFILER=1 pnpm run dev) & \
 	else \
-		(cd ui && npm run dev) & \
+		(cd ui && pnpm run dev) & \
 	fi; \
 	ui_pid="$$!"; \
 	$(ECHO) "$(YELLOW)[make dev-pulse] UI dev server started with pid $$ui_pid$(NC)"; \
@@ -343,7 +343,7 @@ dev-pulse: install-ui install-pulse setup-workspace $(if $(DEBUG),install-delve)
 build-ui: install-ui ## Build ui
 	@$(ECHO) "$(GREEN)Building ui...$(NC)"
 	@rm -rf ui/.next
-	@$(USE_NODE); cd ui && npm run build && npm run copy-build
+	@$(USE_NODE); cd ui && pnpm run build && pnpm run copy-build
 
 build: build-ui ## Build bifrost-http binary
 	@if [ -n "$(LOCAL)" ]; then \
