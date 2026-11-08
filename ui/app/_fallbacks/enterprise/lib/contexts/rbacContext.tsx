@@ -2,9 +2,7 @@ import { createContext, useContext } from "react";
 
 // RBAC Resource Names (must match backend definitions)
 export enum RbacResource {
-	UserProvisioning = "UserProvisioning",
 	Settings = "Settings",
-	Users = "Users",
 	Logs = "Logs",
 	Observability = "Observability",
 	Dashboard = "Dashboard",
@@ -12,23 +10,18 @@ export enum RbacResource {
 	ModelProvider = "ModelProvider",
 	Plugins = "Plugins",
 	MCPGateway = "MCPGateway",
-	MCPToolGroups = "MCPToolGroups",
 	MCPLogs = "MCPLogs",
-	AuditLogs = "AuditLogs",
 	Customers = "Customers",
 	Teams = "Teams",
-	RBAC = "RBAC",
 	Governance = "Governance",
 	RoutingRules = "RoutingRules",
 	PromptRepository = "PromptRepository",
 	PromptDeploymentStrategy = "PromptDeploymentStrategy",
 	SkillsRepository = "SkillsRepository",
 	AccessProfiles = "AccessProfiles",
-	APIKeys = "APIKeys",
 	Inference = "Inference",
 	Metrics = "Metrics",
 	FeatureFlags = "FeatureFlags",
-	CircuitBreaker = "CircuitBreaker",
 }
 
 // RBAC Operation Names (must match backend definitions)

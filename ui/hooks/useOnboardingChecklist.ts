@@ -2,7 +2,6 @@ import { IS_ENTERPRISE } from "@/lib/constants/config";
 import { useGetCoreConfigQuery } from "@/lib/store";
 import { useGetModelConfigsQuery, useGetVirtualKeysQuery } from "@/lib/store/apis/governanceApi";
 import { useGetAllKeysQuery } from "@/lib/store/apis/providersApi";
-import { useGetSCIMProvidersQuery } from "@enterprise/lib/store/apis/scimApi";
 import { useMemo } from "react";
 
 export const METADATA_DISMISSED_KEY = "onboarding_dismissed";
@@ -49,14 +48,10 @@ export function useOnboardingChecklist({ skip = false }: { skip?: boolean } = {}
 	const { data: modelConfigsResponse } = useGetModelConfigsQuery(undefined, {
 		skip: shouldSkipChecklistQueries || !IS_ENTERPRISE,
 	});
-	const { data: scimProviders } = useGetSCIMProvidersQuery(undefined, {
-		skip: shouldSkipChecklistQueries || !IS_ENTERPRISE,
-	});
-
 	const checklistReady =
 		bifrostConfig !== undefined &&
 		allKeys !== undefined &&
-		(!IS_ENTERPRISE || (vksResponse !== undefined && modelConfigsResponse !== undefined && scimProviders !== undefined));
+		(!IS_ENTERPRISE || (vksResponse !== undefined && modelConfigsResponse !== undefined));
 
 	const skippedIds = useMemo<string[]>(() => {
 		return parseSkippedIds(bifrostConfig?.metadata?.[METADATA_SKIPPED_KEY]);
@@ -103,13 +98,6 @@ export function useOnboardingChecklist({ skip = false }: { skip?: boolean } = {}
 		const enterprise: OnboardingStep[] = IS_ENTERPRISE
 			? [
 					{
-						id: "scim",
-						title: "配置 SCIM 用户开通",
-						route: "/workspace/scim",
-						section: "其他",
-						complete: (scimProviders?.length ?? 0) > 0,
-					},
-					{
 						id: "models",
 						title: "配置治理模型目录",
 						route: "/workspace/model-catalog",
@@ -126,7 +114,7 @@ export function useOnboardingChecklist({ skip = false }: { skip?: boolean } = {}
 				]
 			: [];
 		return [...common, ...enterprise];
-	}, [allKeys, clientConfig, authConfig, scimProviders, modelConfigsResponse, vksResponse]);
+	}, [allKeys, clientConfig, authConfig, modelConfigsResponse, vksResponse]);
 
 	return { bifrostConfig, steps, skippedIds, checklistReady, isDismissedForAll };
 }

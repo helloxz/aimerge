@@ -8,14 +8,10 @@
  */
 const NAV_LABELS: Record<string, string> = {
 	"Access Profiles": "访问配置",
-	"API Keys": "API 密钥",
-	"Audit Logs": "审计日志",
 	"Auth Sessions": "登录会话",
 	"Budgets & Limits": "预算与限额",
-	"Business Units": "业务单元",
 	Caching: "缓存",
 	Channels: "渠道",
-	"Circuit Breaker": "熔断",
 	"Client Settings": "客户端设置",
 	Compatibility: "兼容性",
 	"Complexity Router": "复杂度路由",
@@ -49,7 +45,6 @@ const NAV_LABELS: Record<string, string> = {
 	Proxy: "代理",
 	"Report a bug": "报告问题",
 	"Restart Required": "需要重启",
-	"Roles & Permissions": "角色与权限",
 	"Routing Rules": "路由规则",
 	Rules: "规则",
 	Security: "安全",
@@ -57,9 +52,6 @@ const NAV_LABELS: Record<string, string> = {
 	"Setup checklist incomplete": "初始化清单未完成",
 	"Skills Repository": "技能仓库",
 	Teams: "团队",
-	"Tool Groups": "工具组",
-	"User Provisioning": "用户开通",
-	Users: "用户",
 	"Virtual Keys": "虚拟密钥",
 	Webhooks: "Webhook",
 };
