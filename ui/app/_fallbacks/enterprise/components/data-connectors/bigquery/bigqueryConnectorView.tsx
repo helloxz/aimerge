@@ -23,8 +23,8 @@ export default function BigQueryConnectorView(_props: BigQueryConnectorViewProps
 						align="middle"
 						className="mx-auto w-full max-w-lg"
 						icon={<Database className="h-[5.5rem] w-[5.5rem]" strokeWidth={1} />}
-						title="Unlock native BigQuery data ingestion for analytics"
-						description="This feature is a part of the Bifrost enterprise license. We would love to know more about your use case and how we can help you."
+						title="解锁 BigQuery 原生数据接入，助力分析"
+						description="此功能属于 Bifrost 企业版许可。我们很希望了解您的使用场景，以及如何为您提供帮助。"
 						readmeLink="https://docs.getbifrost.ai/enterprise/bigquery-connector"
 					/>
 				</div>

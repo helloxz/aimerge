@@ -26,19 +26,19 @@ export default function TrialExpiryBanner() {
 			<AlertTriangle className="h-3.5 w-3.5" strokeWidth={2} />
 			{expired ? (
 				<span>
-					Your Bifrost Enterprise Trial has expired.{" "}
+					您的 Bifrost 企业试用版已到期。{" "}
 					<a href={supportHref} className="font-semibold underline underline-offset-2">
-						Contact us
+						联系我们
 					</a>{" "}
-					if you need any assistance.
+					如需任何帮助，请与我们联系。
 				</span>
 			) : (
 				<span>
-					Your Bifrost Enterprise Trial expires in {daysRemaining} {daysRemaining === 1 ? "day" : "days"}.{" "}
+					您的 Bifrost 企业试用版将在 {daysRemaining} 天后到期。{" "}
 					<a href={supportHref} className="font-semibold underline underline-offset-2">
-						Contact us
+						联系我们
 					</a>{" "}
-					if you need any assistance.
+					如需任何帮助，请与我们联系。
 				</span>
 			)}
 		</div>

@@ -63,7 +63,7 @@ interface ModelOption {
 	isDisabled?: boolean;
 }
 
-const ALL_MODELS_OPTION: ModelOption = { label: "All Models", value: "*" };
+const ALL_MODELS_OPTION: ModelOption = { label: "全部模型", value: "*" };
 
 export function ModelMultiselect(props: ModelMultiselectProps) {
 	const {
@@ -73,7 +73,7 @@ export function ModelMultiselect(props: ModelMultiselectProps) {
 		value,
 		unfiltered = false,
 		onChange,
-		placeholder = "Search models...",
+		placeholder = "搜索模型...",
 		disabled = false,
 		className,
 		loadModelsOnEmptyProvider = false,
@@ -271,7 +271,7 @@ export function ModelMultiselect(props: ModelMultiselectProps) {
 			debounce={300}
 			isCreatable={true}
 			dynamicOptionCreation={true}
-			createOptionText={"Press enter to add new model"}
+			createOptionText={"按 Enter 添加新模型"}
 			defaultOptions={defaultOptions.length > 0 ? defaultOptions : ([] as Option<ModelOption>[])}
 			isLoading={shouldUseBaseModels ? isLoadingBaseModels : isLoading}
 			placeholder={placeholder}
@@ -287,8 +287,8 @@ export function ModelMultiselect(props: ModelMultiselectProps) {
 			menuListClassName="mx-1"
 			inputValue={inputValue}
 			onInputChange={handleInputChange}
-			noResultsFoundPlaceholder="No models found"
-			emptyResultPlaceholder={provider || shouldLoadOnEmpty ? "Start typing to search models..." : "Please select a provider first"}
+			noResultsFoundPlaceholder="未找到模型"
+			emptyResultPlaceholder={provider || shouldLoadOnEmpty ? "输入以搜索模型..." : "请先选择提供商"}
 			views={{
 				dropdownIndicator: isSingleSelect ? undefined : () => <></>,
 				singleValue: isSingleSelect

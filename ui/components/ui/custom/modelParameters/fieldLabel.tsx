@@ -36,7 +36,7 @@ export default function FieldLabel({ label, helpText, htmlFor, onClear, children
 						size="icon"
 						onClick={onClear}
 						className="text-muted-foreground hover:text-foreground h-4 w-4 opacity-0 transition-opacity group-hover/label:opacity-100"
-						title={`Clear ${label}`}
+						title={`清除 ${label}`}
 					>
 						<X className="h-4 w-4" />
 					</Button>

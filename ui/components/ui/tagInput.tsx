@@ -65,7 +65,7 @@ export const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(
 						<Badge key={tag} variant="secondary" className="bg-accent dark:bg-card flex items-center gap-1">
 							{tag}
 							<button
-								aria-label={`Remove ${tag}`}
+								aria-label={`移除 ${tag}`}
 								type="button"
 								className="ring-offset-background focus:ring-ring cursor-pointer rounded-sm outline-none focus:ring-2 focus:ring-offset-2"
 								onClick={() => removeTag(tag)}
@@ -102,7 +102,7 @@ export const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(
 						<Badge key={tag} variant="secondary" className="bg-accent dark:bg-card flex items-center gap-1">
 							{tag}
 							<button
-								aria-label={`Remove ${tag}`}
+								aria-label={`移除 ${tag}`}
 								type="button"
 								className="ring-offset-background focus:ring-ring cursor-pointer rounded-sm outline-none focus:ring-2 focus:ring-offset-2"
 								onClick={() => removeTag(tag)}
@@ -127,7 +127,7 @@ export const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(
 							onClick={() => setTagsExpanded(true)}
 							className="text-muted-foreground/70 hover:text-foreground/90 group-hover:text-muted-foreground/85 flex w-full cursor-pointer items-center justify-center py-2.5 text-xs font-medium transition-colors absolute top-4"
 						>
-							Show {hiddenTagCount} more
+							再显示 {hiddenTagCount} 个
 						</button>
 					)}
 
@@ -162,7 +162,7 @@ export const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(
 						onClick={() => setTagsExpanded(false)}
 						className="text-muted-foreground/50 hover:text-muted-foreground/80 hover:bg-muted/15 border-border/40 bg-muted/10 relative z-[2] w-full cursor-pointer border-t py-2 text-xs transition-[color,background-color]"
 					>
-						Show less
+						收起
 					</button>
 				)}
 			</div>

@@ -430,9 +430,9 @@ export function PromptProvider({ children }: { children: ReactNode }) {
 		async (promptId: string, folderId: string | null) => {
 			try {
 				await updatePrompt({ id: promptId, data: { folder_id: folderId } }).unwrap();
-				toast.success("Prompt moved successfully");
+				toast.success("提示词已移动");
 			} catch (err) {
-				toast.error(getErrorMessage(err) || "Failed to move prompt");
+				toast.error(getErrorMessage(err) || "移动提示词失败");
 			}
 		},
 		[updatePrompt],
@@ -443,13 +443,13 @@ export function PromptProvider({ children }: { children: ReactNode }) {
 
 		try {
 			await deleteFolder(deleteFolderDialog.folder.id).unwrap();
-			toast.success("Folder deleted");
+			toast.success("文件夹已删除");
 			setDeleteFolderDialog({ open: false });
 			if (selectedPrompt?.folder_id === deleteFolderDialog.folder.id) {
 				setUrlState({ promptId: null, sessionId: null, versionId: null });
 			}
 		} catch (err) {
-			toast.error("Failed to delete folder", { description: getErrorMessage(err) });
+			toast.error("删除文件夹失败", { description: getErrorMessage(err) });
 		}
 	}, [deleteFolderDialog.folder, deleteFolder, selectedPrompt, setUrlState]);
 
@@ -458,13 +458,13 @@ export function PromptProvider({ children }: { children: ReactNode }) {
 
 		try {
 			await deletePrompt(deletePromptDialog.prompt.id).unwrap();
-			toast.success("Prompt deleted");
+			toast.success("提示词已删除");
 			setDeletePromptDialog({ open: false });
 			if (selectedPromptId === deletePromptDialog.prompt.id) {
 				setUrlState({ promptId: null, sessionId: null, versionId: null });
 			}
 		} catch (err) {
-			toast.error("Failed to delete prompt", { description: getErrorMessage(err) });
+			toast.error("删除提示词失败", { description: getErrorMessage(err) });
 		}
 	}, [deletePromptDialog.prompt, deletePrompt, selectedPromptId, setUrlState]);
 
@@ -624,7 +624,7 @@ export function PromptProvider({ children }: { children: ReactNode }) {
 				await handleSubmitToolResult(afterIndex, toolCall.id, content);
 			} catch (err) {
 				if (err instanceof MCPAuthRequiredError) throw err;
-				toast.error("Failed to execute tool", {
+				toast.error("执行工具失败", {
 					description: getErrorMessage(err),
 				});
 			}
@@ -742,9 +742,9 @@ export function PromptProvider({ children }: { children: ReactNode }) {
 			const failures = settled.filter((r): r is PromiseRejectedResult => r.status === "rejected").map((r) => getErrorMessage(r.reason));
 
 			if (failures.length > 0) {
-				const detail = failures.length <= 3 ? failures.join("; ") : `${failures.slice(0, 2).join("; ")} and ${failures.length - 2} more`;
-				toast.error(`${failures.length} of ${toolCalls.length} tool executions failed`, {
-					description: failures.length === toolCalls.length ? detail : `${detail}. Successful results were kept; fill the rest manually.`,
+				const detail = failures.length <= 3 ? failures.join("; ") : `${failures.slice(0, 2).join("; ")} 以及另外 ${failures.length - 2} 个`;
+				toast.error(`${toolCalls.length} 个工具调用中有 ${failures.length} 个执行失败`, {
+					description: failures.length === toolCalls.length ? detail : `${detail}。成功的结果已保留，其余请手动填写。`,
 				});
 			}
 
@@ -752,7 +752,7 @@ export function PromptProvider({ children }: { children: ReactNode }) {
 				try {
 					await handleSubmitAllToolResults(afterIndex, successes);
 				} catch (err) {
-					toast.error("Failed to submit tool results", {
+					toast.error("提交工具结果失败", {
 						description: getErrorMessage(err),
 					});
 				}

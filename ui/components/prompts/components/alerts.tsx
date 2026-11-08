@@ -17,10 +17,9 @@ export function DeleteFolderDialog() {
 		<AlertDialog open={deleteFolderDialog.open}>
 			<AlertDialogContent>
 				<AlertDialogHeader>
-					<AlertDialogTitle>Delete Folder</AlertDialogTitle>
+					<AlertDialogTitle>删除文件夹</AlertDialogTitle>
 					<AlertDialogDescription>
-						Are you sure you want to delete &quot;{deleteFolderDialog.folder?.name}&quot;? This will also delete all prompts, versions, and
-						sessions in this folder. This action cannot be undone.
+						确定要删除&quot;{deleteFolderDialog.folder?.name}&quot;吗？此操作还会删除该文件夹中的所有提示词、版本与会话，且无法撤销。
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
@@ -29,10 +28,10 @@ export function DeleteFolderDialog() {
 						onClick={() => setDeleteFolderDialog({ open: false })}
 						disabled={isDeletingFolder}
 					>
-						Cancel
+						取消
 					</AlertDialogCancel>
 					<AlertDialogAction data-testid="delete-folder-confirm" onClick={handleDeleteFolder} disabled={isDeletingFolder}>
-						{isDeletingFolder ? "Deleting..." : "Delete"}
+						{isDeletingFolder ? "删除中..." : "删除"}
 					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>
@@ -47,10 +46,9 @@ export function DeletePromptDialog() {
 		<AlertDialog open={deletePromptDialog.open}>
 			<AlertDialogContent>
 				<AlertDialogHeader>
-					<AlertDialogTitle>Delete Prompt</AlertDialogTitle>
+					<AlertDialogTitle>删除提示词</AlertDialogTitle>
 					<AlertDialogDescription>
-						Are you sure you want to delete &quot;{deletePromptDialog.prompt?.name}&quot;? This will also delete all versions and sessions.
-						This action cannot be undone.
+						确定要删除&quot;{deletePromptDialog.prompt?.name}&quot;吗？此操作还会删除所有版本与会话，且无法撤销。
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
@@ -59,10 +57,10 @@ export function DeletePromptDialog() {
 						onClick={() => setDeletePromptDialog({ open: false })}
 						disabled={isDeletingPrompt}
 					>
-						Cancel
+						取消
 					</AlertDialogCancel>
 					<AlertDialogAction data-testid="delete-prompt-confirm" onClick={handleDeletePrompt} disabled={isDeletingPrompt}>
-						{isDeletingPrompt ? "Deleting..." : "Delete"}
+						{isDeletingPrompt ? "删除中..." : "删除"}
 					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>

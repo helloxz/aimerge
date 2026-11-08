@@ -17,15 +17,15 @@ export default function FormFooter({ validator, label, onCancel, isLoading, isEd
 	const isDisabled = isLoading || !validator.isValid() || !hasPermission;
 
 	const getTooltipMessage = () => {
-		if (!hasPermission) return "You don't have permission to perform this action";
-		if (isLoading) return "Saving...";
-		return validator.getFirstError() || "Please fix validation errors";
+		if (!hasPermission) return "您没有执行此操作的权限";
+		if (isLoading) return "保存中...";
+		return validator.getFirstError() || "请修正校验错误";
 	};
 
 	return (
 		<DialogFooter className="mt-4">
 			<Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
-				Cancel
+				取消
 			</Button>
 			<TooltipProvider>
 				<Tooltip>
@@ -33,7 +33,7 @@ export default function FormFooter({ validator, label, onCancel, isLoading, isEd
 						<span>
 							<Button type="submit" disabled={isDisabled}>
 								<Save className="h-4 w-4" />
-								{isLoading ? "Saving..." : isEditing ? `Update ${label}` : `Create ${label}`}
+								{isLoading ? "保存中..." : isEditing ? `更新 ${label}` : `创建 ${label}`}
 							</Button>
 						</span>
 					</TooltipTrigger>

@@ -12,8 +12,7 @@ export function ConfigSyncAlert({ className }: ConfigSyncAlertProps) {
 			<Info className="h-4 w-4" />
 			<AlertDescription>
 				<p>
-					This config is synced from <code className="bg-muted rounded px-1 py-0.5 font-mono text-xs">config.json</code>. Any future updates
-					to config.json will overwrite UI changes. If you are using config.json to bootstrap the initial config, you can ignore this alert.
+					此配置从 <code className="bg-muted rounded px-1 py-0.5 font-mono text-xs">config.json</code> 同步。今后对 config.json 的任何更新都会覆盖 UI 中的改动。若您使用 config.json 初始化配置，可忽略此提示。
 				</p>
 			</AlertDescription>
 		</Alert>

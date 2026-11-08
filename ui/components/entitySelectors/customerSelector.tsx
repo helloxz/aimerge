@@ -54,8 +54,8 @@ export function CustomerSelector({ limit = ENTITY_SELECTOR_PAGE_SIZE, ...props }
 		<EntitySelector
 			{...props}
 			LabelResolver={CustomerLabelResolver}
-			entityLabel="customer"
-			entityLabelPlural="customers"
+			entityLabel="客户"
+			entityLabelPlural="客户"
 			options={options}
 			isFetching={isFetching}
 			isError={isError}

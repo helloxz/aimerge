@@ -20,6 +20,13 @@ const Markdown = (props: ComponentProps<typeof LazyMarkdown>) => (
 	</Suspense>
 );
 
+const ROLE_LABELS: Record<string, string> = {
+	system: "系统",
+	user: "用户",
+	assistant: "助手",
+	tool: "工具",
+};
+
 interface CommitVersionFormData {
 	commitMessage: string;
 }
@@ -54,14 +61,14 @@ function MessagePreview({
 		>
 			<Checkbox checked={selected} onCheckedChange={onToggle} className="mt-1 shrink-0" />
 			<div className="min-w-0 flex-1">
-				<span className="text-xs font-medium uppercase">{role}</span>
+				<span className="text-xs font-medium uppercase">{role ? (ROLE_LABELS[role] ?? role) : ""}</span>
 				<div className="text-muted-foreground mt-1 line-clamp-3 text-sm">
 					{hasToolCalls && !content ? (
-						<span className="italic">Tool call: {msg.toolCalls!.map((tc) => tc.function.name).join(", ")}</span>
+						<span className="italic">工具调用：{msg.toolCalls!.map((tc) => tc.function.name).join(", ")}</span>
 					) : content ? (
 						<Markdown content={content} className="text-muted-foreground [&_*]:text-sm" />
 					) : (
-						<span className="italic">Empty message</span>
+						<span className="italic">空消息</span>
 					)}
 				</div>
 			</div>
@@ -114,7 +121,7 @@ export function CommitVersionSheet({ open, onOpenChange, session, onCommitted }:
 
 	async function onSubmit(data: CommitVersionFormData) {
 		if (selectedIndices.size === 0) {
-			toast.error("Please select at least one message to commit");
+			toast.error("请至少选择一条消息进行提交");
 			return;
 		}
 		try {
@@ -131,12 +138,12 @@ export function CommitVersionSheet({ open, onOpenChange, session, onCommitted }:
 				promptId: session.prompt_id,
 				data: commitData,
 			}).unwrap();
-			toast.success("Version committed");
+			toast.success("版本已提交");
 			reset();
 			onCommitted(result.version.id);
 			onOpenChange(false);
 		} catch (err) {
-			toast.error("Failed to commit version", {
+			toast.error("提交版本失败", {
 				description: getErrorMessage(err),
 			});
 		}
@@ -153,18 +160,18 @@ export function CommitVersionSheet({ open, onOpenChange, session, onCommitted }:
 			>
 				<form onSubmit={handleSubmit(onSubmit)} className="flex flex-1 flex-col overflow-hidden">
 					<SheetHeader className="flex flex-col items-start">
-						<SheetTitle>Commit as Version</SheetTitle>
-						<SheetDescription>Select the messages to include in this version. Uncheck any messages you want to exclude.</SheetDescription>
+						<SheetTitle>提交为新版本</SheetTitle>
+						<SheetDescription>选择要包含在此版本中的消息，取消勾选即可排除。</SheetDescription>
 					</SheetHeader>
 
 					{/* Messages selection - scrollable */}
 					<div className="mt-4 flex flex-1 flex-col overflow-hidden">
 						<div className="mb-2 flex items-center justify-between">
 							<Label className="text-sm">
-								Messages ({selectedIndices.size}/{session.messages.length})
+								消息（{selectedIndices.size}/{session.messages.length}）
 							</Label>
 							<button type="button" onClick={toggleAll} className="text-muted-foreground hover:text-foreground text-xs transition-colors">
-								{allSelected ? "Deselect all" : "Select all"}
+								{allSelected ? "取消全选" : "全选"}
 							</button>
 						</div>
 						<ScrollArea className="flex-1 overflow-y-auto rounded-md border">
@@ -184,14 +191,14 @@ export function CommitVersionSheet({ open, onOpenChange, session, onCommitted }:
 					{/* Commit message + CTAs - always visible at bottom */}
 					<div className="mt-4 shrink-0 space-y-4">
 						<div className="space-y-2">
-							<Label htmlFor="commitMessage">Commit Message</Label>
+							<Label htmlFor="commitMessage">提交说明</Label>
 							<Input
 								id="commitMessage"
 								data-testid="commit-version-message"
-								placeholder="Added system message for better context..."
+								placeholder="补充了系统消息以提供更好的上下文..."
 								{...register("commitMessage", {
-									required: "Commit message is required",
-									validate: (v) => v.trim().length > 0 || "Commit message cannot be blank",
+									required: "提交说明不能为空",
+									validate: (v) => v.trim().length > 0 || "提交说明不能为空白",
 								})}
 								autoFocus
 							/>
@@ -199,14 +206,14 @@ export function CommitVersionSheet({ open, onOpenChange, session, onCommitted }:
 								<p className="text-destructive text-xs">{errors.commitMessage.message}</p>
 							) : (
 								<p className="text-muted-foreground text-xs">
-									Describe what changed in this version (e.g., &quot;Added error handling instructions&quot;)
+									描述此版本的变更（例如&quot;添加了错误处理说明&quot;）
 								</p>
 							)}
 						</div>
 
 						<SheetFooter className="flex flex-row items-center justify-end gap-2 p-0">
 							<Button type="button" variant="outline" data-testid="commit-version-cancel" onClick={() => onOpenChange(false)}>
-								Cancel
+								取消
 							</Button>
 							<Button
 								type="submit"
@@ -214,7 +221,7 @@ export function CommitVersionSheet({ open, onOpenChange, session, onCommitted }:
 								disabled={isLoading || selectedIndices.size === 0}
 								className={selectedIndices.size === 0 ? "opacity-50" : ""}
 							>
-								{isLoading ? "Committing..." : "Commit Version"}
+								{isLoading ? "提交中..." : "提交版本"}
 							</Button>
 						</SheetFooter>
 					</div>

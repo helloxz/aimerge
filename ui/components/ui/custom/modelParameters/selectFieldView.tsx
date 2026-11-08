@@ -56,7 +56,7 @@ export default function SelectFieldView(props: Props) {
 					value={Array.isArray(value) ? value : []}
 					onValueChange={(vals) => props.onChange(field.accesorKey ? { [field.accesorKey]: vals } : vals)}
 					disabled={props.disabled}
-					placeholder={`Add ${field.label}`}
+					placeholder={`添加 ${field.label}`}
 					className="h-8"
 				/>
 			) : (
@@ -65,7 +65,7 @@ export default function SelectFieldView(props: Props) {
 					value={(value as string) || null}
 					onValueChange={onFieldChange}
 					disabled={props.disabled}
-					placeholder="Select"
+					placeholder="请选择"
 					disableSearch
 					className="h-8"
 				/>

@@ -21,7 +21,7 @@ function ShortcutKeys({ keys }: { keys: ShortcutKey[] }) {
 		<span className="inline-flex items-center gap-1">
 			{keys.map((k, i) => (
 				<React.Fragment key={i}>
-					{i > 0 && "or"}
+					{i > 0 && "或"}
 					<kbd className={kbdClass}>{k.icon ? <k.icon className="size-2.5" /> : k.label}</kbd>
 				</React.Fragment>
 			))}
@@ -35,7 +35,7 @@ export function SheetNavigationButtons({
 	onNavigate,
 	prevKeys,
 	nextKeys,
-	entityLabel = "item",
+	entityLabel = "条目",
 }: SheetNavigationButtonsProps) {
 	return (
 		<div className="flex items-center">
@@ -46,14 +46,14 @@ export function SheetNavigationButtons({
 						className="size-8"
 						disabled={!hasPrev}
 						onClick={() => onNavigate("prev")}
-						aria-label={`Previous ${entityLabel}`}
+						aria-label={`上一个${entityLabel}`}
 						type="button"
 					>
 						<ChevronUp className="size-4" />
 					</Button>
 				</TooltipTrigger>
 				<TooltipContent className="flex items-center gap-1.5 px-2 py-1 text-xs">
-					Prev {prevKeys && <ShortcutKeys keys={prevKeys} />}
+					上一项 {prevKeys && <ShortcutKeys keys={prevKeys} />}
 				</TooltipContent>
 			</Tooltip>
 			<Tooltip delayDuration={0}>
@@ -63,14 +63,14 @@ export function SheetNavigationButtons({
 						className="size-8"
 						disabled={!hasNext}
 						onClick={() => onNavigate("next")}
-						aria-label={`Next ${entityLabel}`}
+						aria-label={`下一个${entityLabel}`}
 						type="button"
 					>
 						<ChevronDown className="size-4" />
 					</Button>
 				</TooltipTrigger>
 				<TooltipContent className="flex items-center gap-1.5 px-2 py-1 text-xs">
-					Next {nextKeys && <ShortcutKeys keys={nextKeys} />}
+					下一项 {nextKeys && <ShortcutKeys keys={nextKeys} />}
 				</TooltipContent>
 			</Tooltip>
 		</div>

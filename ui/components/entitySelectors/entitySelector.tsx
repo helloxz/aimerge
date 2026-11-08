@@ -260,10 +260,10 @@ export function EntitySelector(props: EntitySelectorProps) {
 		onOpenChange(false);
 	};
 
-	const resolvedPlaceholder = placeholder ?? (isMulti ? `Select ${entityLabelPlural}...` : `Select a ${entityLabel}...`);
-	const resolvedSearchPlaceholder = searchPlaceholder ?? `Search ${entityLabelPlural}...`;
-	const emptyMessage = debouncedSearch ? `No matching ${entityLabelPlural}` : `No ${entityLabelPlural} found`;
-	const errorMessage = `Failed to load ${entityLabelPlural}`;
+	const resolvedPlaceholder = placeholder ?? (isMulti ? `选择${entityLabelPlural}...` : `选择一个${entityLabel}...`);
+	const resolvedSearchPlaceholder = searchPlaceholder ?? `搜索${entityLabelPlural}...`;
+	const emptyMessage = debouncedSearch ? `未找到匹配的${entityLabelPlural}` : `未找到${entityLabelPlural}`;
+	const errorMessage = `加载${entityLabelPlural}失败`;
 
 	// ---------------------------------------------------------------------
 	// Multi mode — react-select, so chips live inside the control.
@@ -337,7 +337,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 								>
 									<div className="flex items-center justify-between">
 										<span className="text-content-primary font-medium">{data.label}</span>
-										{optionProps.isSelected && <span className="text-primary text-xs">Selected</span>}
+										{optionProps.isSelected && <span className="text-primary text-xs">已选择</span>}
 									</div>
 									{data.meta?.description && data.meta.description !== data.label && (
 										<span className="text-content-tertiary line-clamp-1 text-xs">{data.meta.description}</span>
@@ -362,7 +362,7 @@ export function EntitySelector(props: EntitySelectorProps) {
 	const defaultTrigger = isAdd ? (
 		<Button type="button" variant="outline" size="sm" disabled={disabled} className="h-7.5 gap-1.5 px-2 py-1 text-sm font-medium">
 			<PlusIcon className="size-4" />
-			{placeholder ?? `Add ${entityLabel}`}
+			{placeholder ?? `添加${entityLabel}`}
 		</Button>
 	) : (
 		<Button

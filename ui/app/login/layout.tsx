@@ -30,7 +30,7 @@ function PendingComponent() {
 							<img src="/bifrost-logo.webp" alt="Bifrost" width={160} height={26} />
 						</div>
 						<div className="flex items-center justify-center py-6">
-							<div className="text-muted-foreground text-sm">Checking authentication...</div>
+							<div className="text-muted-foreground text-sm">正在验证身份...</div>
 						</div>
 					</div>
 				</div>

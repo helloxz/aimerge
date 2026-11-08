@@ -28,7 +28,7 @@ interface MultiBudgetLinesProps {
 
 export default function MultiBudgetLines({
 	"data-testid": testId,
-	label = "Budget Configuration",
+	label = "预算配置",
 	lines,
 	onChange,
 	options = budgetResetDurationOptions,
@@ -91,18 +91,18 @@ export default function MultiBudgetLines({
 					{onReset && (showReset ?? true) && (
 						<Button data-testid={`${testId}-reset-btn`} type="button" variant="ghost" size="sm" onClick={onReset}>
 							<RotateCcw className="mr-1 h-3 w-3" />
-							Reset
+							重置
 						</Button>
 					)}
 					<Button data-testid={`${testId}-add-btn`} variant="outline" size="sm" type="button" onClick={addLine}>
 						<Plus className="mr-1 h-3 w-3" />
-						Add Budget
+						添加预算
 					</Button>
 				</div>
 			</div>
 
 			{lines.length === 0 && (
-				<div className="text-muted-foreground rounded-md border border-dashed p-3 text-center text-sm">No budget limits configured.</div>
+				<div className="text-muted-foreground rounded-md border border-dashed p-3 text-center text-sm">未配置预算限额。</div>
 			)}
 
 			{lines.map((line, index) => {
@@ -115,7 +115,7 @@ export default function MultiBudgetLines({
 									id={`${testId}-${index}`}
 									dataTestId={`${testId}-amount-${index}`}
 									labelClassName="font-normal"
-									label="Maximum Spend (USD)"
+									label="最高支出（USD）"
 									value={line.max_limit}
 									selectValue={line.reset_duration}
 									onChangeNumber={(value) => updateMaxLimit(index, value)}
@@ -125,7 +125,7 @@ export default function MultiBudgetLines({
 							</div>
 							<Button
 								data-testid={`${testId}-remove-${index}`}
-								aria-label={`Remove budget ${index + 1}`}
+								aria-label={`移除预算 ${index + 1}`}
 								variant="ghost"
 								size="icon"
 								type="button"
@@ -147,7 +147,7 @@ export default function MultiBudgetLines({
 							</div>
 						)}
 						{isDuplicate && (
-							<p className="text-destructive pl-0.5 text-xs">Duplicate reset period; each budget line must use a different interval.</p>
+							<p className="text-destructive pl-0.5 text-xs">重置周期重复；每条预算必须使用不同的间隔。</p>
 						)}
 					</div>
 				);

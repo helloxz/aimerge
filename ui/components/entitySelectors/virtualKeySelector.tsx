@@ -68,8 +68,8 @@ export function VirtualKeySelector({ limit = ENTITY_SELECTOR_PAGE_SIZE, filters,
 		<EntitySelector
 			{...props}
 			LabelResolver={VirtualKeyLabelResolver}
-			entityLabel="virtual key"
-			entityLabelPlural="virtual keys"
+			entityLabel="虚拟密钥"
+			entityLabelPlural="虚拟密钥"
 			options={options}
 			isFetching={isFetching}
 			isError={isError}

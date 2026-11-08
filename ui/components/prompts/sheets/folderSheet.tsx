@@ -54,18 +54,18 @@ export function FolderSheet({ open, onOpenChange, folder, onSaved }: FolderSheet
 					id: folder.id,
 					data: { name: data.name.trim(), description: data.description.trim() || undefined },
 				}).unwrap();
-				toast.success("Folder updated");
+				toast.success("文件夹已更新");
 			} else {
 				await createFolder({
 					name: data.name.trim(),
 					description: data.description.trim() || undefined,
 				}).unwrap();
-				toast.success("Folder created");
+				toast.success("文件夹已创建");
 			}
 			onSaved();
 			onOpenChange(false);
 		} catch (err) {
-			toast.error(`Failed to ${isEditing ? "update" : "create"} folder`, {
+			toast.error(`文件夹${isEditing ? "更新" : "创建"}失败`, {
 				description: getErrorMessage(err),
 			});
 		}
@@ -82,22 +82,22 @@ export function FolderSheet({ open, onOpenChange, folder, onSaved }: FolderSheet
 			>
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<SheetHeader className="flex flex-col items-start">
-						<SheetTitle>{isEditing ? "Edit Folder" : "Create Folder"}</SheetTitle>
+						<SheetTitle>{isEditing ? "编辑文件夹" : "创建文件夹"}</SheetTitle>
 						<SheetDescription>
-							{isEditing ? "Update the folder name and description." : "Create a new folder to organize your prompts."}
+							{isEditing ? "更新文件夹名称与描述。" : "创建新文件夹以整理您的提示词。"}
 						</SheetDescription>
 					</SheetHeader>
 
 					<div className="mt-6 space-y-4">
 						<div className="space-y-2">
-							<Label htmlFor="name">Name</Label>
+							<Label htmlFor="name">名称</Label>
 							<Input
 								id="name"
 								data-testid="folder-name-input"
-								placeholder="My Prompts"
+								placeholder="我的提示词"
 								{...register("name", {
-									required: "Folder name is required",
-									validate: (v) => v.trim().length > 0 || "Folder name cannot be blank",
+									required: "文件夹名称不能为空",
+									validate: (v) => v.trim().length > 0 || "文件夹名称不能为空白",
 								})}
 								autoFocus
 							/>
@@ -105,11 +105,11 @@ export function FolderSheet({ open, onOpenChange, folder, onSaved }: FolderSheet
 						</div>
 
 						<div className="space-y-2">
-							<Label htmlFor="description">Description (optional)</Label>
+							<Label htmlFor="description">描述（可选）</Label>
 							<Textarea
 								id="description"
 								data-testid="folder-description-input"
-								placeholder="Prompts for customer support use cases..."
+								placeholder="用于客户支持场景的提示词..."
 								className="resize-none"
 								{...register("description")}
 							/>
@@ -118,10 +118,10 @@ export function FolderSheet({ open, onOpenChange, folder, onSaved }: FolderSheet
 
 					<SheetFooter className="mt-6 flex flex-row items-center justify-end gap-2 p-0">
 						<Button type="button" variant="outline" data-testid="folder-cancel" onClick={() => onOpenChange(false)}>
-							Cancel
+							取消
 						</Button>
 						<Button type="submit" data-testid="folder-submit" disabled={isLoading}>
-							{isLoading ? "Saving..." : isEditing ? "Update" : "Create"}
+							{isLoading ? "保存中..." : isEditing ? "更新" : "创建"}
 						</Button>
 					</SheetFooter>
 				</form>

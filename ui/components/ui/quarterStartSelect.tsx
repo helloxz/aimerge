@@ -34,10 +34,10 @@ export default function QuarterStartSelect({ "data-testid": testId, value, onCha
 			{/* Stacks below sm so the label and month select don't crush each other on
 			    narrow viewports; horizontal (select right-aligned inside the box) above. */}
 			<div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-				<Label className="font-normal">Fiscal year starts</Label>
+				<Label className="font-normal">财年起始月</Label>
 				<Select value={String(value ?? 1)} onValueChange={(month) => onChange(Number(month))}>
 					<SelectTrigger
-						aria-label="Fiscal year starts"
+						aria-label="财年起始月"
 						className="h-9 w-full shrink-0 sm:w-40"
 						data-testid={testId ? `${testId}-trigger` : undefined}
 					>
@@ -72,8 +72,8 @@ export default function QuarterStartSelect({ "data-testid": testId, value, onCha
 				})}
 			</div>
 			<p className="text-muted-foreground border-t pt-2.5 text-[0.8rem] leading-relaxed">
-				Next reset on <span className="text-foreground font-medium">{format(nextReset, "MMM d, yyyy")}</span>. The current quarter ends{" "}
-				{format(currentQuarterEnd, "MMM d, yyyy")}.
+				下次重置于 <span className="text-foreground font-medium">{format(nextReset, "yyyy-MM-dd")}</span>。当前季度结束于{" "}
+				{format(currentQuarterEnd, "yyyy-MM-dd")}。
 			</p>
 		</div>
 	);

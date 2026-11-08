@@ -141,12 +141,12 @@ function ComboboxInput({
 					className,
 				)}
 			>
-				<span className="truncate">{displayValue || placeholder || "Select..."}</span>
+				<span className="truncate">{displayValue || placeholder || "请选择..."}</span>
 				<div className="ml-2 flex shrink-0 items-center gap-1">
 					{showClear && value && (
 						<button
 							type="button"
-							aria-label="Clear selection"
+							aria-label="清除选择"
 							data-testid="combobox-clear-button"
 							className="rounded-sm opacity-50 hover:opacity-100"
 							onClick={(e) => {
@@ -211,7 +211,7 @@ function ComboboxList({ className, ...props }: React.ComponentProps<typeof Comma
 		<>
 			<div className="flex items-center border-b px-3">
 				<CommandPrimitive.Input
-					placeholder="Search..."
+					placeholder="搜索..."
 					className="placeholder:text-muted-foreground flex h-8 w-full bg-transparent py-3 text-sm outline-none disabled:cursor-not-allowed disabled:opacity-50"
 					value={inputValue}
 					autoFocus
@@ -325,7 +325,7 @@ function ComboboxCreatable({
 	options,
 	value,
 	onValueChange,
-	placeholder = "Type or select...",
+	placeholder = "输入或选择...",
 	disabled = false,
 	className,
 	createLabel,
@@ -445,11 +445,11 @@ type ComboboxSelectProps = (ComboboxSelectSingleProps | ComboboxSelectMultiProps
 function ComboboxSelect(props: ComboboxSelectProps) {
 	const {
 		options,
-		placeholder = "Select…",
+		placeholder = "请选择…",
 		disabled = false,
 		disableSearch = false,
 		className,
-		emptyMessage = "No results found.",
+		emptyMessage = "未找到结果。",
 		noPortal,
 		compactTrigger = false,
 		creatable = false,
@@ -534,7 +534,7 @@ function ComboboxSelect(props: ComboboxSelectProps) {
 						{!disableSearch && (
 							<div className="flex items-center border-b px-3">
 								<CommandPrimitive.Input
-									placeholder={searchPlaceholder || "Search..."}
+									placeholder={searchPlaceholder || "搜索..."}
 									className="placeholder:text-muted-foreground flex h-8 w-full bg-transparent py-3 text-sm outline-none"
 									value={query}
 									onValueChange={setQuery}
@@ -610,7 +610,7 @@ function ComboboxSelect(props: ComboboxSelectProps) {
 						{!props.hideClear && props.value && (
 							<button
 								type="button"
-								aria-label="Clear selection"
+								aria-label="清除选择"
 								data-testid="combobox-select-clear-button"
 								className="rounded-sm opacity-50 hover:opacity-100"
 								onClick={(e) => {
@@ -631,7 +631,7 @@ function ComboboxSelect(props: ComboboxSelectProps) {
 					{!disableSearch && (
 						<div className="flex items-center border-b px-3">
 							<CommandPrimitive.Input
-								placeholder={searchPlaceholder || "Search..."}
+								placeholder={searchPlaceholder || "搜索..."}
 								className="placeholder:text-muted-foreground flex h-8 w-full bg-transparent py-3 text-sm outline-none"
 								value={query}
 								onValueChange={setQuery}

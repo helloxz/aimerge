@@ -69,13 +69,13 @@ export default function HeadersForm({
 	onTest,
 	onSubmit,
 	busy = false,
-	submitLabel = "Submit",
-	testLabel = "Test",
+	submitLabel = "提交",
+	testLabel = "测试",
 	initialValues,
 	testIdPrefix = "headers-form",
 	hideSubmit = false,
 	onCancel,
-	cancelLabel = "Cancel",
+	cancelLabel = "取消",
 }: HeadersFormProps) {
 	const [values, setValues] = useState<Record<string, string>>(() => buildInitialValues(requiredKeys, initialValues));
 	const [reveal, setReveal] = useState<Record<string, boolean>>({});
@@ -119,7 +119,7 @@ export default function HeadersForm({
 			{adminHeaderKeys && adminHeaderKeys.length > 0 && (
 				<div className="border-muted-foreground/20 bg-muted/40 rounded-md border p-3">
 					<div className="flex items-center gap-1.5">
-						<p className="text-muted-foreground text-xs font-medium">Static admin headers</p>
+						<p className="text-muted-foreground text-xs font-medium">管理员静态请求头</p>
 						<TooltipProvider>
 							<Tooltip>
 								<TooltipTrigger asChild>
@@ -127,8 +127,8 @@ export default function HeadersForm({
 								</TooltipTrigger>
 								<TooltipContent className="max-w-xs">
 									<p>
-										These headers are set by the admin on the MCP client and accompany every request alongside your submitted values. You
-										can&apos;t edit them here.
+										这些请求头由管理员在 MCP 客户端上设置，会与您提交的值一起随每个请求发送。您
+										无法在此处编辑。
 									</p>
 								</TooltipContent>
 							</Tooltip>
@@ -146,7 +146,7 @@ export default function HeadersForm({
 
 			<div className="space-y-3">
 				{requiredKeys.length === 0 ? (
-					<p className="text-muted-foreground text-sm">No header keys have been declared on this MCP client.</p>
+					<p className="text-muted-foreground text-sm">此 MCP 客户端尚未声明任何请求头键。</p>
 				) : (
 					requiredKeys.map((key) => {
 						const isRevealed = reveal[key] === true;
@@ -157,7 +157,7 @@ export default function HeadersForm({
 									<Label htmlFor={`${testIdPrefix}-${key}`} className="font-mono text-xs">
 										{key}
 									</Label>
-									{wasSubmitted && <span className="text-muted-foreground text-xs">Previously submitted</span>}
+									{wasSubmitted && <span className="text-muted-foreground text-xs">此前已提交</span>}
 								</div>
 								<div className="relative">
 									<Input
@@ -166,7 +166,7 @@ export default function HeadersForm({
 										autoComplete="off"
 										value={values[key] ?? ""}
 										onChange={(e) => handleChange(key, e.target.value)}
-										placeholder={wasSubmitted ? "•••••• (enter new value to overwrite)" : `Value for ${key}`}
+										placeholder={wasSubmitted ? "••••••（输入新值以覆盖）" : `${key} 的值`}
 										disabled={busy}
 										data-testid={`${testIdPrefix}-input-${key}`}
 									/>
@@ -174,7 +174,7 @@ export default function HeadersForm({
 										type="button"
 										onClick={() => setReveal((r) => ({ ...r, [key]: !r[key] }))}
 										className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2"
-										aria-label={isRevealed ? "Hide value" : "Show value"}
+										aria-label={isRevealed ? "隐藏值" : "显示值"}
 										data-testid={`${testIdPrefix}-reveal-${key}`}
 									>
 										{isRevealed ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}

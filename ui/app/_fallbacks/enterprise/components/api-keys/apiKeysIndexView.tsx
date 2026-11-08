@@ -32,7 +32,7 @@ curl --location 'http://localhost:8080/v1/chat/completions'
 	const { copy: copyToClipboard } = useCopyToClipboard();
 
 	if (isLoading) {
-		return <div>Loading...</div>;
+		return <div>加载中...</div>;
 	}
 	if (!isAuthConfigure) {
 		return (
@@ -40,13 +40,13 @@ curl --location 'http://localhost:8080/v1/chat/completions'
 				<InfoIcon className="text-muted h-4 w-4" />
 				<AlertDescription>
 					<p className="text-md text-muted-foreground">
-						To generate API keys, you need to set up admin username and password first.{" "}
+						要生成 API 密钥，您需要先设置管理员用户名和密码。{" "}
 						<Link to="/workspace/config/security" className="text-md text-primary underline">
-							Configure Security Settings
+							配置安全设置
 						</Link>
-						.<br />
+						。<br />
 						<br />
-						Once generated you will need to use this API key for all API calls to the Bifrost admin APIs and UI.
+						生成后，您需要在调用 Bifrost 管理 API 和访问 UI 时使用此 API 密钥。
 					</p>
 				</AlertDescription>
 			</Alert>
@@ -63,14 +63,13 @@ curl --location 'http://localhost:8080/v1/chat/completions'
 					<p className="text-md text-muted-foreground">
 						{isInferenceAuthDisabled ? (
 							<>
-								Authentication is currently <strong>disabled for inference API calls</strong>. You can make inference requests without
-								authentication. Dashboard and admin API calls still require Basic auth with your admin credentials encoded in the standard{" "}
-								<code className="bg-muted rounded px-1 py-0.5 text-sm">username:password</code> format with base64 encoding.
+								当前推理 API 调用<strong>未启用身份验证</strong>。您可以发送推理请求而无需身份验证。仪表盘和管理 API 调用仍需要 Basic 认证，请将管理员凭证按标准{" "}
+								<code className="bg-muted rounded px-1 py-0.5 text-sm">username:password</code> 格式进行 base64 编码。
 							</>
 						) : (
 							<>
-								Use Basic auth with your admin credentials when making API calls to Bifrost. Encode your credentials in the standard{" "}
-								<code className="bg-muted rounded px-1 py-0.5 text-sm">username:password</code> format with base64 encoding.
+								调用 Bifrost API 时请使用管理员凭证进行 Basic 认证。请将凭证按标准{" "}
+								<code className="bg-muted rounded px-1 py-0.5 text-sm">username:password</code> 格式进行 base64 编码。
 							</>
 						)}
 					</p>
@@ -78,7 +77,7 @@ curl --location 'http://localhost:8080/v1/chat/completions'
 						<>
 							<br />
 							<p className="text-md text-muted-foreground">
-								<strong>Example:</strong>
+								<strong>示例：</strong>
 							</p>
 
 							<div className="relative mt-2 w-full min-w-0 overflow-x-auto">
@@ -95,8 +94,8 @@ curl --location 'http://localhost:8080/v1/chat/completions'
 			<ContactUsView
 				className="mt-4 rounded-md border px-3 py-8"
 				icon={<KeyRound size={48} />}
-				title="Scope Based API Keys"
-				description="Need granular access control with scope-based API keys? Enterprise customers can create multiple API keys with specific permissions for different services, teams, or environments."
+				title="基于作用域的 API 密钥"
+				description="需要基于作用域 API 密钥的精细化访问控制？企业版客户可为不同服务、团队或环境创建多个具有特定权限的 API 密钥。"
 				readmeLink="https://docs.getbifrost.io/enterprise/api-keys"
 			/>
 		</div>

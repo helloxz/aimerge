@@ -65,32 +65,32 @@ interface EntityAssociationSelectProps {
 
 // Default placeholder text for each entity type
 const defaultPlaceholders: Record<EntityType, string> = {
-	virtualKey: "Add virtual key names...",
-	team: "Add team names...",
-	customer: "Add customer names...",
-	user: "Add user names...",
-	provider: "Add provider names...",
-	apiKey: "Add API key names...",
+	virtualKey: "添加虚拟密钥名称...",
+	team: "添加团队名称...",
+	customer: "添加客户名称...",
+	user: "添加用户名称...",
+	provider: "添加提供商名称...",
+	apiKey: "添加 API 密钥名称...",
 };
 
 // Default no options messages for each entity type
 const defaultNoOptionsMessages: Record<EntityType, string> = {
-	virtualKey: "No virtual keys found",
-	team: "No teams found",
-	customer: "No customers found",
-	user: "No users found",
-	provider: "No providers found",
-	apiKey: "No API keys found",
+	virtualKey: "未找到虚拟密钥",
+	team: "未找到团队",
+	customer: "未找到客户",
+	user: "未找到用户",
+	provider: "未找到提供商",
+	apiKey: "未找到 API 密钥",
 };
 
 // Label text for each entity type
 export const entityTypeLabels: Record<EntityType, string> = {
-	virtualKey: "Virtual Keys",
-	team: "Teams",
-	customer: "Customers",
-	user: "Users",
-	provider: "Providers",
-	apiKey: "API Keys",
+	virtualKey: "虚拟密钥",
+	team: "团队",
+	customer: "客户",
+	user: "用户",
+	provider: "提供商",
+	apiKey: "API 密钥",
 };
 
 export function EntityAssociationSelect({
@@ -196,7 +196,7 @@ export function EntityAssociationSelect({
 				hideSelectedOptions={false}
 				isCreatable={isCreatable}
 				onCreateOption={handleCreateOption}
-				formatCreateLabel={formatCreateLabel || ((value) => `Add "${value}"`)}
+				formatCreateLabel={formatCreateLabel || ((value) => `添加"${value}"`)}
 				noOptionsMessage={noOptionsMessage || (() => defaultNoOptionsMessages[entityType])}
 				views={{
 					option: (props) => {
@@ -213,7 +213,7 @@ export function EntityAssociationSelect({
 							>
 								<div className="flex items-center justify-between">
 									<span className="text-content-primary font-medium">{data.label}</span>
-									{props.isSelected && <span className="text-primary text-xs">Selected</span>}
+									{props.isSelected && <span className="text-primary text-xs">已选择</span>}
 								</div>
 								{data.meta?.description && <span className="text-content-tertiary line-clamp-1 text-xs">{data.meta.description}</span>}
 							</div>

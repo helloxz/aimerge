@@ -286,7 +286,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 			onValueChange,
 			variant,
 			defaultValue = [],
-			placeholder = "Select options",
+			placeholder = "选择选项",
 			animation = 0,
 			animationConfig,
 			maxCount = 3,
@@ -611,21 +611,21 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 					const addedLabels = addedItems.map((value) => allOptions.find((opt) => opt.value === value)?.label).filter(Boolean);
 
 					if (addedLabels.length === 1) {
-						announce(`${addedLabels[0]} selected. ${selectedCount} of ${totalOptions} options selected.`);
+						announce(`已选择 ${addedLabels[0]}。共选择 ${totalOptions} 个选项中的 ${selectedCount} 个。`);
 					} else {
-						announce(`${addedLabels.length} options selected. ${selectedCount} of ${totalOptions} total selected.`);
+						announce(`已选择 ${addedLabels.length} 个选项。共选择 ${totalOptions} 个中的 ${selectedCount} 个。`);
 					}
 				} else if (diff < 0) {
-					announce(`Option removed. ${selectedCount} of ${totalOptions} options selected.`);
+					announce(`已移除选项。共选择 ${totalOptions} 个中的 ${selectedCount} 个。`);
 				}
 				prevSelectedCount.current = selectedCount;
 			}
 
 			if (isPopoverOpen !== prevIsOpen.current) {
 				if (isPopoverOpen) {
-					announce(`Dropdown opened. ${totalOptions} options available. Use arrow keys to navigate.`);
+					announce(`下拉菜单已打开，共 ${totalOptions} 个选项可用。使用方向键导航。`);
 				} else {
-					announce("Dropdown closed.");
+					announce("下拉菜单已关闭。");
 				}
 				prevIsOpen.current = isPopoverOpen;
 			}
@@ -637,7 +637,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 							opt.label.toLowerCase().includes(searchValue.toLowerCase()) || opt.value.toLowerCase().includes(searchValue.toLowerCase()),
 					).length;
 
-					announce(`${filteredCount} option${filteredCount === 1 ? "" : "s"} found for "${searchValue}"`);
+					announce(`找到 ${filteredCount} 个与 "${searchValue}" 匹配的选项`);
 				}
 				prevSearchValue.current = searchValue;
 			}
@@ -656,12 +656,12 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 
 				<Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen} modal={modalPopover}>
 					<div id={triggerDescriptionId} className="sr-only">
-						Multi-select dropdown. Use arrow keys to navigate, Enter to select, and Escape to close.
+						多选下拉菜单。使用方向键导航，Enter 选择，Escape 关闭。
 					</div>
 					<div id={selectedCountId} className="sr-only" aria-live="polite">
 						{selectedValues.length === 0
-							? "No options selected"
-							: `${selectedValues.length} option${selectedValues.length === 1 ? "" : "s"} selected: ${selectedValues
+							? "未选择任何选项"
+							: `已选择 ${selectedValues.length} 个选项：${selectedValues
 									.map((value) => getOptionByValue(value)?.label)
 									.filter(Boolean)
 									.join(", ")}`}
@@ -677,7 +677,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 							aria-haspopup="listbox"
 							aria-controls={isPopoverOpen ? listboxId : undefined}
 							aria-describedby={`${triggerDescriptionId} ${selectedCountId}`}
-							aria-label={`Multi-select: ${selectedValues.length} of ${getAllOptions().length} options selected. ${placeholder}`}
+							aria-label={`多选：已选择 ${getAllOptions().length} 个选项中的 ${selectedValues.length} 个。${placeholder}`}
 							className={cn(
 								"flex h-auto min-h-9 items-center justify-between rounded-md border p-1 shadow-none [&_svg]:pointer-events-auto",
 								autoSize ? "w-auto" : "w-full",
@@ -766,7 +766,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 																	toggleOption(value);
 																}
 															}}
-															aria-label={`Remove ${option.label} from selection`}
+															aria-label={`从已选项中移除 ${option.label}`}
 															className="ring-none -m-0.5 ml-2 h-4 w-4 cursor-pointer rounded-sm focus:outline-none"
 														>
 															<XCircle className={cn("h-3 w-3", responsiveSettings.compactMode && "h-2.5 w-2.5")} />
@@ -812,7 +812,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 													handleClear();
 												}
 											}}
-											aria-label={`Clear all ${selectedValues.length} selected options`}
+											aria-label={`清除全部 ${selectedValues.length} 个已选项`}
 											className="text-muted-foreground hover:text-foreground mx-2 flex h-4 w-4 cursor-pointer items-center justify-center rounded-sm focus:outline-none"
 										>
 											<XIcon className="h-4 w-4" />
@@ -833,7 +833,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 						id={listboxId}
 						role="listbox"
 						aria-multiselectable="true"
-						aria-label="Available options"
+						aria-label="可用选项"
 						className={cn("w-full overflow-hidden p-0", popoverClassName)}
 						style={{
 							touchAction: "manipulation",
@@ -847,17 +847,17 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 						<Command className={cn("flex w-full flex-col", commandClassName)}>
 							{searchable && (
 								<CommandInput
-									placeholder="Search options..."
+									placeholder="搜索选项..."
 									onKeyDown={handleInputKeyDown}
 									value={searchValue}
 									onValueChange={setSearchValue}
-									aria-label="Search through available options"
+									aria-label="在可用选项中搜索"
 									aria-describedby={`${multiSelectId}-search-help`}
 								/>
 							)}
 							{searchable && (
 								<div id={`${multiSelectId}-search-help`} className="sr-only">
-									Type to filter options. Use arrow keys to navigate results.
+									输入以筛选选项，使用方向键浏览结果。
 								</div>
 							)}
 							<CommandList
@@ -871,7 +871,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 									scrollbarColor: "rgba(156, 163, 175, 0.5) transparent",
 								}}
 							>
-								<CommandEmpty>{emptyIndicator || "No results found."}</CommandEmpty>{" "}
+								<CommandEmpty>{emptyIndicator || "未找到结果。"}</CommandEmpty>{" "}
 								{!hideSelectAll && !searchValue && (
 									<CommandGroup>
 										<CommandItem
@@ -879,7 +879,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 											onSelect={toggleAll}
 											role="option"
 											aria-selected={selectedValues.length === getAllOptions().filter((opt) => !opt.disabled).length}
-											aria-label={`Select all ${getAllOptions().length} options`}
+											aria-label={`全选 ${getAllOptions().length} 个选项`}
 											className="cursor-pointer"
 										>
 											<div
@@ -894,8 +894,8 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
 												<CheckIcon className="text-secondary bg-primary h-4 w-4 rounded-md" />
 											</div>
 											<span>
-												(Select All
-												{getAllOptions().length > 20 ? ` - ${getAllOptions().length} options` : ""})
+												(全选
+												{getAllOptions().length > 20 ? ` - ${getAllOptions().length} 个选项` : ""})
 											</span>
 										</CommandItem>
 									</CommandGroup>

@@ -15,13 +15,13 @@ export default function ErrorMessageView({ message, disabled, onRemove }: { mess
 			<div className="mb-1 flex h-5 items-center">
 				<span className="text-destructive flex items-center gap-1 py-0.5 text-xs font-medium uppercase">
 					<AlertCircle className="size-3" />
-					Error
+					错误
 				</span>
 				<div className="ml-auto">
 					{!disabled && onRemove && (
 						<button
 							type="button"
-							aria-label="Delete message"
+							aria-label="删除消息"
 							data-testid="error-msg-delete"
 							onClick={onRemove}
 							className="hover:bg-muted focus:bg-muted rounded-sm p-1 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 focus:opacity-100"

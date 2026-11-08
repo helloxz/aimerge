@@ -18,7 +18,7 @@ export function CopyableId({ id, entityLabel, className }: CopyableIdProps) {
 	const value = String(id ?? "");
 	const noun = entityLabel ? `${entityLabel.toLowerCase()} ID` : "ID";
 	const { copy, copied } = useCopyToClipboard({
-		successMessage: `${entityLabel ? `${entityLabel} ID` : "ID"} copied`,
+		successMessage: `${entityLabel ? `${entityLabel} ID` : "ID"} 已复制`,
 	});
 
 	if (!value) return null;
@@ -32,7 +32,7 @@ export function CopyableId({ id, entityLabel, className }: CopyableIdProps) {
 						e.stopPropagation();
 						copy(value);
 					}}
-					aria-label={`Copy ${noun}`}
+					aria-label={`复制 ${noun}`}
 					className={cn(
 						"text-muted-foreground hover:text-foreground hover:bg-muted inline-flex size-6 shrink-0 cursor-pointer items-center justify-center rounded transition-colors",
 						className,
@@ -42,7 +42,7 @@ export function CopyableId({ id, entityLabel, className }: CopyableIdProps) {
 				</button>
 			</TooltipTrigger>
 			<TooltipContent className="flex flex-col items-start gap-0.5 px-2 py-1">
-				<span className="text-xs">Copy {noun}</span>
+				<span className="text-xs">复制 {noun}</span>
 				<span className="font-mono text-xs opacity-80">{value}</span>
 			</TooltipContent>
 		</Tooltip>

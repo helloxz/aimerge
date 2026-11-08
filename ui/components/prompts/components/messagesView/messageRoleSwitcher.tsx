@@ -3,11 +3,18 @@ import { cn } from "@/lib/utils";
 import { ChevronDown } from "lucide-react";
 
 const AVAILABLE_ROLES = [
-	{ value: "system", label: "System" },
-	{ value: "user", label: "User" },
-	{ value: "assistant", label: "Assistant" },
-	{ value: "tool", label: "Tool" },
+	{ value: "system", label: "系统" },
+	{ value: "user", label: "用户" },
+	{ value: "assistant", label: "助手" },
+	{ value: "tool", label: "工具" },
 ] as const;
+
+const ROLE_LABELS: Record<string, string> = {
+	system: "系统",
+	user: "用户",
+	assistant: "助手",
+	tool: "工具",
+};
 
 /**
  * Render a dropdown that lets the user switch the current message role.
@@ -38,14 +45,14 @@ export default function MessageRoleSwitcher({
 						!disabled && "hover:bg-muted cursor-pointer",
 					)}
 				>
-					{role}
+					{ROLE_LABELS[role] ?? role}
 					<ChevronDown className="size-3 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100" />
 				</button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent align="start">
 				{AVAILABLE_ROLES.filter((r) => r.value !== role && (!restrictedRoles || !restrictedRoles.includes(r.value))).map((option) => (
 					<DropdownMenuItem key={option.value} onSelect={() => onRoleChange(option.value)}>
-						{option.label.toUpperCase()}
+						{option.label}
 					</DropdownMenuItem>
 				))}
 			</DropdownMenuContent>

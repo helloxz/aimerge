@@ -75,8 +75,8 @@ function SearchSelect<T extends SearchSelectOption = SearchSelectOption>(props: 
 		label,
 		entryView,
 		footer,
-		searchPlaceholder = "Search...",
-		emptyMessage = "No results found.",
+		searchPlaceholder = "搜索...",
+		emptyMessage = "未找到结果。",
 		disabled = false,
 		open: controlledOpen,
 		onOpenChange,
@@ -94,7 +94,7 @@ function SearchSelect<T extends SearchSelectOption = SearchSelectOption>(props: 
 	const isSearching = isAsync ? (props.isSearching ?? false) : false;
 	const isLoading = isAsync ? (props.isLoading ?? false) : false;
 	const isError = isAsync ? (props.isError ?? false) : false;
-	const errorMessage = isAsync ? (props.errorMessage ?? "Failed to load.") : "";
+	const errorMessage = isAsync ? (props.errorMessage ?? "加载失败。") : "";
 
 	const [internalOpen, setInternalOpen] = React.useState(false);
 	const [search, setSearch] = React.useState("");

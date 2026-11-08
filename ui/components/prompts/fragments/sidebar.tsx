@@ -182,7 +182,7 @@ export function PromptSidebar() {
 					<div className="relative grow">
 						<Search className="text-muted-foreground absolute top-1/2 left-2.5 h-4 w-4 -translate-y-1/2" />
 						<Input
-							placeholder="Search prompts..."
+							placeholder="搜索提示词..."
 							value={searchQuery}
 							onChange={(e) => setSearchQuery(e.target.value)}
 							data-testid="sidebar-search"
@@ -196,7 +196,7 @@ export function PromptSidebar() {
 									variant="outline"
 									className="h-8 w-8 shrink-0 bg-transparent"
 									data-testid="sidebar-create-menu"
-									aria-label="Create prompt or folder"
+									aria-label="创建提示词或文件夹"
 								>
 									<PlusIcon className="h-3.5 w-3.5" />
 								</Button>
@@ -209,7 +209,7 @@ export function PromptSidebar() {
 										onCreatePrompt();
 									}}
 								>
-									New Prompt
+									新建提示词
 								</DropdownMenuItem>
 								<DropdownMenuItem
 									data-testid="sidebar-create-folder"
@@ -218,7 +218,7 @@ export function PromptSidebar() {
 										onCreateFolder();
 									}}
 								>
-									New Folder
+									新建文件夹
 								</DropdownMenuItem>
 							</DropdownMenuContent>
 						</DropdownMenu>
@@ -228,7 +228,7 @@ export function PromptSidebar() {
 				<ScrollArea className="grow overflow-y-auto" viewportClassName="no-table viewport-table-height-full">
 					<div className="flex flex-col p-2 px-3">
 						{filteredData.folders.length === 0 && filteredData.rootPrompts.length === 0 ? (
-							<div className="text-muted-foreground py-8 text-center text-sm">{searchQuery ? "No results found" : "No prompts yet"}</div>
+							<div className="text-muted-foreground py-8 text-center text-sm">{searchQuery ? "未找到结果" : "暂无提示词"}</div>
 						) : (
 							<>
 								{filteredData.folders.map((folder) => (
@@ -392,7 +392,7 @@ function DroppableFolder({
 				onClick={onToggle}
 				data-testid={`sidebar-folder-${folder.id}`}
 			>
-				<button className="flex shrink-0 items-center" aria-label="Toggle folder">
+				<button className="flex shrink-0 items-center" aria-label="展开或收起文件夹">
 					{isExpanded ? (
 						<ChevronDown className="text-muted-foreground h-4 w-4" />
 					) : (
@@ -414,7 +414,7 @@ function DroppableFolder({
 								size="icon"
 								className="h-6 w-6 shrink-0 opacity-0 group-focus-within:opacity-100 group-hover:opacity-100 focus-visible:opacity-100"
 								data-testid={`sidebar-folder-actions-${folder.id}`}
-								aria-label="Folder actions"
+								aria-label="文件夹操作"
 							>
 								<MoreHorizontal className="h-4 w-4" />
 							</Button>
@@ -429,7 +429,7 @@ function DroppableFolder({
 									}}
 								>
 									<Plus className="mr-2 h-4 w-4" />
-									New Prompt
+									新建提示词
 								</DropdownMenuItem>
 							)}
 							{canCreate && (canUpdate || canDelete) && <DropdownMenuSeparator />}
@@ -442,7 +442,7 @@ function DroppableFolder({
 									}}
 								>
 									<Pencil className="h-4 w-4" />
-									Edit Folder
+									编辑文件夹
 								</DropdownMenuItem>
 							)}
 							{canDelete && (
@@ -455,7 +455,7 @@ function DroppableFolder({
 									}}
 								>
 									<Trash2 className="h-4 w-4" />
-									Delete Folder
+									删除文件夹
 								</DropdownMenuItem>
 							)}
 						</DropdownMenuContent>
@@ -466,7 +466,7 @@ function DroppableFolder({
 			{isExpanded && (
 				<div className="ml-4 border-l pl-2">
 					{prompts.length === 0 ? (
-						<div className="text-muted-foreground py-2 pl-4 text-xs">{isDragOver ? "Drop here" : "No prompts"}</div>
+						<div className="text-muted-foreground py-2 pl-4 text-xs">{isDragOver ? "放置到此处" : "暂无提示词"}</div>
 					) : (
 						prompts.map((prompt) => (
 							<DraggablePromptItem
@@ -543,7 +543,7 @@ function DraggablePromptItem({ prompt, isSelected, onSelect, onEdit, onDelete, c
 							size="icon"
 							className="h-6 w-6 opacity-0 group-focus-within:opacity-100 group-hover:opacity-100 focus-visible:opacity-100"
 							data-testid={`sidebar-prompt-actions-${prompt.id}`}
-							aria-label="Prompt actions"
+							aria-label="提示词操作"
 						>
 							<MoreHorizontal className="h-4 w-4" />
 						</Button>
@@ -559,7 +559,7 @@ function DraggablePromptItem({ prompt, isSelected, onSelect, onEdit, onDelete, c
 								}}
 							>
 								<Pencil className="h-4 w-4" />
-								Rename
+								重命名
 							</DropdownMenuItem>
 						)}
 						{canDelete && (
@@ -573,7 +573,7 @@ function DraggablePromptItem({ prompt, isSelected, onSelect, onEdit, onDelete, c
 								}}
 							>
 								<Trash2 className="h-4 w-4" />
-								Delete
+								删除
 							</DropdownMenuItem>
 						)}
 					</DropdownMenuContent>

@@ -66,8 +66,8 @@ export function TeamSelector({ limit = ENTITY_SELECTOR_PAGE_SIZE, filters, ...pr
 		<EntitySelector
 			{...props}
 			LabelResolver={TeamLabelResolver}
-			entityLabel="team"
-			entityLabelPlural="teams"
+			entityLabel="团队"
+			entityLabelPlural="团队"
 			options={options}
 			isFetching={isFetching}
 			isError={isError}

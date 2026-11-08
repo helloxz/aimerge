@@ -40,7 +40,7 @@ export function MCPServerSelector({
 	value,
 	onChange,
 	mcpClients,
-	placeholder = "Search and select MCP servers...",
+	placeholder = "搜索并选择 MCP 服务器...",
 	disabled = false,
 	className,
 	registryPath = "/workspace/mcp-registry",
@@ -150,7 +150,7 @@ export function MCPServerSelector({
 				closeMenuOnSelect={true}
 				hideSelectedOptions={true}
 				controlShouldRenderValue={false}
-				noOptionsMessage={() => "No MCP servers found"}
+				noOptionsMessage={() => "未找到 MCP 服务器"}
 				views={{
 					option: (props) => {
 						// Access data as Option<ServerOptionMeta> since that's the actual runtime type
@@ -173,7 +173,7 @@ export function MCPServerSelector({
 										</Badge>
 									)}
 								</div>
-								<span className="text-content-tertiary text-xs">{data.meta?.toolCount} tools</span>
+								<span className="text-content-tertiary text-xs">{data.meta?.toolCount} 个工具</span>
 							</div>
 						);
 					},
@@ -197,7 +197,7 @@ export function MCPServerSelector({
 										{server.state}
 									</Badge>
 								)}
-								<span className="text-muted-foreground text-xs">{server.toolCount} tools</span>
+								<span className="text-muted-foreground text-xs">{server.toolCount} 个工具</span>
 							</div>
 							<div className="flex items-center gap-1">
 								<Button type="button" variant="ghost" size="sm" className="h-8 w-8 p-0" asChild>
@@ -205,7 +205,7 @@ export function MCPServerSelector({
 										href={`${registryPath}?server=${server.clientId}`}
 										target="_blank"
 										rel="noopener noreferrer"
-										title="Open server details in new tab"
+										title="在新标签页中打开服务器详情"
 									>
 										<ExternalLink className="h-4 w-4" />
 									</a>

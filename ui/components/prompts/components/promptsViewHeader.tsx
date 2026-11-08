@@ -92,9 +92,9 @@ export default function PromptsViewHeader() {
 				},
 			}).unwrap();
 			setUrlState({ sessionId: result.session.id, versionId: null });
-			toast.success("Session saved");
+			toast.success("会话已保存");
 		} catch (err) {
-			toast.error("Failed to save session", { description: getErrorMessage(err) });
+			toast.error("保存会话失败", { description: getErrorMessage(err) });
 		}
 	}, [selectedPrompt?.id, messages, buildSaveParams, provider, model, variables, createSession, setUrlState, hasChanges, isStreaming]);
 
@@ -134,7 +134,7 @@ export default function PromptsViewHeader() {
 			setUrlState({ sessionId: result.session.id, versionId: null });
 			onSessionSaved(result.session);
 		} catch (err) {
-			toast.error("Failed to save session", { description: getErrorMessage(err) });
+			toast.error("保存会话失败", { description: getErrorMessage(err) });
 		}
 	}, [selectedPrompt?.id, messages, buildSaveParams, provider, model, variables, createSession, setUrlState, onSessionSaved, hasChanges]);
 
@@ -144,7 +144,7 @@ export default function PromptsViewHeader() {
 			try {
 				await renameSession({ id: sessionId, promptId: selectedPrompt.id, data: { name } }).unwrap();
 			} catch (err) {
-				toast.error("Failed to rename session", { description: getErrorMessage(err) });
+				toast.error("重命名会话失败", { description: getErrorMessage(err) });
 			}
 		},
 		[selectedPrompt?.id, renameSession],
@@ -167,17 +167,17 @@ export default function PromptsViewHeader() {
 		<div className="flex items-center justify-between border-b px-4 py-3">
 			<div className="flex min-w-0 items-center gap-2">
 				<h3 className="truncate font-semibold">
-					{selectedPrompt?.name || "Playground"}
+					{selectedPrompt?.name || "演练场"}
 					{hasChanges && <span className="text-destructive ml-1">*</span>}
 				</h3>
 				{displayVersion && <Badge variant={"secondary"}>v{displayVersion.version_number}</Badge>}
-				{hasVersionChanges && versions.length > 0 && <Badge variant="outline">Unpublished Changes</Badge>}
+				{hasVersionChanges && versions.length > 0 && <Badge variant="outline">未发布的更改</Badge>}
 			</div>
 			<div className="flex shrink-0 items-center gap-4">
 				{messages.length > 1 && (
 					<Button variant="ghost" size="sm" data-testid="header-clear" onClick={handleClearConversation} disabled={isStreaming}>
 						<Trash2 className="h-4 w-4" />
-						Clear
+						清空
 					</Button>
 				)}
 				<SplitButton
@@ -190,9 +190,9 @@ export default function PromptsViewHeader() {
 						onOpenChange: setSessionsOpen,
 						children: (
 							<Command>
-								<CommandInput placeholder="Search sessions..." data-testid="header-sessions-search" />
+								<CommandInput placeholder="搜索会话..." data-testid="header-sessions-search" />
 								<CommandList>
-									<CommandEmpty>No sessions found.</CommandEmpty>
+									<CommandEmpty>未找到会话。</CommandEmpty>
 									<CommandGroup>
 										{sessions.map((session) => (
 											<SessionItem
@@ -222,7 +222,7 @@ export default function PromptsViewHeader() {
 					}}
 				>
 					<Save className="h-4 w-4" />
-					Save Session
+					保存会话
 				</SplitButton>
 				<SplitButton
 					onClick={handleCommitVersion}
@@ -231,10 +231,10 @@ export default function PromptsViewHeader() {
 						className: "w-64 max-h-72 overflow-y-auto",
 						children: (
 							<>
-								<DropdownMenuLabel>Versions</DropdownMenuLabel>
+								<DropdownMenuLabel>版本</DropdownMenuLabel>
 								<DropdownMenuSeparator />
 								{versions.length === 0 ? (
-									<div className="text-muted-foreground px-2 py-3 text-center text-sm">No versions yet</div>
+									<div className="text-muted-foreground px-2 py-3 text-center text-sm">暂无版本</div>
 								) : (
 									versions.map((version) => (
 										<DropdownMenuItem
@@ -245,9 +245,9 @@ export default function PromptsViewHeader() {
 											<div className="flex min-w-0 flex-col">
 												<span className="truncate text-sm">
 													v{version.version_number}
-													{version.is_latest && <span className="text-primary ml-1.5 text-xs">(latest)</span>}
+													{version.is_latest && <span className="text-primary ml-1.5 text-xs">（最新）</span>}
 												</span>
-												<span className="text-muted-foreground truncate text-xs">{version.commit_message || "No commit message"}</span>
+												<span className="text-muted-foreground truncate text-xs">{version.commit_message || "无提交说明"}</span>
 												<span className="text-muted-foreground text-xs">{formatSessionDate(version.created_at)}</span>
 											</div>
 											{selectedVersionId === version.id && <Check className="text-primary h-4 w-4 shrink-0" />}
@@ -268,7 +268,7 @@ export default function PromptsViewHeader() {
 					}}
 				>
 					<GitCommit className="h-4 w-4" />
-					Commit Version
+					提交版本
 				</SplitButton>
 			</div>
 		</div>
@@ -277,13 +277,8 @@ export default function PromptsViewHeader() {
 
 function formatSessionDate(dateStr: string): string {
 	const date = new Date(dateStr);
-	const month = date.toLocaleString("en-US", { month: "short" });
-	const day = date.getDate();
-	const hours = date.getHours();
-	const minutes = date.getMinutes().toString().padStart(2, "0");
-	const ampm = hours >= 12 ? "pm" : "am";
-	const displayHours = (hours % 12 || 12).toString().padStart(2, "0");
-	return `${month} ${day}, ${displayHours}:${minutes}${ampm}`;
+	const pad = (n: number) => n.toString().padStart(2, "0");
+	return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
 function SessionItem({
@@ -318,7 +313,7 @@ function SessionItem({
 				<Input
 					ref={inputRef}
 					defaultValue={session.name}
-					placeholder="Session name"
+					placeholder="会话名称"
 					className="h-auto border-none bg-transparent p-0 text-sm shadow-none focus-visible:border-none focus-visible:ring-0"
 					data-testid="session-rename-input"
 					autoFocus
@@ -347,7 +342,7 @@ function SessionItem({
 			<div className="flex shrink-0 items-center gap-1">
 				<button
 					type="button"
-					aria-label="Rename session"
+					aria-label="重命名会话"
 					data-testid="session-rename"
 					onPointerDown={(e) => {
 						e.preventDefault();

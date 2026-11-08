@@ -14,7 +14,7 @@ interface BudgetDisplayProps {
 const formatResetDuration = (duration?: string | null, calendarAligned?: boolean) => {
 	if (!duration) return "";
 	const label = resetDurationLabels[duration] || duration;
-	return calendarAligned && supportsCalendarAlignment(duration) ? `${label} (calendar)` : label;
+	return calendarAligned && supportsCalendarAlignment(duration) ? `${label}（日历）` : label;
 };
 
 /**
@@ -43,7 +43,7 @@ export function BudgetDisplay({ budgets, calendarAligned }: BudgetDisplayProps) 
 								<div className="flex items-center justify-between gap-4">
 									<span className="font-medium">
 										{formatCurrency(effectiveMaxLimit)}
-										{hasOverride ? <span className="text-muted-foreground ml-1 text-[10px]">override</span> : null}
+										{hasOverride ? <span className="text-muted-foreground ml-1 text-[10px]">覆盖</span> : null}
 									</span>
 									<span className="text-muted-foreground text-xs">
 										{formatResetDuration(b.reset_duration, calendarAligned)}
@@ -59,12 +59,12 @@ export function BudgetDisplay({ budgets, calendarAligned }: BudgetDisplayProps) 
 							</p>
 							{hasOverride ? (
 								<p className="text-primary-foreground/80 text-xs">
-									Base {formatCurrency(b.max_limit)} + {formatCurrency(b.override_amount ?? 0)} override
+									基础 {formatCurrency(b.max_limit)} + 覆盖 {formatCurrency(b.override_amount ?? 0)}
 								</p>
 							) : null}
 							{b.reset_duration ? (
 								<p className="text-primary-foreground/80 text-xs">
-								Resets {formatResetDuration(b.reset_duration, calendarAligned)}
+								每 {formatResetDuration(b.reset_duration, calendarAligned)} 重置
 								{fiscalQuarterNote(b.reset_duration, b.reset_config)}
 							</p>
 							) : null}

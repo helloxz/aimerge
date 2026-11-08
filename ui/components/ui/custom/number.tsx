@@ -83,14 +83,14 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
 
 				// Validate min/max
 				if (min !== undefined && numValue < min) {
-					onValueError?.(`Value cannot be less than ${min}`);
-					setErrorMessage(`Value cannot be less than ${min}`);
+					onValueError?.(`值不能小于 ${min}`);
+					setErrorMessage(`值不能小于 ${min}`);
 					return min.toString();
 				}
 
 				if (max !== undefined && numValue > max) {
-					onValueError?.(`Value cannot be greater than ${max}`);
-					setErrorMessage(`Value cannot be greater than ${max}`);
+					onValueError?.(`值不能大于 ${max}`);
+					setErrorMessage(`值不能大于 ${max}`);
 					return max.toString();
 				}
 
@@ -131,7 +131,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
 					const normalizedNum = normalized ? Number(normalized) : fallbackValue;
 					setInternalValue(String(normalizedNum));
 					prevValueRef.current = normalizedNum;
-					if (!errorMessage) setErrorMessage(`Value cannot be empty, replaced with ${normalizedNum}`);
+					if (!errorMessage) setErrorMessage(`值不能为空，已替换为 ${normalizedNum}`);
 					onChange?.(normalizedNum);
 				}
 				return;
@@ -140,7 +140,7 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
 			const formattedValue = validateAndFormatNumber(internalValue);
 			setInternalValue(formattedValue);
 
-			if (!errorMessage && !formattedValue) setErrorMessage(`Value cannot be empty, replaced with ${fallbackValue}`);
+			if (!errorMessage && !formattedValue) setErrorMessage(`值不能为空，已替换为 ${fallbackValue}`);
 			onChange?.(formattedValue ? Number(formattedValue) : fallbackValue);
 		};
 
@@ -150,22 +150,22 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
 
 			// Check if the pasted content is a valid number format
 			if (!/^-?\d*\.?\d*$/.test(pastedText)) {
-				onValueError?.("Invalid number format");
-				setErrorMessage("Invalid number format");
+				onValueError?.("数字格式无效");
+				setErrorMessage("数字格式无效");
 				return;
 			}
 
 			// Handle decimal restriction
 			if (!allowDecimal && pastedText.includes(".")) {
-				onValueError?.("Decimal numbers are not allowed");
-				setErrorMessage("Decimal numbers are not allowed");
+				onValueError?.("不允许使用小数");
+				setErrorMessage("不允许使用小数");
 				return;
 			}
 
 			// Handle negative restriction
 			if (!allowNegative && pastedText.includes("-")) {
-				onValueError?.("Negative numbers are not allowed");
-				setErrorMessage("Negative numbers are not allowed");
+				onValueError?.("不允许使用负数");
+				setErrorMessage("不允许使用负数");
 				return;
 			}
 

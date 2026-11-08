@@ -50,19 +50,19 @@ export function PromptSheet({ open, onOpenChange, prompt, folderId, onSaved }: P
 					id: prompt.id,
 					data: { name: data.name.trim() },
 				}).unwrap();
-				toast.success("Prompt updated");
+				toast.success("提示词已更新");
 				onSaved();
 			} else {
 				const result = await createPrompt({
 					name: data.name.trim(),
 					...(folderId ? { folder_id: folderId } : {}),
 				}).unwrap();
-				toast.success("Prompt created");
+				toast.success("提示词已创建");
 				onSaved(result.prompt.id);
 			}
 			onOpenChange(false);
 		} catch (err) {
-			toast.error(`Failed to ${isEditing ? "update" : "create"} prompt`, {
+			toast.error(`提示词${isEditing ? "更新" : "创建"}失败`, {
 				description: getErrorMessage(err),
 			});
 		}
@@ -79,23 +79,23 @@ export function PromptSheet({ open, onOpenChange, prompt, folderId, onSaved }: P
 			>
 				<form onSubmit={handleSubmit(onSubmit)} className="flex grow flex-col">
 					<SheetHeader className="flex flex-col items-start px-8 pt-8">
-						<SheetTitle>{isEditing ? "Rename Prompt" : "Create Prompt"}</SheetTitle>
+						<SheetTitle>{isEditing ? "重命名提示词" : "创建提示词"}</SheetTitle>
 						<SheetDescription>
-							{isEditing ? "Update the prompt name." : folderId ? "Create a new prompt in this folder." : "Create a new prompt."}
+							{isEditing ? "更新提示词名称。" : folderId ? "在此文件夹中创建新提示词。" : "创建新提示词。"}
 						</SheetDescription>
 					</SheetHeader>
 
 					<div className="flex grow flex-col gap-6">
 						<div className="grow space-y-4 px-8">
 							<div className="space-y-2">
-								<Label htmlFor="name">Name</Label>
+								<Label htmlFor="name">名称</Label>
 								<Input
 									id="name"
 									data-testid="prompt-name-input"
-									placeholder="Customer Support Assistant"
+									placeholder="客户支持助手"
 									{...register("name", {
-										required: "Prompt name is required",
-										validate: (v) => v.trim().length > 0 || "Prompt name cannot be blank",
+										required: "提示词名称不能为空",
+										validate: (v) => v.trim().length > 0 || "提示词名称不能为空白",
 									})}
 									autoFocus
 								/>
@@ -105,10 +105,10 @@ export function PromptSheet({ open, onOpenChange, prompt, folderId, onSaved }: P
 
 						<SheetFooter className="flex flex-row items-center justify-end gap-2 border-t px-8 py-4">
 							<Button type="button" variant="outline" data-testid="prompt-cancel" onClick={() => onOpenChange(false)}>
-								Cancel
+								取消
 							</Button>
 							<Button type="submit" data-testid="prompt-submit" disabled={isLoading}>
-								{isLoading ? "Saving..." : isEditing ? "Update" : "Create"}
+								{isLoading ? "保存中..." : isEditing ? "更新" : "创建"}
 							</Button>
 						</SheetFooter>
 					</div>

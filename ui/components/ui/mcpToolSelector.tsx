@@ -55,7 +55,7 @@ export function MCPToolSelector({
 	value,
 	onChange,
 	mcpClients,
-	placeholder = "Search and select tools...",
+	placeholder = "搜索并选择工具...",
 	disabled = false,
 	className,
 }: MCPToolSelectorProps) {
@@ -176,7 +176,7 @@ export function MCPToolSelector({
 				closeMenuOnSelect={true}
 				hideSelectedOptions={true}
 				controlShouldRenderValue={false}
-				noOptionsMessage={() => "No results found"}
+				noOptionsMessage={() => "未找到结果"}
 				views={{
 					option: (optionProps: OptionProps<ToolOptionMeta>) => {
 						const { Option } = components;
@@ -212,8 +212,8 @@ export function MCPToolSelector({
 						<TableHeader>
 							<TableRow>
 								<TableHead className="w-10"></TableHead>
-								<TableHead className="w-auto">Tool</TableHead>
-								<TableHead className="hidden w-32 md:table-cell">Server</TableHead>
+								<TableHead className="w-auto">工具</TableHead>
+								<TableHead className="hidden w-32 md:table-cell">服务器</TableHead>
 								<TableHead className="w-10"></TableHead>
 							</TableRow>
 						</TableHeader>
@@ -271,7 +271,7 @@ export function MCPToolSelector({
 												<tr>
 													<td colSpan={4} className="p-0">
 														<div className="bg-muted/30 border-t px-4 py-3">
-															<div className="text-muted-foreground mb-2 text-xs font-medium">Parameters Schema</div>
+															<div className="text-muted-foreground mb-2 text-xs font-medium">参数结构</div>
 															{tool.parameters ? (
 																<CodeEditor
 																	className="z-0 w-full rounded-md border"
@@ -289,7 +289,7 @@ export function MCPToolSelector({
 																	}}
 																/>
 															) : (
-																<div className="text-muted-foreground text-sm">No parameters defined</div>
+																<div className="text-muted-foreground text-sm">未定义参数</div>
 															)}
 														</div>
 													</td>

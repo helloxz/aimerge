@@ -67,11 +67,11 @@ export function MCPFilterSidebar({ filters, onFiltersChange }: MCPFilterSidebarP
 				type="button"
 				onClick={toggleCollapsed}
 				className="bg-card group flex h-full w-10 shrink-0 cursor-pointer flex-col items-center gap-3 rounded-r-md py-4 text-sm font-medium"
-				title="Show filters"
-				aria-label="Show filters"
+				title="显示筛选器"
+				aria-label="显示筛选器"
 			>
 				<PanelLeftOpen className="text-muted-foreground group-hover:text-foreground size-4 transition-colors" />
-				<span className="rotate-180 select-none [writing-mode:vertical-rl]">Filters</span>
+				<span className="rotate-180 select-none [writing-mode:vertical-rl]">筛选器</span>
 				{activeFilterCount > 0 && (
 					<span className="bg-primary/10 text-primary flex size-6 items-center justify-center rounded-full text-xs font-medium">
 						{activeFilterCount}
@@ -85,15 +85,15 @@ export function MCPFilterSidebar({ filters, onFiltersChange }: MCPFilterSidebarP
 		<div className="bg-card flex h-full w-64 shrink-0 flex-col rounded-r-md">
 			{/* Header */}
 			<div className="flex h-11 items-center justify-between border-b pr-2 pl-5">
-				<span className="text-sm font-semibold">Filters</span>
+				<span className="text-sm font-semibold">筛选器</span>
 				<div className="flex items-center gap-1">
 					{activeFilterCount > 0 && (
 						<Button variant="outline" size="sm" className="text-muted-foreground h-7 px-2 text-xs" onClick={handleReset}>
 							<RotateCcw className="size-3" />
-							Reset
+							重置
 						</Button>
 					)}
-					<Button variant="ghost" size="icon" className="size-7" onClick={toggleCollapsed} title="Hide filters" aria-label="Hide filters">
+					<Button variant="ghost" size="icon" className="size-7" onClick={toggleCollapsed} title="隐藏筛选器" aria-label="隐藏筛选器">
 						<PanelLeftClose className="size-4" />
 					</Button>
 				</div>
@@ -218,7 +218,7 @@ function SearchableCheckboxList({
 	items,
 	isSelected,
 	onToggle,
-	placeholder = "Search...",
+	placeholder = "搜索...",
 	inputRef,
 	allowCustom = false,
 	onSearch,
@@ -280,7 +280,7 @@ function SearchableCheckboxList({
 				<CheckboxFilterItem key={item.key} label={item.label} checked={isSelected(item.key)} onCheckedChange={() => onToggle(item.key)} />
 			))}
 			{filtered.length === 0 && !showAddCustom && (
-				<div className="text-muted-foreground flex h-9 items-center px-3 text-xs">No results</div>
+				<div className="text-muted-foreground flex h-9 items-center px-3 text-xs">无结果</div>
 			)}
 			{showAddCustom && (
 				<button
@@ -290,7 +290,7 @@ function SearchableCheckboxList({
 				>
 					<Plus className="text-muted-foreground size-3.5 shrink-0" />
 					<span className="truncate">
-						Use <span className="font-medium">&quot;{trimmed}&quot;</span>
+						使用 <span className="font-medium">&quot;{trimmed}&quot;</span>
 					</span>
 				</button>
 			)}
@@ -306,7 +306,7 @@ function StatusFilter({ filters, onFiltersChange, defaultOpen }: FilterComponent
 	const hasActive = (filters.status || []).length > 0;
 
 	return (
-		<FilterSection title="Status" defaultOpen={defaultOpen || hasActive}>
+		<FilterSection title="状态" defaultOpen={defaultOpen || hasActive}>
 			{Statuses.map((status) => (
 				<CheckboxFilterItem
 					key={status}
@@ -349,10 +349,10 @@ function ToolNamesFilter({ filters, onFiltersChange, defaultOpen }: FilterCompon
 	if (!isUninitialized && !isLoading && availableToolNames.length === 0 && !hasActive && !opened) return null;
 
 	return (
-		<FilterSection title="Tool Names" defaultOpen={defaultOpen || hasActive} loading={isLoading} onOpenChange={setOpened}>
+		<FilterSection title="工具名称" defaultOpen={defaultOpen || hasActive} loading={isLoading} onOpenChange={setOpened}>
 			<SearchableCheckboxList
 				inputRef={searchInputRef}
-				placeholder="Search or add a tool"
+				placeholder="搜索或添加工具"
 				items={items}
 				allowCustom
 				isSelected={(name) => (filters.tool_names || []).includes(name)}
@@ -393,10 +393,10 @@ function ServersFilter({ filters, onFiltersChange, defaultOpen }: FilterComponen
 	if (!isUninitialized && !isLoading && availableServerLabels.length === 0 && !hasActive && !opened) return null;
 
 	return (
-		<FilterSection title="Servers" defaultOpen={defaultOpen || hasActive} loading={isLoading} onOpenChange={setOpened}>
+		<FilterSection title="服务器" defaultOpen={defaultOpen || hasActive} loading={isLoading} onOpenChange={setOpened}>
 			<SearchableCheckboxList
 				inputRef={searchInputRef}
-				placeholder="Search or add a server"
+				placeholder="搜索或添加服务器"
 				items={items}
 				allowCustom
 				isSelected={(label) => (filters.server_labels || []).includes(label)}
@@ -445,10 +445,10 @@ function VirtualKeysFilter({ filters, onFiltersChange, defaultOpen }: FilterComp
 	};
 
 	return (
-		<FilterSection title="Virtual Keys" defaultOpen={defaultOpen || hasActive} loading={isLoading} onOpenChange={setOpened}>
+		<FilterSection title="虚拟密钥" defaultOpen={defaultOpen || hasActive} loading={isLoading} onOpenChange={setOpened}>
 			<SearchableCheckboxList
 				inputRef={searchInputRef}
-				placeholder="Search virtual keys"
+				placeholder="搜索虚拟密钥"
 				items={availableVirtualKeys.map((key) => ({ key: key.name, label: key.name }))}
 				isSelected={isSelected}
 				onToggle={toggle}

@@ -91,7 +91,7 @@ export async function executePrompt(
 		});
 
 		if (!response.ok) {
-			let errorMessage = `HTTP error! status: ${response.status}`;
+			let errorMessage = `HTTP 错误！状态码：${response.status}`;
 			try {
 				const data = await response.json();
 				errorMessage = data.error?.error || data.error?.message || errorMessage;
@@ -239,7 +239,7 @@ export async function executeToolCall(toolCall: ToolCall, config: Pick<Execution
 	});
 
 	if (!response.ok) {
-		let errorMessage = `HTTP error! status: ${response.status}`;
+		let errorMessage = `HTTP 错误！状态码：${response.status}`;
 		try {
 			const data = await response.json();
 			errorMessage = data.error?.message || data.error?.error || errorMessage;
@@ -248,7 +248,7 @@ export async function executeToolCall(toolCall: ToolCall, config: Pick<Execution
 			if (authRequired) {
 				throw new MCPAuthRequiredError({
 					kind: authRequired.kind,
-					mcpClientName: authRequired.mcp_client_name || "MCP server",
+					mcpClientName: authRequired.mcp_client_name || "MCP 服务器",
 					authorizeUrl: authRequired.authorize_url || authRequired.submit_url || "",
 					message: authRequired.message || errorMessage,
 				});

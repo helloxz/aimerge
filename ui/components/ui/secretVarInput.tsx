@@ -166,7 +166,7 @@ export const SecretVarInput = React.forwardRef<HTMLInputElement | HTMLTextAreaEl
 						</Badge>
 					)}
 				</div>
-				{showEnvHint && <p className="mt-1.5 text-xs text-orange-400">The resolved value will appear after saving</p>}
+				{showEnvHint && <p className="mt-1.5 text-xs text-orange-400">保存后将显示解析后的值</p>}
 			</div>
 		);
 	},

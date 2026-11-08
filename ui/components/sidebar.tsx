@@ -103,9 +103,9 @@ const MCPIcon = ({ className }: { className?: string }) => (
 		viewBox="0 0 24 24"
 		width="1em"
 		xmlns="http://www.w3.org/2000/svg"
-		aria-label="MCP clients icon"
+		aria-label="MCP 客户端图标"
 	>
-		<title>MCP clients icon</title>
+		<title>MCP 客户端图标</title>
 		<path d="M15.688 2.343a2.588 2.588 0 00-3.61 0l-9.626 9.44a.863.863 0 01-1.203 0 .823.823 0 010-1.18l9.626-9.44a4.313 4.313 0 016.016 0 4.116 4.116 0 011.204 3.54 4.3 4.3 0 013.609 1.18l.05.05a4.115 4.115 0 010 5.9l-8.706 8.537a.274.274 0 000 .393l1.788 1.754a.823.823 0 010 1.18.863.863 0 01-1.203 0l-1.788-1.753a1.92 1.92 0 010-2.754l8.706-8.538a2.47 2.47 0 000-3.54l-.05-.049a2.588 2.588 0 00-3.607-.003l-7.172 7.034-.002.002-.098.097a.863.863 0 01-1.204 0 .823.823 0 010-1.18l7.273-7.133a2.47 2.47 0 00-.003-3.537z" />
 		<path d="M14.485 4.703a.823.823 0 000-1.18.863.863 0 00-1.204 0l-7.119 6.982a4.115 4.115 0 000 5.9 4.314 4.314 0 006.016 0l7.12-6.982a.823.823 0 000-1.18.863.863 0 00-1.204 0l-7.119 6.982a2.588 2.588 0 01-3.61 0 2.47 2.47 0 010-3.54l7.12-6.982z" />
 	</svg>
@@ -142,22 +142,22 @@ const externalLinks = [
 // Base promotional card (memoized outside component to prevent recreation)
 const productionSetupHelpCard = {
 	id: "production-setup",
-	title: "Need help with production setup?",
+	title: "需要生产环境部署协助？",
 	description: (
 		<>
-			We offer help with production setup including custom integrations and dedicated support.
+			我们提供生产环境部署协助，包括自定义集成与专属支持。
 			<br />
 			<br />
-			Book a demo with our team{" "}
+			与我们的团队预约演示：{" "}
 			<a
 				href="https://calendly.com/maximai/bifrost-demo?utm_source=bfd_sdbr"
 				target="_blank"
 				className="text-primary font-medium underline"
 				rel="noopener noreferrer"
 			>
-				here
+				在此预约
 			</a>
-			.
+			。
 		</>
 	),
 	dismissible: true,
@@ -1324,10 +1324,10 @@ export default function AppSidebar() {
 		if (coreConfig?.restart_required?.required) {
 			cards.push({
 				id: "restart-required",
-				title: "Restart Required",
+				title: "需要重启",
 				description: (
 					<div className="text-xs text-amber-700 dark:text-amber-300/80">
-						{coreConfig.restart_required.reason || "Configuration changes require a server restart to take effect."}
+						{coreConfig.restart_required.reason || "配置变更需要重启服务器后才会生效。"}
 					</div>
 				),
 				dismissible: false,
@@ -1340,12 +1340,11 @@ export default function AppSidebar() {
 			const remainingSteps = onboardingSteps.length - onboardingDoneCount;
 			cards.push({
 				id: "onboarding-incomplete",
-				title: "Setup checklist incomplete",
+				title: "初始化清单未完成",
 				description: (
 					<div className="flex h-full flex-col gap-2 text-xs text-amber-700 dark:text-amber-300/80">
 						<p>
-							{remainingSteps} setup step{remainingSteps === 1 ? "" : "s"} left. Not completing these steps keeps your Bifrost setup
-							vulnerable.
+							还剩 {remainingSteps} 个设置步骤。不完成这些步骤会使您的 Bifrost 设置处于风险之中。
 						</p>
 						<button
 							type="button"
@@ -1353,7 +1352,7 @@ export default function AppSidebar() {
 							data-testid="onboarding-resume-btn"
 							className="text-primary mt-auto self-start pb-1 font-medium underline"
 						>
-							Resume setup
+							继续设置
 						</button>
 					</div>
 				),
@@ -1364,7 +1363,7 @@ export default function AppSidebar() {
 		if (showNewReleaseBanner && latestRelease) {
 			cards.push({
 				id: "new-release",
-				title: `${latestRelease.name} is now available.`,
+				title: `${latestRelease.name} 现已发布。`,
 				description: (
 					<div className="flex h-full flex-col gap-2">
 						<img src={newReleaseImage} alt="Bifrost" className="h-[95px] rounded-md object-cover" />
@@ -1374,7 +1373,7 @@ export default function AppSidebar() {
 							rel="noopener noreferrer"
 							className="text-primary mt-auto pb-1 font-medium underline"
 						>
-							View release notes
+							查看发布说明
 						</a>
 					</div>
 				),
@@ -1473,7 +1472,7 @@ export default function AppSidebar() {
 						type="button"
 						data-testid="sidebar-collapse-btn"
 						className="text-muted-foreground hover:text-foreground hover:bg-sidebar-accent flex h-7 w-7 items-center justify-center rounded-md transition-colors"
-						aria-label="Collapse sidebar"
+						aria-label="收起侧边栏"
 					>
 						<PanelLeftClose className="h-4 w-4" />
 					</button>
@@ -1509,8 +1508,8 @@ export default function AppSidebar() {
 					<input
 						ref={searchInputRef}
 						type="text"
-						aria-label="Search sidebar navigation"
-						placeholder="Search..."
+						aria-label="搜索侧边栏导航"
+						placeholder="搜索..."
 						value={searchQuery}
 						onChange={(e) => {
 							setSearchQuery(e.target.value);
@@ -1586,7 +1585,7 @@ export default function AppSidebar() {
 										<button
 											className="hover:text-primary text-muted-foreground flex cursor-pointer items-center space-x-3 p-0.5"
 											type="button"
-											aria-label="User menu"
+											aria-label="用户菜单"
 										>
 											<User className="hover:text-primary text-muted-foreground h-4 w-4" size={20} strokeWidth={2} />
 										</button>
@@ -1594,7 +1593,7 @@ export default function AppSidebar() {
 									<PopoverContent side="top" align="start" className="w-56 p-0">
 										<div className="flex flex-col">
 											<div className="px-4 py-3">
-												<p className="text-sm font-medium">{userInfo.name || userInfo.email || userInfo.preferred_username || "User"}</p>
+												<p className="text-sm font-medium">{userInfo.name || userInfo.email || userInfo.preferred_username || "用户"}</p>
 											</div>
 											<Separator />
 											<button
@@ -1603,7 +1602,7 @@ export default function AppSidebar() {
 												type="button"
 											>
 												<LogOut className="h-4 w-4" strokeWidth={2} />
-												<span>Logout</span>
+												<span>退出登录</span>
 											</button>
 										</div>
 									</PopoverContent>
@@ -1614,7 +1613,7 @@ export default function AppSidebar() {
 										className="hover:text-primary text-muted-foreground flex cursor-pointer items-center space-x-3 p-0.5"
 										onClick={handleLogout}
 										type="button"
-										aria-label="Logout"
+										aria-label="退出登录"
 									>
 										<LogOut className="hover:text-primary text-muted-foreground h-4 w-4" size={20} strokeWidth={2} />
 									</button>
@@ -1626,7 +1625,7 @@ export default function AppSidebar() {
 									type="button"
 									data-testid="sidebar-expand-btn"
 									className="text-muted-foreground hover:text-foreground hover:bg-sidebar-accent flex cursor-pointer items-center justify-center rounded-md transition-colors"
-									aria-label="Expand sidebar"
+									aria-label="展开侧边栏"
 								>
 									<PanelLeftOpen className="h-4 w-4" />
 								</button>

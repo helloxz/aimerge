@@ -63,7 +63,7 @@ export function TeamsView() {
 		const errorKey = `${!!teamsError}`;
 		if (shownErrorsRef.current.has(errorKey)) return;
 		shownErrorsRef.current.add(errorKey);
-		toast.error(`Failed to load teams: ${getErrorMessage(teamsError)}`);
+		toast.error(`加载团队失败：${getErrorMessage(teamsError)}`);
 	}, [teamsError]);
 
 	if (teamsLoading) {

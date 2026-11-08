@@ -10,18 +10,21 @@ import { ActionProps } from "react-querybuilder";
 export function ActionButton({ handleOnClick, label, className, title }: ActionProps) {
 	const labelStr = typeof label === "string" ? label : "";
 	const labelLower = labelStr.toLowerCase();
-	const isAddButton = labelLower.includes("add");
+	const isAddButton = labelLower.includes("add") || labelStr.includes("添加");
 	const isRemoveButton =
 		labelLower.includes("remove") ||
+		labelStr.includes("移除") ||
 		labelLower === "x" ||
 		labelStr === "x" ||
 		label?.toString().toLowerCase() === "x" ||
 		title === "Remove rule" ||
-		title === "Remove group";
+		title === "Remove group" ||
+		title === "移除规则" ||
+		title === "移除规则组";
 
 	// Icon-only remove button needs an accessible name (no visible label is rendered)
 	const iconOnly = isRemoveButton;
-	const ariaLabel = iconOnly ? labelStr?.trim() || (typeof title === "string" ? title.trim() : "") || "Remove" : undefined;
+	const ariaLabel = iconOnly ? labelStr?.trim() || (typeof title === "string" ? title.trim() : "") || "移除" : undefined;
 
 	return (
 		<Button

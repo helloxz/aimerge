@@ -27,7 +27,7 @@ interface RateLimitDisplayProps {
 const formatResetDuration = (duration?: string | null, calendarAligned?: boolean) => {
 	if (!duration) return "";
 	const label = resetDurationLabels[duration] || duration;
-	return calendarAligned && supportsCalendarAlignment(duration) ? `${label} (calendar)` : label;
+	return calendarAligned && supportsCalendarAlignment(duration) ? `${label}（日历）` : label;
 };
 
 function LimitText({
@@ -88,7 +88,7 @@ function Bar({
 					{current.toLocaleString()} / {max.toLocaleString()} {label}
 				</p>
 				{resetDuration ? (
-					<p className="text-primary-foreground/80 text-xs">Resets {formatResetDuration(resetDuration, calendarAligned)}</p>
+					<p className="text-primary-foreground/80 text-xs">每 {formatResetDuration(resetDuration, calendarAligned)} 重置</p>
 				) : null}
 			</TooltipContent>
 		</Tooltip>
@@ -112,14 +112,14 @@ export function RateLimitDisplay({ rateLimits, compact, limitOnly, calendarAlign
 			{hasTokens ? (
 				limitOnly ? (
 					<LimitText
-						label="tokens"
+						label="Token"
 						max={rateLimits.token_max_limit!}
 						resetDuration={rateLimits.token_reset_duration}
 						calendarAligned={calendarAligned}
 					/>
 				) : (
 					<Bar
-						label="tokens"
+						label="Token"
 						current={rateLimits.token_current_usage ?? 0}
 						max={rateLimits.token_max_limit!}
 						resetDuration={rateLimits.token_reset_duration}
@@ -131,14 +131,14 @@ export function RateLimitDisplay({ rateLimits, compact, limitOnly, calendarAlign
 			{hasRequests ? (
 				limitOnly ? (
 					<LimitText
-						label="req"
+						label="请求"
 						max={rateLimits.request_max_limit!}
 						resetDuration={rateLimits.request_reset_duration}
 						calendarAligned={calendarAligned}
 					/>
 				) : (
 					<Bar
-						label="req"
+						label="请求"
 						current={rateLimits.request_current_usage ?? 0}
 						max={rateLimits.request_max_limit!}
 						resetDuration={rateLimits.request_reset_duration}

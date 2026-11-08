@@ -41,18 +41,17 @@ export default function BudgetUsageResetDialog({
 		<AlertDialog open={open} onOpenChange={onOpenChange}>
 			<AlertDialogContent data-testid={testId}>
 				<AlertDialogHeader>
-					<AlertDialogTitle>Reset budget usage?</AlertDialogTitle>
+					<AlertDialogTitle>重置预算用量？</AlertDialogTitle>
 					<AlertDialogDescription>
-						You changed a budget amount or reset frequency on this {ownerLabel}. Reset current usage to 0, or preserve the existing
-						counters. The reset window keeps its current start and end either way.
+						您更改了此{ownerLabel}的预算金额或重置频率。可将当前用量重置为 0，或保留现有计数。无论选择哪种，重置窗口的起止时间都保持不变。
 					</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
 					<AlertDialogCancel onClick={() => onChoice(false)} data-testid={testId ? `${testId}-preserve-btn` : undefined}>
-						Preserve Usage
+						保留用量
 					</AlertDialogCancel>
 					<AlertDialogAction onClick={() => onChoice(true)} data-testid={testId ? `${testId}-confirm-btn` : undefined}>
-						Reset Usage
+						重置用量
 					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>
