@@ -128,7 +128,6 @@ All 18 top-level properties from the [Bifrost config schema](../../../transports
 | `logs_store`         | `logs_store`         | Logging storage (SQLite/Postgres)              |
 | `scim_config`        | `scim_config`        | SCIM/SSO (Okta, Entra)                         |
 | `load_balancer_config` | `load_balancer_config` | Intelligent load balancer               |
-| `guardrails_config`  | `guardrails_config`  | Guardrails (rules, providers)                  |
 | `plugins`            | `plugins`            | Plugin configuration array                     |
 | `audit_logs`         | `audit_logs`         | Audit logging (disabled, hmac_key)             |
 | `websocket`          | `websocket`          | WebSocket gateway tuning                       |

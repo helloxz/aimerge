@@ -42,7 +42,6 @@ variable "config_store" { default = null }
 variable "logs_store" { default = null }
 variable "scim_config" { default = null }
 variable "load_balancer_config" { default = null }
-variable "guardrails_config" { default = null }
 variable "plugins" { default = null }
 variable "audit_logs" { default = null }
 variable "websocket" { default = null }

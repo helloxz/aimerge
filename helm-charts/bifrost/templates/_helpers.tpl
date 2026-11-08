@@ -726,39 +726,6 @@ false
 {{- end }}
 {{- $_ := set $config "load_balancer_config" $lb }}
 {{- end }}
-{{- /* Guardrails Config */ -}}
-{{- if .Values.bifrost.guardrails }}
-{{- $guardrails := dict }}
-{{- if .Values.bifrost.guardrails.rules }}
-{{- $rules := list }}
-{{- range .Values.bifrost.guardrails.rules }}
-{{- $rule := dict "id" .id "name" .name "enabled" .enabled "cel_expression" .cel_expression "apply_to" .apply_to }}
-{{- if .description }}{{- $_ := set $rule "description" .description }}{{- end }}
-{{- if hasKey . "query" }}{{- $_ := set $rule "query" .query }}{{- end }}
-{{- if .sampling_rate }}{{- $_ := set $rule "sampling_rate" .sampling_rate }}{{- end }}
-{{- if .timeout }}{{- $_ := set $rule "timeout" .timeout }}{{- end }}
-{{- if hasKey . "max_turns_to_send" }}{{- $_ := set $rule "max_turns_to_send" .max_turns_to_send }}{{- end }}
-{{- if .evaluation_mode }}{{- $_ := set $rule "evaluation_mode" .evaluation_mode }}{{- end }}
-{{- if hasKey . "stream_replay_event_interval_ms" }}{{- $_ := set $rule "stream_replay_event_interval_ms" .stream_replay_event_interval_ms }}{{- end }}
-{{- if .provider_config_ids }}{{- $_ := set $rule "provider_config_ids" .provider_config_ids }}{{- end }}
-{{- $rules = append $rules $rule }}
-{{- end }}
-{{- $_ := set $guardrails "guardrail_rules" $rules }}
-{{- end }}
-{{- if .Values.bifrost.guardrails.providers }}
-{{- $providers := list }}
-{{- range .Values.bifrost.guardrails.providers }}
-{{- $provider := dict "id" .id "provider_name" .provider_name "policy_name" .policy_name "enabled" .enabled }}
-{{- if .timeout }}{{- $_ := set $provider "timeout" .timeout }}{{- end }}
-{{- if .config }}{{- $_ := set $provider "config" .config }}{{- end }}
-{{- $providers = append $providers $provider }}
-{{- end }}
-{{- $_ := set $guardrails "guardrail_providers" $providers }}
-{{- end }}
-{{- if or $guardrails.guardrail_rules $guardrails.guardrail_providers }}
-{{- $_ := set $config "guardrails_config" $guardrails }}
-{{- end }}
-{{- end }}
 {{- /* Skills Registry */ -}}
 {{- if .Values.bifrost.skillsRegistry }}
 {{- $_ := set $config "skills_registry" .Values.bifrost.skillsRegistry }}
@@ -2146,45 +2113,6 @@ Call this template at the beginning of deployment/stateful templates
 {{- range $idx, $role := .Values.bifrost.governance.roles }}
 {{- if not $role.name }}
 {{- fail (printf "ERROR: bifrost.governance.roles[%d].name is required." $idx) }}
-{{- end }}
-{{- end }}
-{{- end }}
-
-{{/* Validate guardrails rules */}}
-{{- if .Values.bifrost.guardrails.rules }}
-{{- range $idx, $rule := .Values.bifrost.guardrails.rules }}
-{{- if not $rule.id }}
-{{- fail (printf "ERROR: bifrost.guardrails.rules[%d].id is required." $idx) }}
-{{- end }}
-{{- if not $rule.name }}
-{{- fail (printf "ERROR: bifrost.guardrails.rules[%d].name is required for rule id '%v'." $idx $rule.id) }}
-{{- end }}
-{{- if not (hasKey $rule "enabled") }}
-{{- fail (printf "ERROR: bifrost.guardrails.rules[%d].enabled is required for rule '%s'." $idx $rule.name) }}
-{{- end }}
-{{- if not $rule.cel_expression }}
-{{- fail (printf "ERROR: bifrost.guardrails.rules[%d].cel_expression is required for rule '%s'." $idx $rule.name) }}
-{{- end }}
-{{- if not $rule.apply_to }}
-{{- fail (printf "ERROR: bifrost.guardrails.rules[%d].apply_to is required for rule '%s'. Values: input, output, both" $idx $rule.name) }}
-{{- end }}
-{{- end }}
-{{- end }}
-
-{{/* Validate guardrails providers */}}
-{{- if .Values.bifrost.guardrails.providers }}
-{{- range $idx, $provider := .Values.bifrost.guardrails.providers }}
-{{- if not $provider.id }}
-{{- fail (printf "ERROR: bifrost.guardrails.providers[%d].id is required." $idx) }}
-{{- end }}
-{{- if not $provider.provider_name }}
-{{- fail (printf "ERROR: bifrost.guardrails.providers[%d].provider_name is required for provider id '%v'." $idx $provider.id) }}
-{{- end }}
-{{- if not $provider.policy_name }}
-{{- fail (printf "ERROR: bifrost.guardrails.providers[%d].policy_name is required for provider '%s'." $idx $provider.provider_name) }}
-{{- end }}
-{{- if not (hasKey $provider "enabled") }}
-{{- fail (printf "ERROR: bifrost.guardrails.providers[%d].enabled is required for provider '%s'." $idx $provider.provider_name) }}
 {{- end }}
 {{- end }}
 {{- end }}

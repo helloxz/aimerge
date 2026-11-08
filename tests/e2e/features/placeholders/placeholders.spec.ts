@@ -6,12 +6,6 @@ test.describe('Placeholder and Enterprise Pages', () => {
     await expect(page.getByText(/Prompt repository is coming soon/i)).toBeVisible({ timeout: 10000 })
   })
 
-  test('should load guardrails page', async ({ page }) => {
-    await page.goto('/workspace/guardrails')
-    await page.waitForLoadState('networkidle')
-    await expect(page).toHaveURL(/\/workspace\/guardrails(?:\?.*)?$/)
-  })
-
   test('should load audit-logs page', async ({ page }) => {
     await page.goto('/workspace/audit-logs')
     await page.waitForLoadState('networkidle')
@@ -45,17 +39,5 @@ test.describe('Placeholder and Enterprise Pages', () => {
     const [popup] = await Promise.all([page.waitForEvent('popup'), readMore.click()])
     await expect(popup).toHaveURL(/^https:\/\/docs\.getbifrost\.ai\/enterprise\/adaptive-load-balancing(\?|$)/)
     await popup.close()
-  })
-
-  test('should load guardrails configuration page', async ({ page }) => {
-    await page.goto('/workspace/guardrails/configuration')
-    await page.waitForLoadState('networkidle')
-    await expect(page).toHaveURL(/\/workspace\/guardrails\/configuration(?:\?.*)?$/)
-  })
-
-  test('should load guardrails providers page', async ({ page }) => {
-    await page.goto('/workspace/guardrails/providers')
-    await page.waitForLoadState('networkidle')
-    await expect(page).toHaveURL(/\/workspace\/guardrails\/providers(?:\?.*)?$/)
   })
 })

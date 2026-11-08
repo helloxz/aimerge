@@ -3,7 +3,6 @@
 
 export const scimReducer = (state = {}) => state;
 export const userReducer = (state = {}) => state;
-export const guardrailReducer = (state = {}) => state;
 
 // Empty reducers map when enterprise features are not available
 export const reducers = {};

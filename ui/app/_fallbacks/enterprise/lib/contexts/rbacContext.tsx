@@ -2,9 +2,6 @@ import { createContext, useContext } from "react";
 
 // RBAC Resource Names (must match backend definitions)
 export enum RbacResource {
-	GuardrailsConfig = "GuardrailsConfig",
-	GuardrailsProviders = "GuardrailsProviders",
-	GuardrailRules = "GuardrailRules",
 	UserProvisioning = "UserProvisioning",
 	Settings = "Settings",
 	Users = "Users",

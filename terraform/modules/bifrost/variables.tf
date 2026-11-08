@@ -114,12 +114,6 @@ variable "load_balancer_config" {
   default     = null
 }
 
-variable "guardrails_config" {
-  description = "Guardrails configuration (guardrail_rules, guardrail_providers)."
-  type        = any
-  default     = null
-}
-
 variable "plugins" {
   description = "Plugins configuration. Array of plugin objects (telemetry, logging, governance, maxim, semantic_cache, otel, datadog)."
   type        = any

@@ -1106,50 +1106,6 @@ bifrost:
     bootstrap: {}
 
   # Guardrails configuration for content moderation and policy enforcement
-  guardrails:
-    rules: []
-      # - id: 1
-      #   name: "Block PII"
-      #   description: "Block requests containing PII"
-      #   enabled: true
-      #   cel_expression: "!contains(request.body, 'SSN')"
-      #   apply_to: "input"
-      #   sampling_rate: 100
-      #   timeout: 60        # Timeout in seconds for rule execution (default: 60)
-      #   max_turns_to_send: 0
-      #   evaluation_mode: "bundled"   # "bundled" (default) | "per_turn" (each turn scanned in isolation; avoids cross-turn false positives, more provider calls)
-      #   stream_replay_event_interval_ms: 25  # Delay between buffered events after an allowed response; 0 sends them immediately
-    providers: []
-      # - id: 1
-      #   provider_name: "bedrock"
-      #   policy_name: "content-filter"
-      #   enabled: true
-      #   timeout: 30        # Timeout in seconds for provider execution (default: 30)
-      #   config: {}
-
-  # Declarative Skills Repository. Rendered verbatim as top-level `skills_registry`
-  # in config.json and reconciled at startup when enabled.
-  # skillsRegistry:
-  #   enabled: true
-  #   skills:
-  #     - name: "my-skill"
-  #       description: "What this skill does"
-  #       version: "1.0.0"
-  #       skill_md_body: "# My Skill\n\nInstructions..."
-  #       # license: "MIT"
-  #       # compatibility: ">=1.0.0"
-  #       # allowed_tools: "Read,Write"
-  #       # metadata: {}
-  #       # extra_frontmatter: {}
-  #       # files:
-  #       #   - path: "reference.md"
-  #       #     source_type: "text"   # text | url | dataurl
-  #       #     content: "..."          # required when source_type=text
-  #       #     # url: "https://..."    # required when source_type=url
-  #       #     # dataurl: "data:..."   # required when source_type=dataurl
-
-  # Access profiles (enterprise): seed RBAC access profile templates from Helm.
-  # This is rendered directly as top-level `access_profiles` in config.json.
   accessProfiles: []
     # - name: "platform-default"
     #   description: "Default platform profile"

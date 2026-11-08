@@ -9,10 +9,8 @@ import {
 	Building2,
 	ChartColumnBig,
 	ChevronsLeftRightEllipsis,
-	Construction,
 	DatabaseZap,
 	Flag,
-	FlaskConical,
 	FolderGit,
 	Globe,
 	KeyRound,
@@ -27,7 +25,6 @@ import {
 	Puzzle,
 	ScrollText,
 	Search,
-	SearchCheck,
 	Settings,
 	Settings2Icon,
 	ShieldCheck,
@@ -532,8 +529,6 @@ export default function AppSidebar() {
 	const hasVirtualKeysAccess = useRbac(RbacResource.VirtualKeys, RbacOperation.View);
 	const hasGovernanceLegacyAccess = useRbac(RbacResource.Governance, RbacOperation.View);
 	const hasRoutingRulesAccess = useRbac(RbacResource.RoutingRules, RbacOperation.View);
-	const hasGuardrailsProvidersAccess = useRbac(RbacResource.GuardrailsProviders, RbacOperation.View);
-	const hasGuardrailsConfigAccess = useRbac(RbacResource.GuardrailsConfig, RbacOperation.View);
 	const hasCircuitBreakerAccess = useRbac(RbacResource.CircuitBreaker, RbacOperation.View);
 	const isAdaptiveRoutingAllowed = useRbac(RbacResource.AdaptiveRouter, RbacOperation.View);
 	const hasSettingsAccess = useRbac(RbacResource.Settings, RbacOperation.View);
@@ -821,29 +816,6 @@ export default function AppSidebar() {
 				],
 			},
 			{
-				title: "Guardrails",
-				url: "/workspace/guardrails",
-				icon: Construction,
-				description: "Guardrails configuration",
-				hasAccess: hasGuardrailsConfigAccess || hasGuardrailsProvidersAccess,
-				subItems: [
-					{
-						title: "Rules",
-						url: "/workspace/guardrails/configuration",
-						icon: SearchCheck,
-						description: "Guardrail rules",
-						hasAccess: hasGuardrailsConfigAccess,
-					},
-					{
-						title: "Providers",
-						url: "/workspace/guardrails/providers",
-						icon: Boxes,
-						description: "Guardrail providers configuration",
-						hasAccess: hasGuardrailsProvidersAccess,
-					},
-				],
-			},
-			{
 				title: "Webhooks",
 				url: "/workspace/webhooks",
 				icon: Webhook,
@@ -891,14 +863,6 @@ export default function AppSidebar() {
 						},
 					]
 				: []),
-			{
-				title: "Evals",
-				url: "https://www.getmaxim.ai",
-				icon: FlaskConical,
-				isExternal: true,
-				description: "Evaluations",
-				hasAccess: true,
-			},
 			{
 				title: "Settings",
 				url: "/workspace/config",
@@ -990,8 +954,6 @@ export default function AppSidebar() {
 			hasGovernanceLegacyAccess,
 			hasAnyGovernanceAccess,
 			hasRoutingRulesAccess,
-			hasGuardrailsProvidersAccess,
-			hasGuardrailsConfigAccess,
 			hasCircuitBreakerAccess,
 			isAdaptiveRoutingAllowed,
 			hasSettingsAccess,
