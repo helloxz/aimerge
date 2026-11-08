@@ -466,12 +466,6 @@ export interface BifrostErrorResponse {
 	};
 }
 
-// LatestReleaseResponse matching Go's LatestReleaseResponse
-export interface LatestReleaseResponse {
-	name: string;
-	changelogUrl: string;
-}
-
 export interface FrameworkConfig {
 	id: number;
 	pricing_url: string;

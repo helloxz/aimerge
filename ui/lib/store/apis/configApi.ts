@@ -1,5 +1,4 @@
-import { BifrostConfig, GlobalProxyConfig, LatestReleaseResponse } from "@/lib/types/config";
-import axios from "axios";
+import { BifrostConfig, GlobalProxyConfig } from "@/lib/types/config";
 import { baseApi } from "./baseApi";
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
@@ -36,52 +35,6 @@ export const configApi = baseApi.injectEndpoints({
 			}),
 		}),
 
-		// Get latest release from public site
-		getLatestRelease: builder.query<LatestReleaseResponse, void>({
-			queryFn: async (_arg, { signal }) => {
-				try {
-					const response = await axios.get("https://getbifrost.ai/latest-release", {
-						timeout: 3000, // 3 second timeout
-						signal,
-						headers: {
-							Accept: "application/json",
-						},
-						maxRedirects: 5,
-						validateStatus: (status) => status >= 200 && status < 300,
-					});
-					const data = response.data as any;
-					const normalized: LatestReleaseResponse = {
-						name: data.name ?? data.tag ?? data.version ?? "",
-						changelogUrl: data.changelogUrl ?? data.changelog_url ?? "",
-					};
-					return { data: normalized };
-				} catch (error) {
-					if (axios.isAxiosError(error)) {
-						if (error.code === "ECONNABORTED" || error.code === "ETIMEDOUT") {
-							console.warn("Latest release fetch timed out after 3s");
-							return {
-								error: {
-									status: "TIMEOUT_ERROR",
-									error: "请求超时",
-									data: { error: { message: "请求超时" } },
-								},
-							};
-						}
-						console.error("Latest release fetch error:", error.message);
-					} else {
-						console.error("Latest release fetch error:", error);
-					}
-					return {
-						error: {
-							status: "FETCH_ERROR",
-							error: String(error),
-							data: { error: { message: "网络错误" } },
-						},
-					};
-				}
-			},
-			keepUnusedDataFor: 300, // Cache for 5 minutes (seconds)
-		}),
 		// Update core configuration
 		updateCoreConfig: builder.mutation<null, BifrostConfig>({
 			query: (data) => ({
@@ -150,6 +103,4 @@ export const {
 	useForcePricingSyncMutation,
 	useUpdateClientMetadataMutation,
 	useLazyGetCoreConfigQuery,
-	useGetLatestReleaseQuery,
-	useLazyGetLatestReleaseQuery,
 } = configApi;

@@ -71,7 +71,7 @@ import { HIDDEN_UNTIL_NAV_COOKIE, REMIND_LATER_COOKIE, useOnboardingChecklist } 
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { IS_ENTERPRISE } from "@/lib/constants/config";
 import { navLabel } from "@/lib/constants/navLabels";
-import { useGetCoreConfigQuery, useGetLatestReleaseQuery, useGetVersionQuery, useLogoutMutation } from "@/lib/store";
+import { useGetCoreConfigQuery, useGetVersionQuery, useLogoutMutation } from "@/lib/store";
 import { RbacOperation, RbacResource, useRbac } from "@enterprise/lib";
 import type { UserInfo } from "@enterprise/lib/store/utils/tokenManager";
 import { getUserInfo } from "@enterprise/lib/store/utils/tokenManager";
@@ -495,45 +495,6 @@ const SidebarItemView = ({
 	);
 };
 
-// Helper function to compare semantic versions
-const compareVersions = (v1: string, v2: string): number => {
-	// Remove 'v' prefix if present
-	const cleanV1 = v1.startsWith("v") ? v1.slice(1) : v1;
-	const cleanV2 = v2.startsWith("v") ? v2.slice(1) : v2;
-
-	// Split into main version and prerelease
-	const [mainV1, prereleaseV1] = cleanV1.split("-");
-	const [mainV2, prereleaseV2] = cleanV2.split("-");
-
-	// Compare main version numbers (major.minor.patch)
-	const partsV1 = mainV1.split(".").map(Number);
-	const partsV2 = mainV2.split(".").map(Number);
-
-	for (let i = 0; i < Math.max(partsV1.length, partsV2.length); i++) {
-		const num1 = partsV1[i] || 0;
-		const num2 = partsV2[i] || 0;
-
-		if (num1 > num2) return 1;
-		if (num1 < num2) return -1;
-	}
-
-	// If main versions are equal, check prerelease
-	// Version without prerelease is higher than version with prerelease
-	if (!prereleaseV1 && prereleaseV2) return 1;
-	if (prereleaseV1 && !prereleaseV2) return -1;
-
-	// Both have prereleases, compare them
-	if (prereleaseV1 && prereleaseV2) {
-		// Extract prerelease number (e.g., "prerelease1" -> 1)
-		const prereleaseNum1 = parseInt(prereleaseV1.replace(/\D/g, "")) || 0;
-		const prereleaseNum2 = parseInt(prereleaseV2.replace(/\D/g, "")) || 0;
-
-		if (prereleaseNum1 > prereleaseNum2) return 1;
-		if (prereleaseNum1 < prereleaseNum2) return -1;
-	}
-	return 0;
-};
-
 export default function AppSidebar() {
 	const pathname = useLocation({ select: (l) => l.pathname });
 	const search = useLocation({ select: (l) => l.searchStr ?? "" });
@@ -557,9 +518,6 @@ export default function AppSidebar() {
 	]);
 	const isProductionSetupDismissed = !!cookies[PRODUCTION_SETUP_DISMISSED_COOKIE];
 	const isOnboardingCardDismissed = !!cookies[ONBOARDING_CARD_DISMISSED_COOKIE];
-	const { data: latestRelease } = useGetLatestReleaseQuery(undefined, {
-		skip: !mounted, // Only fetch after component is mounted
-	});
 	const hasLogsAccess = useRbac(RbacResource.Logs, RbacOperation.View);
 	const hasObservabilityAccess = useRbac(RbacResource.Observability, RbacOperation.View);
 	// Alerting is currently surfaced under the existing governance permission
@@ -1140,13 +1098,6 @@ export default function AppSidebar() {
 		}
 	}, []);
 
-	const showNewReleaseBanner = useMemo(() => {
-		if (IS_ENTERPRISE) return false;
-		if (latestRelease && version) {
-			return compareVersions(latestRelease.name, version) > 0;
-		}
-		return false;
-	}, [latestRelease, version]);
 	const isAuthEnabled = coreConfig?.auth_config?.is_enabled || false;
 
 	useEffect(() => {
@@ -1314,9 +1265,6 @@ export default function AppSidebar() {
 
 	const { isConnected: isWebSocketConnected } = useWebSocket();
 
-	// New release image - based on theme
-	const newReleaseImage = mounted && resolvedTheme === "dark" ? "/images/new-release-image-dark.webp" : "/images/new-release-image.webp";
-
 	// Memoize promo cards array to prevent duplicates and unnecessary re-renders
 	const promoCards = useMemo(() => {
 		const cards = [];
@@ -1360,26 +1308,6 @@ export default function AppSidebar() {
 				variant: "warning" as const,
 			});
 		}
-		if (showNewReleaseBanner && latestRelease) {
-			cards.push({
-				id: "new-release",
-				title: `${latestRelease.name} 现已发布。`,
-				description: (
-					<div className="flex h-full flex-col gap-2">
-						<img src={newReleaseImage} alt="Bifrost" className="h-[95px] rounded-md object-cover" />
-						<a
-							href={`https://docs.getbifrost.ai/changelogs/${latestRelease.name}`}
-							target="_blank"
-							rel="noopener noreferrer"
-							className="text-primary mt-auto pb-1 font-medium underline"
-						>
-							查看发布说明
-						</a>
-					</div>
-				),
-				dismissible: true,
-			});
-		}
 		// Only show after mounted to ensure cookie is properly hydrated and avoid flash
 		if (!IS_ENTERPRISE && mounted && !isProductionSetupDismissed) {
 			cards.push(productionSetupHelpCard);
@@ -1387,9 +1315,6 @@ export default function AppSidebar() {
 		return cards;
 	}, [
 		coreConfig?.restart_required,
-		showNewReleaseBanner,
-		latestRelease,
-		newReleaseImage,
 		isProductionSetupDismissed,
 		mounted,
 		showOnboardingResumeCard,
