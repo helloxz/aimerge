@@ -44,8 +44,6 @@ import (
 	"github.com/maximhq/bifrost/plugins/governance"
 	"github.com/maximhq/bifrost/plugins/governance/complexity"
 	"github.com/maximhq/bifrost/plugins/logging"
-	"github.com/maximhq/bifrost/plugins/maxim"
-	"github.com/maximhq/bifrost/plugins/otel"
 	"github.com/maximhq/bifrost/plugins/prompts"
 	"github.com/maximhq/bifrost/plugins/semanticcache"
 	"gorm.io/gorm"
@@ -124,10 +122,8 @@ var builtinPluginNames = []string{
 	prompts.PluginName,
 	logging.PluginName,
 	governance.PluginName,
-	otel.PluginName,
 	semanticcache.PluginName,
 	compat.PluginName,
-	maxim.PluginName,
 }
 
 func GetBuiltinPluginNames() []string {

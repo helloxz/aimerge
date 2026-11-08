@@ -7,7 +7,6 @@ import {
 	Building,
 	Building2,
 	ChartColumnBig,
-	ChevronsLeftRightEllipsis,
 	DatabaseZap,
 	Flag,
 	FolderGit,
@@ -499,7 +498,6 @@ export default function AppSidebar() {
 	const isProductionSetupDismissed = !!cookies[PRODUCTION_SETUP_DISMISSED_COOKIE];
 	const isOnboardingCardDismissed = !!cookies[ONBOARDING_CARD_DISMISSED_COOKIE];
 	const hasLogsAccess = useRbac(RbacResource.Logs, RbacOperation.View);
-	const hasObservabilityAccess = useRbac(RbacResource.Observability, RbacOperation.View);
 	const hasDashboardAccess = useRbac(RbacResource.Dashboard, RbacOperation.View);
 	const hasModelProvidersAccess = useRbac(RbacResource.ModelProvider, RbacOperation.View);
 	const hasMCPGatewayAccess = useRbac(RbacResource.MCPGateway, RbacOperation.View);
@@ -589,13 +587,6 @@ export default function AppSidebar() {
 						icon: MCPIcon,
 						description: "MCP tool execution logs",
 						hasAccess: hasMCPLogsAccess,
-					},
-					{
-						title: "Connectors",
-						url: "/workspace/observability",
-						icon: ChevronsLeftRightEllipsis,
-						description: "Log connectors",
-						hasAccess: hasObservabilityAccess,
 					},
 					{
 						title: "Logs Settings",
@@ -899,7 +890,6 @@ export default function AppSidebar() {
 		[
 			hasLogsAccess,
 			hasAPIKeyAccess,
-			hasObservabilityAccess,
 			hasDashboardAccess,
 			hasModelProvidersAccess,
 			hasMCPGatewayAccess,

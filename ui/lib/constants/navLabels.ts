@@ -19,7 +19,6 @@ const NAV_LABELS: Record<string, string> = {
 	"Client Settings": "客户端设置",
 	Compatibility: "兼容性",
 	"Complexity Router": "复杂度路由",
-	Connectors: "连接器",
 	Customers: "客户",
 	Dashboard: "仪表盘",
 	"Discord Server": "Discord 服务器",

@@ -10,12 +10,9 @@ import (
 	"github.com/maximhq/bifrost/plugins/compat"
 	"github.com/maximhq/bifrost/plugins/governance"
 	"github.com/maximhq/bifrost/plugins/logging"
-	"github.com/maximhq/bifrost/plugins/maxim"
 	"github.com/maximhq/bifrost/plugins/modelcatalogresolver"
-	"github.com/maximhq/bifrost/plugins/otel"
 	"github.com/maximhq/bifrost/plugins/prompts"
 	"github.com/maximhq/bifrost/plugins/semanticcache"
-	"github.com/maximhq/bifrost/transports/bifrost-http/handlers"
 	"github.com/maximhq/bifrost/transports/bifrost-http/lib"
 )
 
@@ -76,26 +73,12 @@ func loadBuiltinPlugin(ctx context.Context, name string, pluginConfig any, bifro
 			bifrostConfig.GovernanceConfig, bifrostConfig.ModelCatalog,
 			bifrostConfig.MCPCatalog, inMemoryStore)
 
-	case maxim.PluginName:
-		maximConfig, err := MarshalPluginConfig[maxim.Config](pluginConfig)
-		if err != nil {
-			return nil, fmt.Errorf("failed to marshal maxim plugin config: %w", err)
-		}
-		return maxim.Init(maximConfig, logger)
-
 	case semanticcache.PluginName:
 		semanticConfig, err := MarshalPluginConfig[semanticcache.Config](pluginConfig)
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal semantic cache plugin config: %w", err)
 		}
 		return semanticcache.Init(ctx, semanticConfig, logger, bifrostConfig.VectorStore)
-
-	case otel.PluginName:
-		otelConfig, err := MarshalPluginConfig[otel.Config](pluginConfig)
-		if err != nil {
-			return nil, fmt.Errorf("failed to marshal otel plugin config: %w", err)
-		}
-		return otel.Init(ctx, otelConfig, logger, bifrostConfig.ModelCatalog, handlers.GetVersion())
 
 	case compat.PluginName:
 		compatConfig, err := MarshalPluginConfig[compat.Config](pluginConfig)
@@ -190,15 +173,6 @@ func (s *BifrostHTTPServer) loadBuiltinPlugins(ctx context.Context) error {
 	}
 	s.Config.SetPluginOrderInfo(governance.PluginName, builtinPlacement, schemas.Ptr(4))
 
-	// 5. OTEL (if configured in PluginConfigs)
-	otelConfig := s.getPluginConfig(otel.PluginName)
-	if otelConfig != nil && otelConfig.Enabled {
-		s.registerPluginWithStatus(ctx, otel.PluginName, nil, otelConfig.Config, false)
-	} else {
-		s.markPluginDisabled(otel.PluginName)
-	}
-	s.Config.SetPluginOrderInfo(otel.PluginName, builtinPlacement, schemas.Ptr(5))
-
 	// 6. Semantic Cache (if configured in PluginConfigs)
 	semanticCacheConfig := s.getPluginConfig(semanticcache.PluginName)
 	if semanticCacheConfig != nil && semanticCacheConfig.Enabled {
@@ -218,15 +192,6 @@ func (s *BifrostHTTPServer) loadBuiltinPlugins(ctx context.Context) error {
 	}
 	s.registerPluginWithStatus(ctx, compat.PluginName, nil, compatCfg, false)
 	s.Config.SetPluginOrderInfo(compat.PluginName, builtinPlacement, schemas.Ptr(7))
-
-	// 8. Maxim (if configured in PluginConfigs)
-	maximConfig := s.getPluginConfig(maxim.PluginName)
-	if maximConfig != nil && maximConfig.Enabled {
-		s.registerPluginWithStatus(ctx, maxim.PluginName, nil, maximConfig.Config, false)
-	} else {
-		s.markPluginDisabled(maxim.PluginName)
-	}
-	s.Config.SetPluginOrderInfo(maxim.PluginName, builtinPlacement, schemas.Ptr(8))
 
 	// 9. ModelCatalogResolver (last routing layer — fills req.Provider from catalog only when
 	// no earlier routing plugin (governance routing rules, governance VK LB, enterprise LB)

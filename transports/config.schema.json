@@ -2094,43 +2094,6 @@
             "if": {
               "properties": {
                 "name": {
-                  "const": "maxim"
-                }
-              }
-            },
-            "then": {
-              "required": ["config"],
-              "properties": {
-                "config": {
-                  "type": "object",
-                  "description": "Configuration for the Maxim SDK integration plugin",
-                  "properties": {
-                    "api_key": {
-                      "type": "string",
-                      "description": "API key for Maxim SDK authentication"
-                    },
-                    "log_repo_id": {
-                      "type": "string",
-                      "description": "Optional default ID for the Maxim logger instance"
-                    },
-                    "request_headers": {
-                      "type": "array",
-                      "items": {
-                        "type": "string"
-                      },
-                      "description": "Request header name patterns (exact or wildcard like x-custom-*) to capture and attach as trace tags. Note: * captures all headers including sensitive ones like Authorization."
-                    }
-                  },
-                  "required": ["api_key"],
-                  "additionalProperties": false
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "name": {
                   "const": "semantic_cache"
                 }
               }
@@ -2257,27 +2220,6 @@
                     }
                   ],
                   "additionalProperties": false
-                }
-              }
-            }
-          },
-          {
-            "if": {
-              "properties": {
-                "name": {
-                  "const": "otel"
-                }
-              }
-            },
-            "then": {
-              "required": ["config"],
-              "properties": {
-                "config": {
-                  "anyOf": [
-                    { "$ref": "#/$defs/otel_profile_config" },
-                    { "$ref": "#/$defs/otel_profiles_config" }
-                  ],
-                  "description": "Configuration for the OpenTelemetry plugin. Supports the legacy single-profile shape or the profiles wrapper for multiple collectors."
                 }
               }
             }

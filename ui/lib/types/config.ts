@@ -545,13 +545,6 @@ export interface RestartRequiredConfig {
 }
 
 // Bifrost Config
-export type PluginSpanFilterMode = "include" | "exclude";
-
-export interface PluginSpanFilter {
-	mode: PluginSpanFilterMode;
-	plugins: string[];
-}
-
 export interface BifrostConfig {
 	client_config: CoreConfig;
 	framework_config: FrameworkConfig;
