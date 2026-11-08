@@ -17332,7 +17332,6 @@ func getSchemaTypeMappings() []schemaTypeMapping {
 var enterpriseSchemaPaths = map[string]bool{
 	"$schema":                    true,
 	"access_profiles":            true,
-	"alerting":                   true,
 	"audit_logs":                 true,
 	"circuit_breaker_config":     true,
 	"cluster_config":             true,

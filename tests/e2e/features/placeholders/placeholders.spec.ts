@@ -6,17 +6,6 @@ test.describe('Placeholder and Enterprise Pages', () => {
     await expect(page.getByText(/Prompt repository is coming soon/i)).toBeVisible({ timeout: 10000 })
   })
 
-  test('should load alerting page', async ({ page }) => {
-    await page.goto('/workspace/alerting')
-    await page.waitForLoadState('networkidle')
-    await expect(page.getByTestId('alert-rules-title')).toBeVisible()
-    const readMore = page.getByTestId('alert-rules-read-more')
-    await expect(readMore).toBeVisible()
-    const [popup] = await Promise.all([page.waitForEvent('popup'), readMore.click()])
-    await expect(popup).toHaveURL(/^https:\/\/docs\.getbifrost\.ai\/enterprise\/alerting\/alert-rules(\?|$)/)
-    await popup.close()
-  })
-
   test('should load guardrails page', async ({ page }) => {
     await page.goto('/workspace/guardrails')
     await page.waitForLoadState('networkidle')

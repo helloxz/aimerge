@@ -9,7 +9,6 @@
 const NAV_LABELS: Record<string, string> = {
 	"Access Profiles": "访问配置",
 	"Adaptive Routing": "自适应路由",
-	Alerting: "告警",
 	"API Keys": "API 密钥",
 	"Audit Logs": "审计日志",
 	"Auth Sessions": "登录会话",
