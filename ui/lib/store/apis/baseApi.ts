@@ -206,7 +206,7 @@ export const baseApi = createApi({
 // Helper function to extract error message from RTK Query error
 export const getErrorMessage = (error: unknown): string => {
 	if (error === undefined || error === null) {
-		return "An unexpected error occurred";
+		return "发生未知错误";
 	}
 	if (error instanceof Error) {
 		return error.message;
@@ -228,5 +228,5 @@ export const getErrorMessage = (error: unknown): string => {
 	if (typeof error === "object" && error && "message" in error && typeof error.message === "string") {
 		return error.message;
 	}
-	return "An unexpected error occurred";
+	return "发生未知错误";
 };

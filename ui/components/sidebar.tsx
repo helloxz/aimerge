@@ -70,6 +70,7 @@ import {
 import { HIDDEN_UNTIL_NAV_COOKIE, REMIND_LATER_COOKIE, useOnboardingChecklist } from "@/hooks/useOnboardingChecklist";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { IS_ENTERPRISE } from "@/lib/constants/config";
+import { navLabel } from "@/lib/constants/navLabels";
 import { useGetCoreConfigQuery, useGetLatestReleaseQuery, useGetVersionQuery, useLogoutMutation } from "@/lib/store";
 import { RbacOperation, RbacResource, useRbac } from "@enterprise/lib";
 import type { UserInfo } from "@enterprise/lib/store/utils/tokenManager";
@@ -183,6 +184,11 @@ const getSidebarItemHref = (item: Pick<SidebarItem, "url" | "queryParam">) => {
 
 const slug = (s: string) => s.toLowerCase().replace(/\s+/g, "-");
 
+// Nav search must hit both the Chinese label and the English key, so typing
+// either "日志" or "logs" finds the same item.
+const matchNavSearch = (title: string, query: string) =>
+	navLabel(title).toLowerCase().includes(query) || title.toLowerCase().includes(query);
+
 const TimeFilterPages = new Set(["/workspace/dashboard", "/workspace/logs", "/workspace/mcp-logs"]);
 
 const preserveTimeFilters = (baseHref: string, subItemUrl: string, pathname: string, search: string): string => {
@@ -294,7 +300,7 @@ const SidebarItemView = ({
 			<div className="flex w-full items-center gap-2">
 				<item.icon className={`h-4 w-4 shrink-0 ${isActive || isAnySubItemActive ? "text-primary" : "text-muted-foreground"}`} />
 				<span className={`text-sm group-data-[collapsible=icon]:hidden ${isActive || isAnySubItemActive ? "font-medium" : "font-normal"}`}>
-					{item.title}
+					{navLabel(item.title)}
 				</span>
 				{item.tag && (
 					<Badge variant="secondary" className="text-muted-foreground ml-auto text-xs group-data-[collapsible=icon]:hidden">
@@ -323,7 +329,7 @@ const SidebarItemView = ({
 	if (hasSubItems) {
 		menuButton = (
 			<SidebarMenuButton
-				tooltip={isSidebarCollapsed ? undefined : item.title}
+				tooltip={isSidebarCollapsed ? undefined : navLabel(item.title)}
 				className={buttonClassName}
 				onClick={handleClick}
 				data-testid={`sidebar-item-btn-${slug(item.title)}`}
@@ -333,13 +339,13 @@ const SidebarItemView = ({
 		);
 	} else if (!item.hasAccess) {
 		menuButton = (
-			<SidebarMenuButton tooltip={item.title} data-nav-url={item.url} className={buttonClassName}>
+			<SidebarMenuButton tooltip={navLabel(item.title)} data-nav-url={item.url} className={buttonClassName}>
 				{innerContent}
 			</SidebarMenuButton>
 		);
 	} else if (isExternal) {
 		menuButton = (
-			<SidebarMenuButton asChild tooltip={item.title} className={buttonClassName}>
+			<SidebarMenuButton asChild tooltip={navLabel(item.title)} className={buttonClassName}>
 				<a
 					href={item.url}
 					target="_blank"
@@ -353,7 +359,7 @@ const SidebarItemView = ({
 		);
 	} else {
 		menuButton = (
-			<SidebarMenuButton asChild tooltip={item.title} className={buttonClassName}>
+			<SidebarMenuButton asChild tooltip={navLabel(item.title)} className={buttonClassName}>
 				<Link
 					to={item.url}
 					preload="intent"
@@ -382,7 +388,7 @@ const SidebarItemView = ({
 						onMouseLeave={closeFlyout}
 						data-testid={`sidebar-flyout-content-${slug(item.title)}`}
 					>
-						<div className="text-muted-foreground px-2 py-1.5 text-xs font-medium">{item.title}</div>
+						<div className="text-muted-foreground px-2 py-1.5 text-xs font-medium">{navLabel(item.title)}</div>
 						{item.subItems?.map((subItem) => {
 							const baseHref = getSidebarItemHref(subItem);
 							const href = preserveTimeFilters(baseHref, subItem.url, pathname, search);
@@ -393,7 +399,7 @@ const SidebarItemView = ({
 								<div className="flex items-center gap-2">
 									{SubItemIcon && <SubItemIcon className={`h-3.5 w-3.5 ${isSubItemActive ? "text-primary" : "text-muted-foreground"}`} />}
 									<span className={`text-sm ${isSubItemActive ? "text-primary font-medium" : "text-slate-500 dark:text-zinc-400"}`}>
-										{subItem.title}
+										{navLabel(subItem.title)}
 									</span>
 									{subItem.tag && (
 										<Badge variant="secondary" className="text-muted-foreground ml-auto text-xs">
@@ -450,7 +456,7 @@ const SidebarItemView = ({
 						const subInner = (
 							<div className="flex w-full items-center gap-2">
 								{SubItemIcon && <SubItemIcon className={`h-3.5 w-3.5 ${isSubItemActive ? "text-primary" : "text-muted-foreground"}`} />}
-								<span className={`text-sm ${isSubItemActive ? "font-medium" : "font-normal"}`}>{subItem.title}</span>
+								<span className={`text-sm ${isSubItemActive ? "font-medium" : "font-normal"}`}>{navLabel(subItem.title)}</span>
 								{subItem.tag && (
 									<Badge variant="secondary" className="text-muted-foreground ml-auto text-xs">
 										{subItem.tag}
@@ -1106,11 +1112,11 @@ export default function AppSidebar() {
 
 		return accessibleItems
 			.map((item) => {
-				const parentMatches = item.title.toLowerCase().includes(query);
+				const parentMatches = matchNavSearch(item.title, query);
 				if (parentMatches) return item;
 
 				if (item.subItems) {
-					const matchingSubItems = item.subItems.filter((sub) => sub.title.toLowerCase().includes(query));
+					const matchingSubItems = item.subItems.filter((sub) => matchNavSearch(sub.title, query));
 					if (matchingSubItems.length > 0) {
 						return { ...item, subItems: matchingSubItems };
 					}
@@ -1171,9 +1177,9 @@ export default function AppSidebar() {
 		const toExpand = new Set<string>();
 		items.forEach((item) => {
 			if (!item.subItems?.length) return;
-			const parentMatches = item.title.toLowerCase().includes(query);
+			const parentMatches = matchNavSearch(item.title, query);
 			if (parentMatches) return;
-			const hasMatchingChild = item.subItems.some((sub) => sub.title.toLowerCase().includes(query));
+			const hasMatchingChild = item.subItems.some((sub) => matchNavSearch(sub.title, query));
 			if (hasMatchingChild) {
 				toExpand.add(item.title);
 			}
@@ -1561,7 +1567,7 @@ export default function AppSidebar() {
 										target="_blank"
 										rel="noopener noreferrer"
 										className="group flex w-full items-center justify-between"
-										title={item.title}
+										title={navLabel(item.title)}
 									>
 										<div className="flex items-center space-x-3">
 											<item.icon
