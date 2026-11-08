@@ -167,27 +167,10 @@ func (account *ComprehensiveTestAccount) GetConfiguredProviders() ([]schemas.Mod
 		schemas.Cohere,
 		schemas.Azure,
 		schemas.Vertex,
-		schemas.Ollama,
-		schemas.Mistral,
-		schemas.Groq,
-		schemas.SGL,
-		schemas.Parasail,
-		schemas.Elevenlabs,
-		schemas.Perplexity,
-		schemas.Cerebras,
 		schemas.DeepSeek,
 		schemas.Gemini,
 		schemas.OpenRouter,
-		schemas.HuggingFace,
-		schemas.Nebius,
 		schemas.XAI,
-		schemas.Replicate,
-		schemas.VLLM,
-		schemas.Runway,
-		schemas.Runware,
-		schemas.Fireworks,
-		schemas.Sarvam,
-		schemas.Wafer,
 		ProviderOpenAICustom,
 	}, nil
 }
@@ -407,82 +390,10 @@ func (account *ComprehensiveTestAccount) GetKeysForProvider(ctx context.Context,
 				UseForBatchAPI: bifrost.Ptr(true),
 			},
 		}, nil
-	case schemas.Mistral:
-		return []schemas.Key{
-			{
-				Value:          *schemas.NewSecretVar("env.MISTRAL_API_KEY"),
-				Models:         []string{"*"},
-				Weight:         1.0,
-				UseForBatchAPI: bifrost.Ptr(true),
-			},
-		}, nil
-	case schemas.Groq:
-		return []schemas.Key{
-			{
-				Value:          *schemas.NewSecretVar("env.GROQ_API_KEY"),
-				Models:         []string{"*"},
-				Weight:         1.0,
-				UseForBatchAPI: bifrost.Ptr(true),
-			},
-		}, nil
-	case schemas.Parasail:
-		return []schemas.Key{
-			{
-				Value:          *schemas.NewSecretVar("env.PARASAIL_API_KEY"),
-				Models:         []string{"*"},
-				Weight:         1.0,
-				UseForBatchAPI: bifrost.Ptr(true),
-			},
-		}, nil
-	case schemas.Elevenlabs:
-		return []schemas.Key{
-			{
-				Value:          *schemas.NewSecretVar("env.ELEVENLABS_API_KEY"),
-				Models:         []string{"*"},
-				Weight:         1.0,
-				UseForBatchAPI: bifrost.Ptr(true),
-			},
-		}, nil
-	case schemas.Perplexity:
-		return []schemas.Key{
-			{
-				Value:          *schemas.NewSecretVar("env.PERPLEXITY_API_KEY"),
-				Models:         []string{"*"},
-				Weight:         1.0,
-				UseForBatchAPI: bifrost.Ptr(true),
-			},
-		}, nil
-	case schemas.Cerebras:
-		return []schemas.Key{
-			{
-				Value:          *schemas.NewSecretVar("env.CEREBRAS_API_KEY"),
-				Models:         []string{"*"},
-				Weight:         1.0,
-				UseForBatchAPI: bifrost.Ptr(true),
-			},
-		}, nil
-	case schemas.Sarvam:
-		return []schemas.Key{
-			{
-				Value:          *schemas.NewSecretVar("env.SARVAM_API_KEY"),
-				Models:         []string{"*"},
-				Weight:         1.0,
-				UseForBatchAPI: bifrost.Ptr(true),
-			},
-		}, nil
 	case schemas.DeepSeek:
 		return []schemas.Key{
 			{
 				Value:          *schemas.NewSecretVar("env.DEEPSEEK_API_KEY"),
-				Models:         []string{"*"},
-				Weight:         1.0,
-				UseForBatchAPI: bifrost.Ptr(true),
-			},
-		}, nil
-	case schemas.Wafer:
-		return []schemas.Key{
-			{
-				Value:          *schemas.NewSecretVar("env.WAFER_API_KEY"),
 				Models:         []string{"*"},
 				Weight:         1.0,
 				UseForBatchAPI: bifrost.Ptr(true),
@@ -506,24 +417,6 @@ func (account *ComprehensiveTestAccount) GetKeysForProvider(ctx context.Context,
 				UseForBatchAPI: bifrost.Ptr(true),
 			},
 		}, nil
-	case schemas.HuggingFace:
-		return []schemas.Key{
-			{
-				Value:          *schemas.NewSecretVar("env.HUGGING_FACE_API_KEY"),
-				Models:         []string{"*"},
-				Weight:         1.0,
-				UseForBatchAPI: bifrost.Ptr(true),
-			},
-		}, nil
-	case schemas.Nebius:
-		return []schemas.Key{
-			{
-				Value:          *schemas.NewSecretVar("env.NEBIUS_API_KEY"),
-				Models:         []string{"*"},
-				Weight:         1.0,
-				UseForBatchAPI: bifrost.Ptr(true),
-			},
-		}, nil
 	case schemas.XAI:
 		return []schemas.Key{
 			{
@@ -531,57 +424,6 @@ func (account *ComprehensiveTestAccount) GetKeysForProvider(ctx context.Context,
 				Models:         []string{"*"},
 				Weight:         1.0,
 				UseForBatchAPI: bifrost.Ptr(true),
-			},
-		}, nil
-	case schemas.Replicate:
-		return replicateProviderTestKeys(), nil
-	case schemas.Runway:
-		return []schemas.Key{
-			{
-				Value:          *schemas.NewSecretVar("env.RUNWAY_API_KEY"),
-				Models:         []string{"*"},
-				Weight:         1.0,
-				UseForBatchAPI: bifrost.Ptr(true),
-			},
-		}, nil
-	case schemas.Runware:
-		return []schemas.Key{
-			{
-				Value:          *schemas.NewSecretVar("env.RUNWARE_API_KEY"),
-				Models:         []string{"*"},
-				Weight:         1.0,
-				UseForBatchAPI: bifrost.Ptr(true),
-			},
-		}, nil
-	case schemas.Fireworks:
-		return []schemas.Key{
-			{
-				Value:          *schemas.NewSecretVar("env.FIREWORKS_API_KEY"),
-				Models:         []string{"accounts/fireworks/models/deepseek-v4-pro", "fireworks/qwen3-embedding-8b"},
-				Weight:         1.0,
-				UseForBatchAPI: bifrost.Ptr(true),
-			},
-		}, nil
-	case schemas.Ollama:
-		return []schemas.Key{
-			{
-				Models:         []string{"*"},
-				Weight:         1.0,
-				UseForBatchAPI: bifrost.Ptr(true),
-				OllamaKeyConfig: &schemas.OllamaKeyConfig{
-					URL: *schemas.NewSecretVar("env.OLLAMA_BASE_URL"),
-				},
-			},
-		}, nil
-	case schemas.VLLM:
-		return []schemas.Key{
-			{
-				Models:         []string{"*"},
-				Weight:         1.0,
-				UseForBatchAPI: bifrost.Ptr(true),
-				VLLMKeyConfig: &schemas.VLLMKeyConfig{
-					URL: *schemas.NewSecretVar("env.VLLM_BASE_URL"),
-				},
 			},
 		}, nil
 	default:
@@ -710,144 +552,11 @@ func (account *ComprehensiveTestAccount) GetConfigForProvider(providerKey schema
 				BufferSize:  10,
 			},
 		}, nil
-	case schemas.Ollama:
-		return &schemas.ProviderConfig{
-			NetworkConfig: schemas.NetworkConfig{
-				DefaultRequestTimeoutInSeconds: 120,
-				MaxRetries:                     8, // Local service, fewer retries needed
-				RetryBackoffInitial:            250 * time.Millisecond,
-				RetryBackoffMax:                4 * time.Second,
-				BaseURL:                        os.Getenv("OLLAMA_BASE_URL"),
-			},
-			ConcurrencyAndBufferSize: schemas.ConcurrencyAndBufferSize{
-				Concurrency: Concurrency,
-				BufferSize:  10,
-			},
-		}, nil
-	case schemas.Mistral:
-		return &schemas.ProviderConfig{
-			NetworkConfig: schemas.NetworkConfig{
-				DefaultRequestTimeoutInSeconds: 120,
-				MaxRetries:                     10, // Mistral can be variable
-				RetryBackoffInitial:            5 * time.Second,
-				RetryBackoffMax:                5 * time.Minute,
-			},
-			ConcurrencyAndBufferSize: schemas.ConcurrencyAndBufferSize{
-				Concurrency: Concurrency,
-				BufferSize:  10,
-			},
-		}, nil
-	case schemas.Groq:
-		return &schemas.ProviderConfig{
-			NetworkConfig: schemas.NetworkConfig{
-				DefaultRequestTimeoutInSeconds: 120,
-				MaxRetries:                     10, // Groq can be flaky at times
-				RetryBackoffInitial:            1 * time.Second,
-				RetryBackoffMax:                15 * time.Second,
-			},
-			ConcurrencyAndBufferSize: schemas.ConcurrencyAndBufferSize{
-				Concurrency: Concurrency,
-				BufferSize:  10,
-			},
-		}, nil
-	case schemas.SGL:
-		return &schemas.ProviderConfig{
-			NetworkConfig: schemas.NetworkConfig{
-				BaseURL:                        os.Getenv("SGL_BASE_URL"),
-				DefaultRequestTimeoutInSeconds: 120,
-				MaxRetries:                     10, // SGL (self-hosted) can be variable
-				RetryBackoffInitial:            1 * time.Second,
-				RetryBackoffMax:                15 * time.Second,
-			},
-			ConcurrencyAndBufferSize: schemas.ConcurrencyAndBufferSize{
-				Concurrency: Concurrency,
-				BufferSize:  10,
-			},
-		}, nil
-	case schemas.Parasail:
-		return &schemas.ProviderConfig{
-			NetworkConfig: schemas.NetworkConfig{
-				DefaultRequestTimeoutInSeconds: 120,
-				MaxRetries:                     10, // Parasail can be variable
-				RetryBackoffInitial:            1 * time.Second,
-				RetryBackoffMax:                12 * time.Second,
-			},
-			ConcurrencyAndBufferSize: schemas.ConcurrencyAndBufferSize{
-				Concurrency: Concurrency,
-				BufferSize:  10,
-			},
-		}, nil
-	case schemas.Elevenlabs:
-		return &schemas.ProviderConfig{
-			NetworkConfig: schemas.NetworkConfig{
-				DefaultRequestTimeoutInSeconds: 120,
-				MaxRetries:                     10, // Elevenlabs can be variable
-				RetryBackoffInitial:            1 * time.Second,
-				RetryBackoffMax:                12 * time.Second,
-			},
-			ConcurrencyAndBufferSize: schemas.ConcurrencyAndBufferSize{
-				Concurrency: Concurrency,
-				BufferSize:  10,
-			},
-		}, nil
-	case schemas.Perplexity:
-		return &schemas.ProviderConfig{
-			NetworkConfig: schemas.NetworkConfig{
-				DefaultRequestTimeoutInSeconds: 120,
-				MaxRetries:                     10, // Perplexity can be variable
-				RetryBackoffInitial:            1 * time.Second,
-				RetryBackoffMax:                12 * time.Second,
-			},
-			ConcurrencyAndBufferSize: schemas.ConcurrencyAndBufferSize{
-				Concurrency: Concurrency,
-				BufferSize:  10,
-			},
-		}, nil
-	case schemas.Cerebras:
-		return &schemas.ProviderConfig{
-			NetworkConfig: schemas.NetworkConfig{
-				DefaultRequestTimeoutInSeconds: 120,
-				MaxRetries:                     10, // Cerebras is reasonably stable
-				RetryBackoffInitial:            5 * time.Second,
-				RetryBackoffMax:                3 * time.Minute,
-			},
-			ConcurrencyAndBufferSize: schemas.ConcurrencyAndBufferSize{
-				Concurrency: Concurrency,
-				BufferSize:  10,
-			},
-		}, nil
 	case schemas.DeepSeek:
 		return &schemas.ProviderConfig{
 			NetworkConfig: schemas.NetworkConfig{
 				DefaultRequestTimeoutInSeconds: 120,
 				MaxRetries:                     10,
-				RetryBackoffInitial:            5 * time.Second,
-				RetryBackoffMax:                3 * time.Minute,
-			},
-			ConcurrencyAndBufferSize: schemas.ConcurrencyAndBufferSize{
-				Concurrency: Concurrency,
-				BufferSize:  10,
-			},
-		}, nil
-	case schemas.Wafer:
-		return &schemas.ProviderConfig{
-			NetworkConfig: schemas.NetworkConfig{
-				DefaultRequestTimeoutInSeconds: 120,
-				MaxRetries:                     10,
-				RetryBackoffInitial:            5 * time.Second,
-				RetryBackoffMax:                3 * time.Minute,
-			},
-			ConcurrencyAndBufferSize: schemas.ConcurrencyAndBufferSize{
-				Concurrency: Concurrency,
-				BufferSize:  10,
-			},
-		}, nil
-	case schemas.VLLM:
-		return &schemas.ProviderConfig{
-			NetworkConfig: schemas.NetworkConfig{
-				BaseURL:                        os.Getenv("VLLM_BASE_URL"),
-				DefaultRequestTimeoutInSeconds: 120,
-				MaxRetries:                     10, // vllm is stable
 				RetryBackoffInitial:            5 * time.Second,
 				RetryBackoffMax:                3 * time.Minute,
 			},
@@ -882,85 +591,7 @@ func (account *ComprehensiveTestAccount) GetConfigForProvider(providerKey schema
 				BufferSize:  10,
 			},
 		}, nil
-	case schemas.HuggingFace:
-		return &schemas.ProviderConfig{
-			NetworkConfig: schemas.NetworkConfig{
-				DefaultRequestTimeoutInSeconds: 300,
-				MaxRetries:                     10, // HuggingFace can be variable
-				RetryBackoffInitial:            2 * time.Second,
-				RetryBackoffMax:                30 * time.Second,
-			},
-			ConcurrencyAndBufferSize: schemas.ConcurrencyAndBufferSize{
-				Concurrency: Concurrency,
-				BufferSize:  10,
-			},
-		}, nil
-	case schemas.Nebius:
-		return &schemas.ProviderConfig{
-			NetworkConfig: schemas.NetworkConfig{
-				DefaultRequestTimeoutInSeconds: 120,
-				MaxRetries:                     10,
-				RetryBackoffInitial:            1 * time.Second,
-				RetryBackoffMax:                12 * time.Second,
-			},
-			ConcurrencyAndBufferSize: schemas.ConcurrencyAndBufferSize{
-				Concurrency: Concurrency,
-				BufferSize:  10,
-			},
-		}, nil
 	case schemas.XAI:
-		return &schemas.ProviderConfig{
-			NetworkConfig: schemas.NetworkConfig{
-				DefaultRequestTimeoutInSeconds: 120,
-				MaxRetries:                     10,
-				RetryBackoffInitial:            1 * time.Second,
-				RetryBackoffMax:                12 * time.Second,
-			},
-			ConcurrencyAndBufferSize: schemas.ConcurrencyAndBufferSize{
-				Concurrency: Concurrency,
-				BufferSize:  10,
-			},
-		}, nil
-	case schemas.Replicate:
-		return &schemas.ProviderConfig{
-			NetworkConfig: schemas.NetworkConfig{
-				DefaultRequestTimeoutInSeconds: 300,
-				MaxRetries:                     10,
-				RetryBackoffInitial:            1 * time.Second,
-				RetryBackoffMax:                12 * time.Second,
-			},
-			ConcurrencyAndBufferSize: schemas.ConcurrencyAndBufferSize{
-				Concurrency: Concurrency,
-				BufferSize:  10,
-			},
-		}, nil
-	case schemas.Runway:
-		return &schemas.ProviderConfig{
-			NetworkConfig: schemas.NetworkConfig{
-				DefaultRequestTimeoutInSeconds: 300,
-				MaxRetries:                     10,
-				RetryBackoffInitial:            1 * time.Second,
-				RetryBackoffMax:                12 * time.Second,
-			},
-			ConcurrencyAndBufferSize: schemas.ConcurrencyAndBufferSize{
-				Concurrency: Concurrency,
-				BufferSize:  10,
-			},
-		}, nil
-	case schemas.Runware:
-		return &schemas.ProviderConfig{
-			NetworkConfig: schemas.NetworkConfig{
-				DefaultRequestTimeoutInSeconds: 300,
-				MaxRetries:                     10,
-				RetryBackoffInitial:            1 * time.Second,
-				RetryBackoffMax:                12 * time.Second,
-			},
-			ConcurrencyAndBufferSize: schemas.ConcurrencyAndBufferSize{
-				Concurrency: Concurrency,
-				BufferSize:  10,
-			},
-		}, nil
-	case schemas.Fireworks:
 		return &schemas.ProviderConfig{
 			NetworkConfig: schemas.NetworkConfig{
 				DefaultRequestTimeoutInSeconds: 120,
@@ -1275,144 +906,6 @@ var AllProviderConfigs = []ComprehensiveTestConfig{
 		},
 	},
 	{
-		Provider:           schemas.Mistral,
-		ChatModel:          "mistral-large-2411",
-		TextModel:          "", // Mistral focuses on chat
-		TranscriptionModel: "voxtral-mini-latest",
-		Scenarios: TestScenarios{
-			TextCompletion:             false, // Not typical
-			SimpleChat:                 true,
-			MultiTurnConversation:      true,
-			ToolCalls:                  true,
-			ToolCallsStreaming:         true,
-			MultipleToolCalls:          true,
-			MultipleToolCallsStreaming: true,
-			End2EndToolCalling:         true,
-			AutomaticFunctionCall:      true,
-			ImageURL:                   true,
-			ImageBase64:                true,
-			MultipleImages:             true,
-			CompleteEnd2End:            true,
-			SpeechSynthesis:            false, // Not supported
-			SpeechSynthesisStream:      false, // Not supported
-			Transcription:              true,  // Supported via voxtral-mini-latest
-			TranscriptionStream:        true,  // Supported via voxtral-mini-latest
-			Embedding:                  true,
-			ImageGeneration:            false,
-			ImageGenerationStream:      false,
-			ImageEdit:                  false, // Mistral does not support image editing
-			ImageEditStream:            false, // Mistral does not support streaming image editing
-			ImageVariation:             false, // Mistral does not support image variation
-			ImageVariationStream:       false, // Mistral does not support streaming image variation
-			ListModels:                 true,
-		},
-		Fallbacks: []schemas.Fallback{
-			{Provider: schemas.OpenAI, Model: "gpt-4o-mini"},
-		},
-	},
-	{
-		Provider:  schemas.Ollama,
-		ChatModel: "llama3.2",
-		TextModel: "", // Ollama focuses on chat
-		Scenarios: TestScenarios{
-			TextCompletion:             false, // Not typical
-			SimpleChat:                 true,
-			CompletionStream:           true,
-			MultiTurnConversation:      true,
-			ToolCalls:                  true,
-			ToolCallsStreaming:         true,
-			MultipleToolCalls:          true,
-			MultipleToolCallsStreaming: true,
-			End2EndToolCalling:         true,
-			AutomaticFunctionCall:      true,
-			ImageURL:                   true,
-			ImageBase64:                true,
-			MultipleImages:             true,
-			CompleteEnd2End:            true,
-			SpeechSynthesis:            false, // Not supported
-			SpeechSynthesisStream:      false, // Not supported
-			Transcription:              false, // Not supported
-			TranscriptionStream:        false, // Not supported
-			Embedding:                  false,
-			ImageGeneration:            false,
-			ImageGenerationStream:      false,
-			ImageEdit:                  false, // Ollama does not support image editing
-			ImageEditStream:            false, // Ollama does not support streaming image editing
-			ImageVariation:             false, // Ollama does not support image variation
-			ImageVariationStream:       false, // Ollama does not support streaming image variation
-			ListModels:                 true,
-		},
-		Fallbacks: []schemas.Fallback{
-			{Provider: schemas.OpenAI, Model: "gpt-4o-mini"},
-		},
-	},
-	{
-		Provider:  schemas.Groq,
-		ChatModel: "llama-3.3-70b-versatile",
-		TextModel: "", // Groq doesn't support text completion
-		Scenarios: TestScenarios{
-			TextCompletion:             false, // Not supported
-			SimpleChat:                 true,
-			CompletionStream:           true,
-			MultiTurnConversation:      true,
-			ToolCalls:                  true,
-			ToolCallsStreaming:         true,
-			MultipleToolCalls:          true,
-			MultipleToolCallsStreaming: true,
-			End2EndToolCalling:         true,
-			AutomaticFunctionCall:      true,
-			ImageURL:                   true,
-			ImageBase64:                true,
-			MultipleImages:             true,
-			CompleteEnd2End:            true,
-			SpeechSynthesis:            false, // Not supported
-			SpeechSynthesisStream:      false, // Not supported
-			Transcription:              false, // Not supported
-			TranscriptionStream:        false, // Not supported
-			Embedding:                  false,
-			ImageGeneration:            false,
-			ImageGenerationStream:      false,
-			ImageEdit:                  false, // Groq does not support image editing
-			ImageEditStream:            false, // Groq does not support streaming image editing
-			ImageVariation:             false, // Groq does not support image variation
-			ImageVariationStream:       false, // Groq does not support streaming image variation
-			ListModels:                 true,
-		},
-		Fallbacks: []schemas.Fallback{
-			{Provider: schemas.OpenAI, Model: "gpt-4o-mini"},
-		},
-	},
-	{
-		Provider:       schemas.Fireworks,
-		ChatModel:      "accounts/fireworks/models/deepseek-v3p2",
-		TextModel:      "accounts/fireworks/models/deepseek-v3p2",
-		EmbeddingModel: "nomic-ai/nomic-embed-text-v1.5",
-		Scenarios: TestScenarios{
-			TextCompletion:        true,
-			TextCompletionStream:  true,
-			SimpleChat:            true,
-			CompletionStream:      true,
-			MultiTurnConversation: true,
-			ToolCalls:             true,
-			ToolCallsStreaming:    true,
-			MultipleToolCalls:     false,
-			End2EndToolCalling:    false,
-			AutomaticFunctionCall: false,
-			ImageURL:              false,
-			ImageBase64:           false,
-			MultipleImages:        false,
-			FileBase64:            false,
-			FileURL:               false,
-			CompleteEnd2End:       true,
-			Embedding:             true,
-			ListModels:            true,
-			Reasoning:             false,
-			Transcription:         false,
-			SpeechSynthesis:       false,
-			PromptCaching:         false,
-		},
-	},
-	{
 		Provider:  ProviderOpenAICustom,
 		ChatModel: "llama-3.3-70b-versatile",
 		TextModel: "", // Custom OpenAI instance doesn't support text completion
@@ -1536,48 +1029,6 @@ var AllProviderConfigs = []ComprehensiveTestConfig{
 		},
 	},
 	{
-		Provider:             schemas.HuggingFace,
-		ChatModel:            "groq/openai/gpt-oss-120b",
-		VisionModel:          "novita/zai-org/GLM-4.6V-Flash",
-		EmbeddingModel:       "sambanova/intfloat/e5-mistral-7b-instruct",
-		TranscriptionModel:   "fal-ai/openai/whisper-large-v3",
-		SpeechSynthesisModel: "fal-ai/hexgrad/Kokoro-82M",
-		ImageGenerationModel: "fal-ai/fal-ai/flux-2",
-		ImageEditModel:       "fal-ai/fal-ai/flux-2",
-		Scenarios: TestScenarios{
-			TextCompletion:        false,
-			TextCompletionStream:  false,
-			SimpleChat:            true,
-			CompletionStream:      true,
-			MultiTurnConversation: true,
-			ToolCalls:             true,
-			ToolCallsStreaming:    true,
-			MultipleToolCalls:     false,
-			End2EndToolCalling:    true,
-			AutomaticFunctionCall: true,
-			ImageURL:              true,
-			ImageBase64:           true,
-			MultipleImages:        true,
-			CompleteEnd2End:       true,
-			Embedding:             true,
-			ImageGeneration:       true,
-			ImageGenerationStream: true,
-			ImageEdit:             true,  // HuggingFace (fal-ai) supports image editing
-			ImageEditStream:       true,  // HuggingFace (fal-ai) supports streaming image editing
-			ImageVariation:        false, // HuggingFace does not support image variation
-			ImageVariationStream:  false, // HuggingFace does not support streaming image variation
-			Transcription:         true,
-			TranscriptionStream:   false,
-			SpeechSynthesis:       true,
-			SpeechSynthesisStream: false,
-			Reasoning:             false,
-			ListModels:            true,
-		},
-		Fallbacks: []schemas.Fallback{
-			{Provider: schemas.OpenAI, Model: "gpt-4o-mini"},
-		},
-	},
-	{
 		Provider:             schemas.XAI,
 		ChatModel:            "grok-4-0709",
 		TextModel:            "", // XAI focuses on chat
@@ -1609,70 +1060,6 @@ var AllProviderConfigs = []ComprehensiveTestConfig{
 			ImageVariation:             false, // XAI does not support image variation
 			ImageVariationStream:       false, // XAI does not support streaming image variation
 			ListModels:                 true,
-		},
-	},
-	{
-		Provider:             schemas.Replicate,
-		ChatModel:            "openai/gpt-4.1-mini",
-		TextModel:            "openai/gpt-4.1-mini",
-		ImageGenerationModel: "black-forest-labs/flux-dev",
-		Scenarios: TestScenarios{
-			TextCompletion:             false, // Not typical
-			SimpleChat:                 true,
-			CompletionStream:           true,
-			MultiTurnConversation:      true,
-			ToolCalls:                  true,
-			ToolCallsStreaming:         true,
-			MultipleToolCalls:          true,
-			MultipleToolCallsStreaming: true,
-			End2EndToolCalling:         true,
-			AutomaticFunctionCall:      true,
-			ImageURL:                   true,
-			ImageBase64:                true,
-			MultipleImages:             true,
-			CompleteEnd2End:            true,
-			SpeechSynthesis:            false, // Not supported
-			SpeechSynthesisStream:      false, // Not supported
-			Transcription:              false, // Not supported
-			TranscriptionStream:        false, // Not supported
-			Embedding:                  false, // Not supported
-			ListModels:                 true,
-			ImageGeneration:            true,
-			ImageGenerationStream:      false,
-		},
-	},
-	{
-		Provider:           schemas.VLLM,
-		ChatModel:          "Qwen/Qwen3-0.6B",
-		TextModel:          "Qwen/Qwen3-0.6B",
-		EmbeddingModel:     "Qwen/Qwen3-Embedding-0.6B",
-		TranscriptionModel: "openai/whisper-small",
-		Scenarios: TestScenarios{
-			SpeechSynthesis:            false, // Not supported
-			SpeechSynthesisStream:      false, // Not supported
-			Transcription:              true,  // VLLM supports transcription
-			TranscriptionStream:        true,  // VLLM supports transcription streaming
-			Embedding:                  true,  // VLLM supports embedding
-			ImageGeneration:            false,
-			ImageGenerationStream:      false,
-			ImageEdit:                  false, // VLLM does not support image editing
-			ImageEditStream:            false, // VLLM does not support streaming image editing
-			ImageVariation:             false, // VLLM does not support image variation
-			ImageVariationStream:       false, // VLLM does not support streaming image variation
-			ListModels:                 true,
-			TextCompletion:             true,
-			TextCompletionStream:       true,
-			SimpleChat:                 true,
-			CompletionStream:           true,
-			MultiTurnConversation:      true,
-			ToolCalls:                  true,
-			ToolCallsStreaming:         true,
-			MultipleToolCalls:          true,
-			MultipleToolCallsStreaming: true,
-			End2EndToolCalling:         true,
-		},
-		Fallbacks: []schemas.Fallback{
-			{Provider: schemas.OpenAI, Model: "gpt-4o-mini"},
 		},
 	},
 }

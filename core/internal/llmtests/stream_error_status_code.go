@@ -32,10 +32,6 @@ func RunStreamErrorStatusCodeTest(t *testing.T, client *bifrost.Bifrost, ctx con
 		schemas.Azure:       true,
 		schemas.Bedrock:     true,
 		schemas.Vertex:      true,
-		schemas.Replicate:   true,
-		schemas.VLLM:        true,
-		schemas.HuggingFace: true,
-		schemas.Fireworks:   true,
 	}
 	if deploymentBasedProviders[testConfig.Provider] {
 		t.Logf("Skipping StreamErrorStatusCode for %s (deployment-based key selection validates models before API call)", testConfig.Provider)

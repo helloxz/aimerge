@@ -174,17 +174,6 @@ func TestGetModelsForProvider_PartialListModelsProviderUnionsDatasheet(t *testin
 		t.Fatalf("load pricing testdata: %v", err)
 	}
 
-	// Perplexity: live lists only a responses-API model; the unlisted "sonar"
-	// chat model must still be unioned in from the datasheet.
-	mcPerplexity := NewTestCatalogWithDatasheet(ds)
-	mcPerplexity.UpsertLive(schemas.Perplexity, "k1", false, []string{"listed-responses-model"})
-	gotPerplexity := mcPerplexity.GetModelsForProvider(schemas.Perplexity)
-	slices.Sort(gotPerplexity)
-	wantPerplexity := []string{"listed-responses-model", "sonar"}
-	if !slices.Equal(gotPerplexity, wantPerplexity) {
-		t.Errorf("GetModelsForProvider(Perplexity) = %v, want %v (unlisted datasheet model must be unioned)", gotPerplexity, wantPerplexity)
-	}
-
 	// OpenAI is not a partial-list-models provider: its non-deprecated unlisted
 	// datasheet model stays shadowed by the authoritative live list.
 	mcOpenAI := NewTestCatalogWithDatasheet(ds)

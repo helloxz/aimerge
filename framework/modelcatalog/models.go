@@ -16,8 +16,7 @@ import (
 // authoritative superset, so live must be unioned with the full allowed
 // datasheet set rather than only the deprecated backfill.
 var providersWithPartialListModels = map[schemas.ModelProvider]bool{
-	schemas.Perplexity: true,
-	schemas.Vertex:     true,
+	schemas.Vertex: true,
 }
 
 // GetModelsForProvider returns the effective allowed model set for the
@@ -197,11 +196,6 @@ func (mc *ModelCatalog) GetProvidersForModel(model string) []schemas.ModelProvid
 			}
 		}
 	}
-	if _, ok := seen[schemas.Groq]; !ok && strings.Contains(model, "gpt-") {
-		if slices.Contains(mc.GetModelsForProvider(schemas.Groq), "openai/"+model) {
-			providers = append(providers, schemas.Groq)
-		}
-	}
 	if _, ok := seen[schemas.Bedrock]; !ok && strings.Contains(model, "claude") {
 		for _, bedrockModel := range mc.GetModelsForProvider(schemas.Bedrock) {
 			if strings.Contains(bedrockModel, model) {
@@ -313,7 +307,7 @@ func (mc *ModelCatalog) RefineModelForProvider(provider schemas.ModelProvider, m
 		return model, nil
 	}
 	switch provider {
-	case schemas.Groq, schemas.Replicate, schemas.Perplexity, schemas.OpenRouter:
+	case schemas.OpenRouter:
 		return mc.refineNestedProviderModel(provider, model)
 	}
 	return model, nil

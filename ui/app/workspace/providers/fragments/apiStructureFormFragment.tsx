@@ -120,7 +120,6 @@ export function ApiStructureFormFragment({ provider }: Props) {
 										<SelectItem value="bedrock">AWS Bedrock</SelectItem>
 										<SelectItem value="cohere">Cohere</SelectItem>
 										<SelectItem value="gemini">Gemini</SelectItem>
-										<SelectItem value="replicate">Replicate</SelectItem>
 									</SelectContent>
 								</Select>
 								<FormDescription>该自定义提供商所使用的基础提供商</FormDescription>

@@ -201,7 +201,7 @@ func TestOpenAIKeepsAdditionalToolsItem(t *testing.T) {
 // TestUnlistedProviderKeepsAdditionalToolsItem verifies the fail-open default:
 // providers absent from ProviderFeatures are left untouched.
 func TestUnlistedProviderKeepsAdditionalToolsItem(t *testing.T) {
-	out := codexAdditionalToolsRequest(t, schemas.Groq)
+	out := codexAdditionalToolsRequest(t, schemas.Vertex)
 
 	if got := gjson.GetBytes(out, "input.#").Int(); got != 2 {
 		t.Fatalf("expected 2 input items for unlisted provider, got %d", got)

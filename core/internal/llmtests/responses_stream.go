@@ -1108,7 +1108,7 @@ func validateResponsesStreamingResponse(t *testing.T, eventTypes map[schemas.Res
 	// Content quality checks (basic)
 	if len(finalContent) > 0 {
 		// Check for reasonable content for story prompt
-		if testConfig.Provider != schemas.SGL { // SGL might have different output patterns
+		if testConfig.Provider != "" {
 			lowerContent := strings.ToLower(finalContent)
 			hasStoryElements := strings.Contains(lowerContent, "robot") ||
 				strings.Contains(lowerContent, "paint") ||

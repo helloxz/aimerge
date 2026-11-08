@@ -453,40 +453,12 @@ func ModifyExpectationsForProvider(expectations ResponseExpectations, provider s
 		expectations.ShouldHaveTimestamps = false // Vertex does not return created timestamps
 		expectations.ShouldHaveLatency = true
 
-	case schemas.Mistral:
-		expectations.ShouldHaveUsageStats = true
-		expectations.ShouldHaveLatency = true
-
-	case schemas.Ollama:
-		// Local models may not return usage or timestamps
-		expectations.ShouldHaveUsageStats = false
-		expectations.ShouldHaveTimestamps = false
-		expectations.ShouldHaveLatency = true
-
-	case schemas.Groq:
-		expectations.ShouldHaveUsageStats = true
-		expectations.ShouldHaveLatency = true
-
 	case schemas.Gemini:
 		expectations.ShouldHaveUsageStats = true
 		expectations.ShouldHaveTimestamps = false // Gemini does not return created timestamps
 		expectations.ShouldHaveLatency = true
 
-	case schemas.Perplexity:
-		expectations.ShouldHaveUsageStats = true
-		expectations.ShouldHaveTimestamps = false // Perplexity does not return created timestamps
-		expectations.ShouldHaveModel = false      // Perplexity does not return model field
-		expectations.ShouldHaveLatency = true
-
-	case schemas.Cerebras:
-		expectations.ShouldHaveUsageStats = true
-		expectations.ShouldHaveLatency = true
-
 	case schemas.DeepSeek:
-		expectations.ShouldHaveUsageStats = true
-		expectations.ShouldHaveLatency = true
-
-	case schemas.Wafer:
 		expectations.ShouldHaveUsageStats = true
 		expectations.ShouldHaveLatency = true
 
@@ -497,55 +469,6 @@ func ModifyExpectationsForProvider(expectations ResponseExpectations, provider s
 
 	case schemas.XAI:
 		expectations.ShouldHaveUsageStats = true
-		expectations.ShouldHaveLatency = true
-
-	case schemas.Nebius:
-		expectations.ShouldHaveUsageStats = true
-		expectations.ShouldHaveLatency = true
-
-	case schemas.SGL:
-		// SGLang local inference — may not return all fields
-		expectations.ShouldHaveUsageStats = false
-		expectations.ShouldHaveTimestamps = false
-		expectations.ShouldHaveLatency = true
-
-	case schemas.Parasail:
-		expectations.ShouldHaveUsageStats = true
-		expectations.ShouldHaveTimestamps = false // Parasail does not return created timestamps
-		expectations.ShouldHaveModel = false      // Parasail does not return model field
-		expectations.ShouldHaveLatency = true
-
-	case schemas.Elevenlabs:
-		// Elevenlabs is primarily audio — usage/timestamps may not apply to all calls
-		expectations.ShouldHaveUsageStats = false
-		expectations.ShouldHaveTimestamps = false
-		expectations.ShouldHaveLatency = true
-
-	case schemas.HuggingFace:
-		expectations.ShouldHaveUsageStats = false
-		expectations.ShouldHaveTimestamps = false
-		expectations.ShouldHaveLatency = true
-
-	case schemas.Replicate:
-		expectations.ShouldHaveUsageStats = false
-		expectations.ShouldHaveTimestamps = false
-		expectations.ShouldHaveLatency = true
-
-	case schemas.VLLM:
-		// vLLM local inference — OpenAI-compatible
-		expectations.ShouldHaveUsageStats = true
-		expectations.ShouldHaveLatency = true
-
-	case schemas.Runway:
-		// Runway is primarily video/image generation
-		expectations.ShouldHaveUsageStats = false
-		expectations.ShouldHaveTimestamps = false
-		expectations.ShouldHaveLatency = true
-
-	case schemas.Runware:
-		// Runware is image generation only
-		expectations.ShouldHaveUsageStats = false
-		expectations.ShouldHaveTimestamps = false
 		expectations.ShouldHaveLatency = true
 
 	default:

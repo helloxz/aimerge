@@ -25,9 +25,6 @@ func ToOpenAITextCompletionRequest(bifrostReq *schemas.BifrostTextCompletionRequ
 			openaiReq.TextCompletionParameters.ExtraParams = openaiReq.ExtraParams
 		}
 	}
-	if bifrostReq.Provider == schemas.Fireworks {
-		openaiReq.applyFireworksTextCompletionCompatibility()
-	}
 	return openaiReq
 }
 

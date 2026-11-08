@@ -90,22 +90,12 @@ var dynamicallyConfigurableProviders = []schemas.ModelProvider{
 	schemas.Azure,
 	schemas.Bedrock,
 	schemas.BedrockMantle,
-	schemas.Cerebras,
 	schemas.Cohere,
 	schemas.DeepSeek,
-	schemas.Elevenlabs,
 	schemas.Gemini,
-	schemas.Groq,
-	schemas.HuggingFace,
-	schemas.Mistral,
-	schemas.Nebius,
 	schemas.OpenAI,
 	schemas.OpenRouter,
-	schemas.Parasail,
-	schemas.Perplexity,
-	schemas.Sarvam,
 	schemas.Vertex,
-	schemas.Wafer,
 	schemas.XAI,
 }
 
@@ -132,7 +122,7 @@ func providerRequiresKey(customConfig *schemas.CustomProviderConfig) bool {
 // Some providers like Vertex and Bedrock have their credentials in additional key configs.
 // Ollama and SGL are keyless (API Key is optional) but use per-key server URLs.
 func CanProviderKeyValueBeEmpty(providerKey schemas.ModelProvider) bool {
-	return providerKey == schemas.Vertex || providerKey == schemas.Bedrock || providerKey == schemas.BedrockMantle || providerKey == schemas.VLLM || providerKey == schemas.Azure || providerKey == schemas.Ollama || providerKey == schemas.SGL
+	return providerKey == schemas.Vertex || providerKey == schemas.Bedrock || providerKey == schemas.BedrockMantle || providerKey == schemas.Azure
 }
 
 func isKeySkippingAllowed(providerKey schemas.ModelProvider) bool {
@@ -189,27 +179,6 @@ func validateKey(providerKey schemas.ModelProvider, key *schemas.Key) error {
 	case schemas.Vertex:
 		if key.VertexKeyConfig == nil {
 			return fmt.Errorf("vertex_key_config is required")
-		}
-	case schemas.VLLM:
-		if key.VLLMKeyConfig == nil {
-			return fmt.Errorf("vllm_key_config is required")
-		}
-		if key.VLLMKeyConfig.URL.GetValue() == "" {
-			return fmt.Errorf("vllm_key_config.url is required")
-		}
-	case schemas.Ollama:
-		if key.OllamaKeyConfig == nil {
-			return fmt.Errorf("ollama_key_config is required")
-		}
-		if key.OllamaKeyConfig.URL.GetValue() == "" {
-			return fmt.Errorf("ollama_key_config.url is required")
-		}
-	case schemas.SGL:
-		if key.SGLKeyConfig == nil {
-			return fmt.Errorf("sgl_key_config is required")
-		}
-		if key.SGLKeyConfig.URL.GetValue() == "" {
-			return fmt.Errorf("sgl_key_config.url is required")
 		}
 	}
 	return nil

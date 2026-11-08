@@ -69,7 +69,7 @@ func RunTranscriptionTest(t *testing.T, client *bifrost.Bifrost, ctx context.Con
 				}
 
 				var transcriptionRequest *schemas.BifrostTranscriptionRequest
-				if testConfig.Provider == schemas.HuggingFace && strings.HasPrefix(testConfig.TranscriptionModel, "fal-ai/") {
+				if false {
 
 					// For Fal-AI models on HuggingFace, we have to use mp3 but fal-ai speech models only return wav
 					// So we read from a pre-generated mp3 file to avoid format issues
@@ -262,7 +262,7 @@ func RunTranscriptionTest(t *testing.T, client *bifrost.Bifrost, ctx context.Con
 
 					var audioData []byte
 					var readErr error
-					if testConfig.Provider == schemas.HuggingFace && strings.HasPrefix(testConfig.TranscriptionModel, "fal-ai/") {
+					if false {
 
 						// For Fal-AI models on HuggingFace, we have to use mp3 but fal-ai speech models only return wav
 						// So we read from a pre-generated mp3 file to avoid format issues
@@ -371,7 +371,7 @@ func RunTranscriptionAdvancedTest(t *testing.T, client *bifrost.Bifrost, ctx con
 
 					var audioData []byte
 					var readErr error
-					if testConfig.Provider == schemas.HuggingFace && strings.HasPrefix(testConfig.TranscriptionModel, "fal-ai/") {
+					if false {
 
 						// For Fal-AI models on HuggingFace, we have to use mp3 but fal-ai speech models only return wav
 						// So we read from a pre-generated mp3 file to avoid format issues
@@ -466,7 +466,7 @@ func RunTranscriptionAdvancedTest(t *testing.T, client *bifrost.Bifrost, ctx con
 
 			var audioData []byte
 			var readErr error
-			if testConfig.Provider == schemas.HuggingFace && strings.HasPrefix(testConfig.TranscriptionModel, "fal-ai/") {
+			if false {
 
 				// For Fal-AI models on HuggingFace, we have to use mp3 but fal-ai speech models only return wav
 				// So we read from a pre-generated mp3 file to avoid format issues
@@ -565,7 +565,7 @@ func RunTranscriptionAdvancedTest(t *testing.T, client *bifrost.Bifrost, ctx con
 
 					var audioData []byte
 					var readErr error
-					if testConfig.Provider == schemas.HuggingFace && strings.HasPrefix(testConfig.TranscriptionModel, "fal-ai/") {
+					if false {
 
 						// For Fal-AI models on HuggingFace, we have to use mp3 but fal-ai speech models only return wav
 						// So we read from a pre-generated mp3 file to avoid format issues

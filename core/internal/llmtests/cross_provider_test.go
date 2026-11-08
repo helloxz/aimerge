@@ -38,7 +38,6 @@ func TestCrossProviderScenarios(t *testing.T) {
 			Available:       true,
 		},
 		{
-			Provider:        schemas.Groq,
 			ChatModel:       "llama-3.1-70b-versatile",
 			VisionModel:     "", // No vision support
 			ToolsSupported:  true,
@@ -125,7 +124,6 @@ func TestCrossProviderConsistency(t *testing.T) {
 	providers := []ProviderConfig{
 		{Provider: schemas.OpenAI, ChatModel: "gpt-4o-mini", Available: true},
 		{Provider: schemas.Anthropic, ChatModel: "claude-3-5-sonnet-20241022", Available: true},
-		{Provider: schemas.Groq, ChatModel: "llama-3.1-70b-versatile", Available: true},
 		{Provider: schemas.Gemini, ChatModel: "gemini-1.5-pro", Available: true},
 	}
 

@@ -7038,7 +7038,7 @@ func migrationAddReplicateKeyConfigColumn(ctx context.Context, db *gorm.DB, logg
 				trueVal := true
 				if err := tx.Model(&tables.TableKey{}).
 					Where("provider = ? AND aliases_json IS NOT NULL AND aliases_json != ? AND aliases_json != ?",
-						string(schemas.Replicate), "", "{}",
+						"replicate", "", "{}",
 					).
 					Update("ReplicateUseDeploymentsEndpoint", &trueVal).Error; err != nil {
 					return err
@@ -7049,7 +7049,7 @@ func migrationAddReplicateKeyConfigColumn(ctx context.Context, db *gorm.DB, logg
 				var affectedKeys []tables.TableKey
 				if err := tx.Where(
 					"provider = ? AND replicate_use_deployments_endpoint IS NOT NULL",
-					string(schemas.Replicate),
+					"replicate",
 				).Find(&affectedKeys).Error; err != nil {
 					return fmt.Errorf("failed to fetch replicate keys for hash recomputation: %w", err)
 				}

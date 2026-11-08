@@ -403,9 +403,6 @@ func RunSpeechSynthesisStreamAdvancedTest(t *testing.T, client *bifrost.Bifrost,
 			openaiVoices := []string{"alloy", "echo", "fable", "onyx", "nova", "shimmer"}
 			geminiVoices := []string{"achernar", "achird", "erinome"}
 
-			// it's not possible to test all voices with Elevenlabs, we are using a few
-			elevenlabsVoices := []string{"21m00Tcm4TlvDq8ikWAM", "29vD33N1CtxCmqQRPOHJ", "2EiwWnXFnvU5JabPnv8n"}
-
 			testText := "Testing streaming speech synthesis with different voice options."
 
 			switch testConfig.Provider {
@@ -413,8 +410,6 @@ func RunSpeechSynthesisStreamAdvancedTest(t *testing.T, client *bifrost.Bifrost,
 				voices = openaiVoices
 			case schemas.Gemini:
 				voices = geminiVoices
-			case schemas.Elevenlabs:
-				voices = elevenlabsVoices
 			}
 
 			for _, voice := range voices {

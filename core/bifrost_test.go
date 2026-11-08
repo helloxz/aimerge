@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	mistralprovider "github.com/maximhq/bifrost/core/providers/mistral"
+	"github.com/maximhq/bifrost/core/providers/openai"
 	schemas "github.com/maximhq/bifrost/core/schemas"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
@@ -568,13 +568,13 @@ func TestHandleProviderRequest_OCROperationNotAllowed(t *testing.T) {
 			DefaultRequestTimeoutInSeconds: 1,
 		},
 		CustomProviderConfig: &schemas.CustomProviderConfig{
-			CustomProviderKey: "custom-mistral",
-			BaseProviderType:  schemas.Mistral,
+			CustomProviderKey: "custom-openai",
+			BaseProviderType:  schemas.OpenAI,
 			AllowedRequests:   &schemas.AllowedRequests{},
 		},
 	}
-	provider := mistralprovider.NewMistralProvider(providerConfig, NewDefaultLogger(schemas.LogLevelError))
-	if provider.GetProviderKey() != schemas.ModelProvider("custom-mistral") {
+	provider := openai.NewOpenAIProvider(providerConfig, NewDefaultLogger(schemas.LogLevelError))
+	if provider.GetProviderKey() != schemas.ModelProvider("custom-openai") {
 		t.Fatalf("expected custom provider key, got %q", provider.GetProviderKey())
 	}
 	bifrost := &Bifrost{}
@@ -585,7 +585,7 @@ func TestHandleProviderRequest_OCROperationNotAllowed(t *testing.T) {
 		BifrostRequest: schemas.BifrostRequest{
 			RequestType: schemas.OCRRequest,
 			OCRRequest: &schemas.BifrostOCRRequest{
-				Model: "custom-mistral/mistral-ocr-latest",
+				Model: "custom-openai/gpt-4o",
 				Document: schemas.OCRDocument{
 					Type:        schemas.OCRDocumentTypeDocumentURL,
 					DocumentURL: Ptr("https://example.com/doc.pdf"),
@@ -854,7 +854,6 @@ func TestFilterProvidersByContext(t *testing.T) {
 	providers := []schemas.ModelProvider{
 		schemas.OpenAI,
 		schemas.Anthropic,
-		schemas.Mistral,
 	}
 
 	t.Run("no context filter keeps all providers", func(t *testing.T) {
@@ -1511,46 +1510,7 @@ func TestUpdateProvider(t *testing.T) {
 		}
 	})
 
-	t.Run("UpdateInactiveProvider", func(t *testing.T) {
-		// Setup account with provider but don't initialize it in Bifrost
-		account := NewMockAccount()
 
-		ctx := context.Background()
-		bifrost, err := Init(ctx, schemas.BifrostConfig{
-			Account: account,
-			Logger:  NewDefaultLogger(schemas.LogLevelError),
-		})
-		if err != nil {
-			t.Fatalf("Failed to initialize Bifrost: %v", err)
-		}
-
-		// Verify provider doesn't exist initially
-		// Note: Use Ollama (not in dynamicallyConfigurableProviders) to test truly inactive provider
-		if bifrost.getProviderByKey(schemas.Ollama) != nil {
-			t.Fatal("Provider should not exist initially")
-		}
-
-		// Add provider to account after bifrost initialization
-		// Note: Ollama requires a BaseURL
-		account.AddProviderWithBaseURL(schemas.Ollama, 3, 500, "http://localhost:11434")
-
-		// Update should succeed and initialize the provider
-		err = bifrost.UpdateProvider(schemas.Ollama)
-		if err != nil {
-			t.Fatalf("UpdateProvider should succeed for inactive provider: %v", err)
-		}
-
-		// Verify provider now exists
-		provider := bifrost.getProviderByKey(schemas.Ollama)
-		if provider == nil {
-			t.Fatal("Provider should exist after update")
-		}
-
-		if provider.GetProviderKey() != schemas.Ollama {
-			t.Errorf("Provider has wrong key: got %s, want %s",
-				provider.GetProviderKey(), schemas.Ollama)
-		}
-	})
 
 	t.Run("MultipleProviderUpdates", func(t *testing.T) {
 		// Test updating multiple different providers

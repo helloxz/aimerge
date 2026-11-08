@@ -15,9 +15,6 @@ import (
 // before the API runs.
 func listModelsBifrostContext(parent context.Context, provider schemas.ModelProvider) *schemas.BifrostContext {
 	bfCtx := schemas.NewBifrostContext(parent, schemas.NoDeadline)
-	if provider == schemas.Replicate {
-		bfCtx.SetValue(schemas.BifrostContextKeyAPIKeyName, ReplicateKeyNameListModels)
-	}
 	return bfCtx
 }
 

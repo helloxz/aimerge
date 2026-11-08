@@ -179,7 +179,7 @@ func TestResolveChatFileURLs_OnlyFetchesForOpenAIAndAzure(t *testing.T) {
 		}}}
 	}
 
-	for _, provider := range []schemas.ModelProvider{schemas.Vertex, schemas.Cerebras, schemas.DeepSeek} {
+	for _, provider := range []schemas.ModelProvider{schemas.Vertex, schemas.DeepSeek} {
 		t.Run(string(provider)+" is left untouched", func(t *testing.T) {
 			req := newReq()
 			require.NoError(t, ResolveChatFileURLs(nil, provider, req),

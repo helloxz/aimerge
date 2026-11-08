@@ -290,7 +290,6 @@ func TestKeyAliasesValidate(t *testing.T) {
 	azureCfg := &AzureAliasCfg{APIVersion: Ptr("2024-08-01-preview")}
 	bedrockCfg := &BedrockAliasCfg{InferenceProfileARN: NewSecretVar("arn:aws:bedrock:...")}
 	vertexCfg := &VertexAliasCfg{ProjectID: NewSecretVar("my-gcp-project")}
-	replicateCfg := &ReplicateAliasCfg{UseDeploymentsEndpoint: Ptr(true)}
 	cases := []struct {
 		name     string
 		provider ModelProvider
@@ -373,17 +372,6 @@ func TestKeyAliasesValidate(t *testing.T) {
 			provider: OpenAI,
 			ka:       KeyAliases{"k": {ModelID: "v", VertexAliasCfg: vertexCfg}},
 			wantErr:  "vertex sub-config is only valid on Vertex keys",
-		},
-		{
-			name:     "replicate sub-config on replicate key — ok",
-			provider: Replicate,
-			ka:       KeyAliases{"k": {ModelID: "v", ReplicateAliasCfg: replicateCfg}},
-		},
-		{
-			name:     "replicate sub-config on bedrock key — error",
-			provider: Bedrock,
-			ka:       KeyAliases{"k": {ModelID: "v", ReplicateAliasCfg: replicateCfg}},
-			wantErr:  "replicate sub-config is only valid on Replicate keys",
 		},
 	}
 	for _, c := range cases {

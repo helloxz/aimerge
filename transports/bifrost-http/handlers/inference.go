@@ -1319,10 +1319,8 @@ func prepareSpeechRequest(ctx *fasthttp.RequestCtx, config *lib.Config) (*Speech
 	// resolution: it routes sound models to /v1/sound-generation and still rejects
 	// voice-less text-to-speech with "voice parameter is required". Every other
 	// provider keeps the original handler-level 400, so TTS behavior is unchanged.
-	if base.Provider != schemas.Elevenlabs {
-		if req.SpeechParameters == nil || req.VoiceConfig == nil || (req.VoiceConfig.Voice == nil && len(req.VoiceConfig.MultiVoiceConfig) == 0) {
-			return nil, nil, fmt.Errorf("voice is required for speech completion")
-		}
+	if req.SpeechParameters == nil || req.VoiceConfig == nil || (req.VoiceConfig.Voice == nil && len(req.VoiceConfig.MultiVoiceConfig) == 0) {
+		return nil, nil, fmt.Errorf("voice is required for speech completion")
 	}
 	if req.SpeechParameters == nil {
 		req.SpeechParameters = &schemas.SpeechParameters{}
@@ -1399,9 +1397,7 @@ func (h *CompletionHandler) speech(ctx *fasthttp.RequestCtx) {
 
 	// Preserve the attachment header through the large-response shortcut; the
 	// normal binary path sets this explicitly after the stream check.
-	if !(bifrostSpeechReq.Provider == schemas.Elevenlabs && req.WithTimestamps != nil && *req.WithTimestamps) {
-		bifrostCtx.SetValue(schemas.BifrostContextKeyLargeResponseContentDisposition, "attachment; filename="+attachmentFilename)
-	}
+	bifrostCtx.SetValue(schemas.BifrostContextKeyLargeResponseContentDisposition, "attachment; filename="+attachmentFilename)
 
 	if resp != nil {
 		lib.ApplyBifrostResponseHeaders(ctx, bifrostCtx, resp.ExtraFields)
@@ -1412,15 +1408,6 @@ func (h *CompletionHandler) speech(ctx *fasthttp.RequestCtx) {
 	}
 
 	// Send successful response
-	// When with_timestamps is true, Elevenlabs returns base64 encoded audio
-	hasTimestamps := req.WithTimestamps != nil && *req.WithTimestamps
-
-	if bifrostSpeechReq.Provider == schemas.Elevenlabs && hasTimestamps {
-		ctx.Response.Header.Set("Content-Type", "application/json")
-		SendJSON(ctx, resp)
-		return
-	}
-
 	if resp.Audio == nil {
 		SendError(ctx, fasthttp.StatusBadRequest, "Speech response is missing audio data")
 		return

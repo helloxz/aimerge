@@ -361,10 +361,6 @@ func normalizeProvider(p string) string {
 		return string(schemas.Bedrock)
 	case strings.Contains(p, "cohere"):
 		return string(schemas.Cohere)
-	case strings.Contains(p, "runwayml"):
-		return string(schemas.Runway)
-	case strings.Contains(p, "fireworks_ai"):
-		return string(schemas.Fireworks)
 	default:
 		return p
 	}

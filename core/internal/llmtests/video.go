@@ -183,7 +183,7 @@ func RunVideoDownloadTest(t *testing.T, client *bifrost.Bifrost, ctx context.Con
 			t.Fatal("❌ Video generation (for download test) returned invalid response")
 		}
 
-		requireURL := testConfig.Provider == schemas.Runway
+		requireURL := false
 		completed, pollErr := waitForVideoCompletion(client, ctx, testConfig, created.ID, requireURL)
 		if pollErr != nil {
 			t.Fatalf("❌ Video completion polling failed: %s", GetErrorMessage(pollErr))

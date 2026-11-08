@@ -78,11 +78,7 @@ func RunRealtimeTest(t *testing.T, client *bifrost.Bifrost, ctx context.Context,
 
 		t.Logf("connected to Realtime endpoint: %s", wsURL)
 
-		if testConfig.Provider == schemas.Elevenlabs {
-			runElevenLabsRealtimeTest(t, conn, testConfig)
-		} else {
-			runOpenAIRealtimeTest(t, conn, testConfig)
-		}
+		runOpenAIRealtimeTest(t, conn, testConfig)
 	})
 }
 

@@ -327,9 +327,6 @@ func (ka KeyAliases) Validate(providerKey ModelProvider) error {
 		if ac.BedrockAliasCfg != nil && providerKey != Bedrock {
 			return fmt.Errorf("alias %q: bedrock sub-config is only valid on Bedrock keys (got provider %q)", from, providerKey)
 		}
-		if ac.ReplicateAliasCfg != nil && providerKey != Replicate {
-			return fmt.Errorf("alias %q: replicate sub-config is only valid on Replicate keys (got provider %q)", from, providerKey)
-		}
 		normalized := strings.ToLower(from)
 		if _, ok := seen[normalized]; ok {
 			return fmt.Errorf("duplicate alias source %q (case-insensitive)", from)

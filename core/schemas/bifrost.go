@@ -50,29 +50,12 @@ const (
 	BedrockMantle ModelProvider = "bedrock_mantle"
 	Cohere        ModelProvider = "cohere"
 	Vertex        ModelProvider = "vertex"
-	Mistral       ModelProvider = "mistral"
-	Ollama        ModelProvider = "ollama"
 	OpencodeGo    ModelProvider = "opencode-go"
 	OpencodeZen   ModelProvider = "opencode-zen"
-	Groq          ModelProvider = "groq"
-	SGL           ModelProvider = "sgl"
-	Parasail      ModelProvider = "parasail"
-	Perplexity    ModelProvider = "perplexity"
-	Cerebras      ModelProvider = "cerebras"
 	DeepSeek      ModelProvider = "deepseek"
 	Gemini        ModelProvider = "gemini"
 	OpenRouter    ModelProvider = "openrouter"
-	Elevenlabs    ModelProvider = "elevenlabs"
-	HuggingFace   ModelProvider = "huggingface"
-	Nebius        ModelProvider = "nebius"
 	XAI           ModelProvider = "xai"
-	Replicate     ModelProvider = "replicate"
-	VLLM          ModelProvider = "vllm"
-	Runway        ModelProvider = "runway"
-	Runware       ModelProvider = "runware"
-	Fireworks     ModelProvider = "fireworks"
-	Sarvam        ModelProvider = "sarvam"
-	Wafer         ModelProvider = "wafer"
 )
 
 // SupportedBaseProviders is the list of base providers allowed for custom providers.
@@ -82,8 +65,6 @@ var SupportedBaseProviders = []ModelProvider{
 	Cohere,
 	Gemini,
 	OpenAI,
-	HuggingFace,
-	Replicate,
 }
 
 // StandardProviders is the list of all built-in (non-custom) providers.
@@ -92,32 +73,15 @@ var StandardProviders = []ModelProvider{
 	Azure,
 	Bedrock,
 	BedrockMantle,
-	Cerebras,
 	Cohere,
 	DeepSeek,
 	Gemini,
-	Groq,
-	Mistral,
-	Ollama,
 	OpencodeGo,
 	OpencodeZen,
 	OpenAI,
-	Parasail,
-	Perplexity,
-	SGL,
 	Vertex,
 	OpenRouter,
-	Elevenlabs,
-	HuggingFace,
-	Nebius,
 	XAI,
-	Replicate,
-	VLLM,
-	Runway,
-	Runware,
-	Fireworks,
-	Sarvam,
-	Wafer,
 }
 
 // RequestType represents the type of request being made to a provider.

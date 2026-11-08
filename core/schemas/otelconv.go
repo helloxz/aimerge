@@ -40,8 +40,6 @@ func OTelProviderName(p ModelProvider) string {
 		return "gcp.gemini"
 	case XAI:
 		return "x_ai"
-	case Mistral:
-		return "mistral_ai"
 	case Azure:
 		return "azure.ai.openai"
 	default:

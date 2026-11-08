@@ -6564,7 +6564,6 @@ func (c *Config) replaceWebhookEndpoints(endpoints []configstoreTables.TableWebh
 // Supported environment variables:
 //   - OpenAI: OPENAI_API_KEY, OPENAI_KEY
 //   - Anthropic: ANTHROPIC_API_KEY, ANTHROPIC_KEY
-//   - Mistral: MISTRAL_API_KEY, MISTRAL_KEY
 //
 // For each detected provider, it creates a default configuration with:
 //   - The detected API key with weight 1.0
@@ -6575,7 +6574,6 @@ func (c *Config) autoDetectProviders(ctx context.Context) {
 	providerEnvVars := map[schemas.ModelProvider][]string{
 		schemas.OpenAI:    {"OPENAI_API_KEY", "OPENAI_KEY"},
 		schemas.Anthropic: {"ANTHROPIC_API_KEY", "ANTHROPIC_KEY"},
-		schemas.Mistral:   {"MISTRAL_API_KEY", "MISTRAL_KEY"},
 	}
 
 	detectedCount := 0

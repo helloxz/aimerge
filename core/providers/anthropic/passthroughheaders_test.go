@@ -229,7 +229,7 @@ func TestSetPassthroughHeaders_ContentTypeSurvivesEitherOrdering(t *testing.T) {
 func TestSetPassthroughHeaders_OnlyAnthropicReceivesThem(t *testing.T) {
 	sharers := []schemas.ModelProvider{
 		schemas.Azure, schemas.Vertex, schemas.BedrockMantle, schemas.Bedrock,
-		schemas.VLLM, schemas.SGL, schemas.DeepSeek, schemas.Fireworks,
+		schemas.DeepSeek,
 	}
 
 	for _, provider := range sharers {

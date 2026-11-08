@@ -71,10 +71,6 @@ func ToOpenAIChatRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.Bifros
 		// can fail, and this function has no way to report a failure. Callers invoke
 		// ResolveChatFileURLs after conversion, where the error can propagate; see its doc comment.
 		return openaiReq
-	case schemas.Cerebras, schemas.Wafer:
-		openaiReq.filterOpenAISpecificParameters(capModel)
-		openaiReq.stripReasoningDetails()
-		return openaiReq
 	case schemas.DeepSeek:
 		openaiReq.filterOpenAISpecificParameters(capModel)
 		// DeepSeek is asymmetric: it rejects reasoning_content on ordinary assistant
@@ -92,10 +88,6 @@ func ToOpenAIChatRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.Bifros
 		// Removing extra parameters that are not supported by Gemini
 		openaiReq.ServiceTier = nil
 		return openaiReq
-	case schemas.Mistral:
-		openaiReq.filterOpenAISpecificParameters(capModel)
-		openaiReq.applyMistralCompatibility()
-		return openaiReq
 	case schemas.Vertex:
 		openaiReq.filterOpenAISpecificParameters(capModel)
 
@@ -111,17 +103,6 @@ func ToOpenAIChatRequest(ctx *schemas.BifrostContext, bifrostReq *schemas.Bifros
 			// // proprietary OpenAI/Azure GPT-5.1+ keep "none" via their own cases.)
 			openaiReq.Reasoning.Effort = nil
 		}
-		return openaiReq
-	case schemas.Fireworks:
-		// Fireworks uses prompt_cache_isolation_key for cache isolation on chat/completions.
-		// Preserve it before the generic filter strips prompt_cache_key.
-		if openaiReq.ChatParameters.PromptCacheKey != nil && openaiReq.PromptCacheIsolationKey == nil {
-			openaiReq.PromptCacheIsolationKey = openaiReq.ChatParameters.PromptCacheKey
-		}
-		// Fireworks supports predicted outputs; save before the filter strips them.
-		prediction := openaiReq.ChatParameters.Prediction
-		openaiReq.filterOpenAISpecificParameters(capModel)
-		openaiReq.ChatParameters.Prediction = prediction
 		return openaiReq
 	default:
 		// Check if provider is a custom provider

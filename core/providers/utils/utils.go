@@ -3180,8 +3180,8 @@ func GetProviderName(defaultProvider schemas.ModelProvider, customConfig *schema
 // after sending the finish_reason. This function helps determine the correct stream termination logic.
 func ProviderSendsDoneMarker(providerName schemas.ModelProvider) bool {
 	switch providerName {
-	case schemas.Cerebras, schemas.Perplexity, schemas.HuggingFace, schemas.Bedrock:
-		// Cerebras, Perplexity, HuggingFace, and Bedrock mantle don't send [DONE] marker, ends stream after finish_reason
+	case schemas.Bedrock:
+		// Bedrock does not send the [DONE] marker; the stream ends after finish_reason.
 		return false
 	default:
 		// Default to expecting [DONE] marker for safety

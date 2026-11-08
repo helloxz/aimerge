@@ -25,31 +25,14 @@ import (
 	"github.com/maximhq/bifrost/core/providers/azure"
 	"github.com/maximhq/bifrost/core/providers/bedrock"
 	"github.com/maximhq/bifrost/core/providers/bedrockmantle"
-	"github.com/maximhq/bifrost/core/providers/cerebras"
 	"github.com/maximhq/bifrost/core/providers/cohere"
 	"github.com/maximhq/bifrost/core/providers/deepseek"
-	"github.com/maximhq/bifrost/core/providers/elevenlabs"
-	"github.com/maximhq/bifrost/core/providers/fireworks"
 	"github.com/maximhq/bifrost/core/providers/gemini"
-	"github.com/maximhq/bifrost/core/providers/groq"
-	"github.com/maximhq/bifrost/core/providers/huggingface"
-	"github.com/maximhq/bifrost/core/providers/mistral"
-	"github.com/maximhq/bifrost/core/providers/nebius"
-	"github.com/maximhq/bifrost/core/providers/ollama"
 	"github.com/maximhq/bifrost/core/providers/openai"
 	"github.com/maximhq/bifrost/core/providers/opencode"
 	"github.com/maximhq/bifrost/core/providers/openrouter"
-	"github.com/maximhq/bifrost/core/providers/parasail"
-	"github.com/maximhq/bifrost/core/providers/perplexity"
-	"github.com/maximhq/bifrost/core/providers/replicate"
-	"github.com/maximhq/bifrost/core/providers/runware"
-	"github.com/maximhq/bifrost/core/providers/runway"
-	"github.com/maximhq/bifrost/core/providers/sarvam"
-	"github.com/maximhq/bifrost/core/providers/sgl"
 	providerUtils "github.com/maximhq/bifrost/core/providers/utils"
 	"github.com/maximhq/bifrost/core/providers/vertex"
-	"github.com/maximhq/bifrost/core/providers/vllm"
-	"github.com/maximhq/bifrost/core/providers/wafer"
 	"github.com/maximhq/bifrost/core/providers/xai"
 	schemas "github.com/maximhq/bifrost/core/schemas"
 	"github.com/valyala/fasthttp"
@@ -4345,52 +4328,18 @@ func (bifrost *Bifrost) createBaseProvider(providerKey schemas.ModelProvider, co
 		return azure.NewAzureProvider(config, bifrost.logger)
 	case schemas.Vertex:
 		return vertex.NewVertexProvider(config, bifrost.logger)
-	case schemas.Mistral:
-		return mistral.NewMistralProvider(config, bifrost.logger), nil
-	case schemas.Ollama:
-		return ollama.NewOllamaProvider(config, bifrost.logger)
-	case schemas.Groq:
-		return groq.NewGroqProvider(config, bifrost.logger)
 	case schemas.OpencodeGo:
 		return opencode.NewOpencodeGoProvider(config, bifrost.logger)
 	case schemas.OpencodeZen:
 		return opencode.NewOpencodeZenProvider(config, bifrost.logger)
-	case schemas.SGL:
-		return sgl.NewSGLProvider(config, bifrost.logger)
-	case schemas.Parasail:
-		return parasail.NewParasailProvider(config, bifrost.logger)
-	case schemas.Perplexity:
-		return perplexity.NewPerplexityProvider(config, bifrost.logger)
-	case schemas.Cerebras:
-		return cerebras.NewCerebrasProvider(config, bifrost.logger)
 	case schemas.DeepSeek:
 		return deepseek.NewDeepSeekProvider(config, bifrost.logger)
-	case schemas.Wafer:
-		return wafer.NewWaferProvider(config, bifrost.logger)
 	case schemas.Gemini:
 		return gemini.NewGeminiProvider(config, bifrost.logger), nil
 	case schemas.OpenRouter:
 		return openrouter.NewOpenRouterProvider(config, bifrost.logger), nil
-	case schemas.Elevenlabs:
-		return elevenlabs.NewElevenlabsProvider(config, bifrost.logger), nil
-	case schemas.Nebius:
-		return nebius.NewNebiusProvider(config, bifrost.logger)
-	case schemas.HuggingFace:
-		return huggingface.NewHuggingFaceProvider(config, bifrost.logger), nil
 	case schemas.XAI:
 		return xai.NewXAIProvider(config, bifrost.logger)
-	case schemas.Replicate:
-		return replicate.NewReplicateProvider(config, bifrost.logger)
-	case schemas.VLLM:
-		return vllm.NewVLLMProvider(config, bifrost.logger)
-	case schemas.Runway:
-		return runway.NewRunwayProvider(config, bifrost.logger)
-	case schemas.Runware:
-		return runware.NewRunwareProvider(config, bifrost.logger)
-	case schemas.Fireworks:
-		return fireworks.NewFireworksProvider(config, bifrost.logger)
-	case schemas.Sarvam:
-		return sarvam.NewSarvamProvider(config, bifrost.logger)
 	default:
 		return nil, fmt.Errorf("unsupported provider: %s", targetProviderKey)
 	}
@@ -8508,11 +8457,6 @@ func (bifrost *Bifrost) selectKeyFromProviderForModelWithPool(ctx *schemas.Bifro
 			// key.Models and key.BlacklistedModels must therefore be expressed in alias keys.
 			// The provider-specific identifier is resolved later in the handler closure via key.Aliases.Resolve(model).
 			modelSupported := hasValue && key.Models.IsAllowed(model) && !key.BlacklistedModels.IsBlocked(model)
-			if baseProviderType == schemas.VLLM && key.VLLMKeyConfig != nil {
-				if key.VLLMKeyConfig.ModelName != "" {
-					modelSupported = modelSupported && (key.VLLMKeyConfig.ModelName == model)
-				}
-			}
 			if modelSupported {
 				supportedKeys = append(supportedKeys, key)
 			}

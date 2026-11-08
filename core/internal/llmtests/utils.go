@@ -28,7 +28,7 @@ const (
 
 func GetProviderDefaultFormat(provider schemas.ModelProvider) string {
 	switch provider {
-	case schemas.Gemini, schemas.Groq:
+	case schemas.Gemini:
 		return "wav"
 	default:
 		return "mp3"
@@ -59,28 +59,6 @@ func GetProviderVoice(provider schemas.ModelProvider, voiceType string) string {
 			return "erinome"
 		default:
 			return "achernar"
-		}
-	case schemas.Groq:
-		switch voiceType {
-		case "primary":
-			return "troy"
-		case "secondary":
-			return "autumn"
-		case "tertiary":
-			return "diana"
-		default:
-			return "troy"
-		}
-	case schemas.Elevenlabs:
-		switch voiceType {
-		case "primary":
-			return "21m00Tcm4TlvDq8ikWAM"
-		case "secondary":
-			return "29vD33N1CtxCmqQRPOHJ"
-		case "tertiary":
-			return "2EiwWnXFnvU5JabPnv8n"
-		default:
-			return "21m00Tcm4TlvDq8ikWAM"
 		}
 	default:
 		// Default to OpenAI voices for other providers
