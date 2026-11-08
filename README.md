@@ -1,266 +1,89 @@
-# Bifrost AI Gateway
+# aimerge
 
-<a href="https://trendshift.io/repositories/14529?utm_source=repository-badge&amp;utm_medium=badge&amp;utm_campaign=badge-repository-14529" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/repositories/14529" alt="maximhq%2Fbifrost | Trendshift" width="250" height="55"/></a>
+基于 [Bifrost](https://github.com/maximhq/bifrost) **v1.6.11** 二次开发的个人自用版本。
 
-[![Discord badge](https://dcbadge.limes.pink/api/server/https://discord.gg/exN5KAydbU?style=flat)](https://discord.gg/exN5KAydbU)
-[![codecov](https://codecov.io/gh/maximhq/bifrost/branch/main/graph/badge.svg)](https://codecov.io/gh/maximhq/bifrost)
-![Docker Pulls](https://img.shields.io/docker/pulls/maximhq/bifrost)
-[<img src="https://run.pstmn.io/button.svg" alt="Run In Postman" style="width: 95px; height: 21px;">](https://app.getpostman.com/run-collection/31642484-2ba0e658-4dcd-49f4-845a-0c7ed745b916?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D31642484-2ba0e658-4dcd-49f4-845a-0c7ed745b916%26entityType%3Dcollection%26workspaceId%3D63e853c8-9aec-477f-909c-7f02f543150e)
-[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/bifrost)](https://artifacthub.io/packages/search?repo=bifrost)
-[![License](https://img.shields.io/github/license/maximhq/bifrost)](LICENSE)
+Bifrost 本身是一个高性能 AI 网关:把 20+ 家模型提供商统一到一个 OpenAI 兼容 API 后面,同时提供 MCP 网关、虚拟密钥、预算限流、请求日志等功能。
 
-## The fastest way to build AI applications that never go down
+本仓库在原版基础上做了**简体中文汉化**和**功能裁剪**,去掉了企业版锁定和自用不到的部分。
 
-Bifrost is a high-performance AI gateway that unifies access to 23+ providers (OpenAI, Anthropic, AWS Bedrock, Google Vertex, and more) through a single OpenAI-compatible API. Deploy in seconds with zero configuration and get automatic failover, load balancing, semantic caching, and enterprise-grade features.
+## 与原版的差异
 
-## Quick Start
+### 界面
 
-![Get started](./docs/media/getting-started.png)
+- 全量简体中文界面(`lang="zh-CN"`、CJK 字体回退、日期格式中文化)
+- 移除官方版本更新检测(不再请求 `getbifrost.ai/latest-release`)
+- 底部链接指向本仓库,移除 Discord 和 BUG 反馈入口
 
-**Go from zero to production-ready AI gateway in under a minute.**
+### 已移除
 
-**Step 1:** Start Bifrost Gateway
+企业版独占、或自用场景用不到的模块:
 
-```bash
-# Install and run locally
-npx -y @maximhq/bifrost
+| 模块 | 说明 |
+|---|---|
+| 告警 | 渠道 / 规则 / 历史,企业版功能 |
+| 集群配置 | 多节点模式,企业版功能 |
+| 护栏 | Guardrails,企业版功能 |
+| 评测 | 仅一个指向 Maxim 官网的外链 |
+| 自适应路由 | 即企业版的负载均衡 |
+| 遥测 | Prometheus 指标插件(默认开启,已整体移除) |
+| 可观测性连接器 | OpenTelemetry、Maxim、Datadog、BigQuery、Kafka、Pub/Sub、New Relic |
+| 企业版占位页 | 审计日志、SCIM 用户开通、角色与权限、用户、业务单元、工具组、熔断、API 密钥、MCP 认证配置 |
 
-# Or use Docker
-docker run -p 8080:8080 maximhq/bifrost
-```
+工程层面还删掉了:官方文档站 `docs/`、`.github/`(CI、dependabot、issue/PR 模板)。
 
-**Step 2:** Configure via Web UI
+> 说明:这些页面在原版 OSS 里本来就只是"预约演示"占位,后端没有对应实现;移除后不影响任何实际功能。
 
-```bash
-# Open the built-in web interface
-open http://localhost:8080
-```
+### 工程调整
 
-**Step 3:** Make your first API call
+- **前端包管理改用 pnpm**(npm → pnpm,`nodeLinker: hoisted`)
+- **`bytedance/sonic` 升级到 v1.15.5**:原版 v1.15.1 在 Go 1.27 下会退回标准库 JSON,性能下降 3~4 倍
+- 后端构建走本地 Go workspace(`make build LOCAL=1`),否则会拉取上游已发布模块
 
-```bash
-curl -X POST http://localhost:8080/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "openai/gpt-4o-mini",
-    "messages": [{"role": "user", "content": "Hello, Bifrost!"}]
-  }'
-```
+## 保留的能力
 
-**That's it!** Your AI gateway is running with a web interface for visual configuration, real-time monitoring, and analytics.
+- OpenAI 兼容 API,以及 OpenAI / Anthropic / Bedrock / Google GenAI / LangChain / LiteLLM SDK 兼容层
+- 多提供商接入、密钥负载均衡、失败自动 fallback
+- MCP 网关:MCP 客户端管理、工具调用、认证会话、OAuth 授权
+- 治理:虚拟密钥、团队、客户、预算与限额
+- 可观测性:仪表盘、LLM 日志、MCP 日志、日志存储(SQLite / Postgres / MySQL / ClickHouse)
+- 插件系统(内置 prompts / logging / governance / compat / model-catalog-resolver)
+- 路由规则、复杂度路由、模型目录、模型限制、价格覆盖
+- 提示词仓库、技能仓库、Webhook
 
-**Complete Setup Guides:**
+## 快速开始
 
-- [Gateway Setup](https://docs.getbifrost.ai/quickstart/gateway/setting-up) - HTTP API deployment
-- [Go SDK Setup](https://docs.getbifrost.ai/quickstart/go-sdk/setting-up) - Direct integration
+### 环境要求
 
----
+- Go **1.26.x**
+- Node.js **>= 22.12**
+- pnpm **11.x**
 
-## Key Features
-
-### Core Infrastructure
-
-- **[Unified Interface](https://docs.getbifrost.ai/providers/supported-providers/overview)** - Single OpenAI-compatible API for all providers
-- **[Multi-Provider Support](https://docs.getbifrost.ai/quickstart/gateway/provider-configuration)** - OpenAI, Anthropic, AWS Bedrock, Google Vertex, Azure, Cerebras, Cohere, Mistral, Ollama, Groq, and more
-- **[Automatic Fallbacks](https://docs.getbifrost.ai/features/retries-and-fallbacks)** - Seamless failover between providers and models with zero downtime
-- **[Load Balancing](https://docs.getbifrost.ai/features/retries-and-fallbacks)** - Intelligent request distribution across multiple API keys and providers
-
-### Advanced Features
-
-- **[Model Context Protocol (MCP)](https://docs.getbifrost.ai/mcp/overview)** - Enable AI models to use external tools (filesystem, web search, databases)
-- **[Semantic Caching](https://docs.getbifrost.ai/features/semantic-caching)** - Intelligent response caching based on semantic similarity to reduce costs and latency
-- **[Multimodal Support](https://docs.getbifrost.ai/quickstart/gateway/streaming)** - Support for text,images, audio, and streaming, all behind a common interface.
-- **[Custom Plugins](https://docs.getbifrost.ai/enterprise/custom-plugins)** - Extensible middleware architecture for analytics, monitoring, and custom logic
-- **[Governance](https://docs.getbifrost.ai/features/governance/virtual-keys)** - Usage tracking, rate limiting, and fine-grained access control
-
-### Enterprise & Security
-
-- **[Budget Management](https://docs.getbifrost.ai/features/governance/budget-and-limits)** - Hierarchical cost control with virtual keys, teams, and customer budgets
-- **[User Provisioning (OIDC)](https://docs.getbifrost.ai/enterprise/user-provisioning)** - OAuth 2.0 / OIDC login with background directory sync for teams, roles, and business units
-- **[Observability](https://docs.getbifrost.ai/features/observability/default)** - Native Prometheus metrics, distributed tracing, and comprehensive logging
-- **[Secrets Management](https://docs.getbifrost.ai/deployment-guides/config-json#environment-variable-references)** - Secure API key management with environment variables and deployment secrets
-
-### Developer Experience
-
-- **[Zero-Config Startup](https://docs.getbifrost.ai/quickstart/gateway/setting-up)** - Start immediately with dynamic provider configuration
-- **[Drop-in Replacement](https://docs.getbifrost.ai/features/drop-in-replacement)** - Replace OpenAI/Anthropic/GenAI APIs with one line of code
-- **[SDK Integrations](https://docs.getbifrost.ai/integrations/what-is-an-integration)** - Native support for popular AI SDKs with zero code changes
-- **[Configuration Flexibility](https://docs.getbifrost.ai/quickstart/gateway/provider-configuration)** - Web UI, API-driven, or file-based configuration options
-
----
-
-## Repository Structure
-
-Bifrost uses a modular architecture for maximum flexibility:
-
-```text
-bifrost/
-├── npx/                 # NPX script for easy installation
-├── core/                # Core functionality and shared components
-│   ├── providers/       # Provider-specific implementations (OpenAI, Anthropic, etc.)
-│   ├── schemas/         # Interfaces and structs used throughout Bifrost
-│   └── bifrost.go       # Main Bifrost implementation
-├── framework/           # Framework components for data persistence
-│   ├── configstore/     # Configuration storages
-│   ├── logstore/        # Request logging storages
-│   └── vectorstore/     # Vector storages
-├── transports/          # HTTP gateway and other interface layers
-│   └── bifrost-http/    # HTTP transport implementation
-├── ui/                  # Web interface for HTTP gateway
-├── plugins/             # Extensible plugin system
-│   ├── governance/      # Budget management and access control
-│   ├── jsonparser/      # JSON parsing and manipulation utilities
-│   ├── logging/         # Request logging and analytics
-│   ├── maxim/           # Maxim's observability integration
-│   ├── mocker/          # Mock responses for testing and development
-│   ├── semanticcache/   # Intelligent response caching
-│   └── telemetry/       # Monitoring and observability
-├── docs/                # Documentation and guides
-└── tests/               # Comprehensive test suites
-```
-
----
-
-## Getting Started Options
-
-Choose the deployment method that fits your needs:
-
-### 1. Gateway (HTTP API)
-
-**Best for:** Language-agnostic integration, microservices, and production deployments
+### 构建
 
 ```bash
-# NPX - Get started in 30 seconds
-npx -y @maximhq/bifrost
-
-# Docker - Production ready
-docker run -p 8080:8080 -v $(pwd)/data:/app/data maximhq/bifrost
+make setup-workspace   # 生成 go.work,把本地模块纳入构建
+make build LOCAL=1     # 构建前端 + 后端,产物在 tmp/bifrost-http
 ```
 
-**Features:** Web UI, real-time monitoring, multi-provider management, zero-config startup
-
-**Learn More:** [Gateway Setup Guide](https://docs.getbifrost.ai/quickstart/gateway/setting-up)
-
-### 2. Go SDK
-
-**Best for:** Direct Go integration with maximum performance and control
+### 运行
 
 ```bash
-go get github.com/maximhq/bifrost/core
+./tmp/bifrost-http -app-dir ./bifrost-data -host 0.0.0.0 -port 8080
 ```
 
-**Features:** Native Go APIs, embedded deployment, custom middleware integration
+浏览器打开 `http://<host>:8080` 即可。配置和日志默认存本地 SQLite(`bifrost-data/config.db`、`logs.db`)。
 
-**Learn More:** [Go SDK Guide](https://docs.getbifrost.ai/quickstart/go-sdk/setting-up)
+### 开发
 
-### 3. Drop-in Replacement
-
-**Best for:** Migrating existing applications with zero code changes
-
-```diff
-# OpenAI SDK
-- base_url = "https://api.openai.com"
-+ base_url = "http://localhost:8080/openai"
-
-# Anthropic SDK  
-- base_url = "https://api.anthropic.com"
-+ base_url = "http://localhost:8080/anthropic"
-
-# Google GenAI SDK
-- api_endpoint = "https://generativelanguage.googleapis.com"
-+ api_endpoint = "http://localhost:8080/genai"
+```bash
+make dev    # 前端 vite 热更新(3000)+ 后端自动重启(8080)
 ```
 
-**Learn More:** [Integration Guides](https://docs.getbifrost.ai/integrations/what-is-an-integration)
+改了 `core/`、`framework/`、`plugins/` 的 Go 代码时,构建务必带 `LOCAL=1`,否则 `GOWORK=off` 会用上游发布版,你的改动不生效。
 
----
+## 说明
 
-## Performance
-
-Bifrost adds virtually zero overhead to your AI requests. In sustained 5,000 RPS benchmarks, the gateway added only **11 µs** of overhead per request.
-
-| Metric | t3.medium | t3.xlarge | Improvement |
-|--------|-----------|-----------|-------------|
-| Added latency (Bifrost overhead) | 59 µs | **11 µs** | **-81%** |
-| Success rate @ 5k RPS | 100% | 100% | No failed requests |
-| Avg. queue wait time | 47 µs | **1.67 µs** | **-96%** |
-| Avg. request latency (incl. provider) | 2.12 s | **1.61 s** | **-24%** |
-
-**Key Performance Highlights:**
-
-- **Perfect Success Rate** - 100% request success rate even at 5k RPS
-- **Minimal Overhead** - Less than 15 µs additional latency per request
-- **Efficient Queuing** - Sub-microsecond average wait times
-- **Fast Key Selection** - ~10 ns to pick weighted API keys
-
-**Complete Benchmarks:** [Performance Analysis](https://docs.getbifrost.ai/benchmarking/getting-started)
-
----
-
-## Documentation
-
-**Complete Documentation:** [https://docs.getbifrost.ai](https://docs.getbifrost.ai)
-
-### Quick Start
-
-- [Gateway Setup](https://docs.getbifrost.ai/quickstart/gateway/setting-up) - HTTP API deployment in 30 seconds
-- [Go SDK Setup](https://docs.getbifrost.ai/quickstart/go-sdk/setting-up) - Direct Go integration
-- [Provider Configuration](https://docs.getbifrost.ai/quickstart/gateway/provider-configuration) - Multi-provider setup
-
-### Features
-
-- [Multi-Provider Support](https://docs.getbifrost.ai/providers/supported-providers/overview) - Single API for all providers
-- [MCP Integration](https://docs.getbifrost.ai/mcp/overview) - External tool calling
-- [Semantic Caching](https://docs.getbifrost.ai/features/semantic-caching) - Intelligent response caching
-- [Fallbacks & Load Balancing](https://docs.getbifrost.ai/features/retries-and-fallbacks) - Reliability features
-- [Budget Management](https://docs.getbifrost.ai/features/governance/budget-and-limits) - Cost control and governance
-
-### Integrations
-
-- [OpenAI SDK](https://docs.getbifrost.ai/integrations/openai-sdk/overview) - Drop-in OpenAI replacement
-- [Anthropic SDK](https://docs.getbifrost.ai/integrations/anthropic-sdk/overview) - Drop-in Anthropic replacement
-- [AWS Bedrock SDK](https://docs.getbifrost.ai/integrations/bedrock-sdk/overview) - AWS Bedrock integration
-- [Google GenAI SDK](https://docs.getbifrost.ai/integrations/genai-sdk/overview) - Drop-in GenAI replacement
-- [LiteLLM SDK](https://docs.getbifrost.ai/integrations/litellm-sdk) - LiteLLM integration
-- [Langchain SDK](https://docs.getbifrost.ai/integrations/langchain-sdk) - Langchain integration
-
-### Enterprise
-
-- [Custom Plugins](https://docs.getbifrost.ai/enterprise/custom-plugins) - Extend functionality
-- [Clustering](https://docs.getbifrost.ai/enterprise/clustering) - Multi-node deployment
-- [Secrets Management](https://docs.getbifrost.ai/deployment-guides/config-json#environment-variable-references) - Secure key management
-- [Production Deployment](https://docs.getbifrost.ai/deployment-guides/k8s) - Scaling and monitoring
-
----
-
-## Need Help?
-
-**[Join our Discord](https://discord.gg/exN5KAydbU)** for community support and discussions.
-
-Get help with:
-
-- Quick setup assistance and troubleshooting
-- Best practices and configuration tips  
-- Community discussions and support
-- Real-time help with integrations
-
----
-
-## Contributing
-
-We welcome contributions of all kinds! See our [Contributing Guide](https://docs.getbifrost.ai/contributing/setting-up-repo) for:
-
-- Setting up the development environment
-- Code conventions and best practices
-- How to submit pull requests
-- Building and testing locally
-
-For development requirements and build instructions, see our [Development Setup Guide](https://docs.getbifrost.ai/contributing/setting-up-repo#development-environment-setup).
-
----
-
-## License
-
-This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENSE) file for details.
-
-Built with ❤️ by [Maxim](https://github.com/maximhq)
+- **出站请求**:服务端只会 GET 拉取模型价格、模型参数和 MCP 库目录(默认 `getbifrost.ai`,可通过 `pricing_url` / `model_parameters_url` / `mcp_library_url` 改为自建地址或 `file://` 本地文件)。没有任何匿名上报或数据回传。
+- **鉴权**:默认关闭,可在「配置 → 安全」里开启管理员账号。开启后所有 `/api/*` 需要登录。
+- **许可证**:沿用上游 Apache 2.0,见 [LICENSE](LICENSE)。
+- 上游文档:[docs.getbifrost.ai](https://docs.getbifrost.ai)(内容对应原版,企业版功能本仓库已移除)。
