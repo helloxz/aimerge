@@ -69,7 +69,6 @@ var ignoreSchemaProps = map[string]string{
 	// deployments; OSS ConfigData struct does not carry these fields.
 	"/properties/access_profiles":            "enterprise-only; defined in bifrost-enterprise/lib/config.go",
 	"/properties/audit_logs":                 "enterprise-only; defined in bifrost-enterprise/lib/config.go",
-	"/properties/cluster_config":             "enterprise-only; defined in bifrost-enterprise/lib/config.go",
 	"/properties/guardrails_config":          "enterprise-only; defined in bifrost-enterprise/lib/config.go",
 	"/properties/large_payload_optimization": "enterprise-only; defined in bifrost-enterprise/lib/config.go",
 	"/properties/load_balancer_config":       "enterprise-only; defined in bifrost-enterprise/lib/config.go",

@@ -101,12 +101,6 @@ variable "logs_store" {
   default     = null
 }
 
-variable "cluster_config" {
-  description = "Cluster mode configuration (enabled, peers, gossip, discovery)."
-  type        = any
-  default     = null
-}
-
 variable "scim_config" {
   description = "SCIM/SSO configuration (enabled, provider: okta/entra, config)."
   type        = any

@@ -18,7 +18,6 @@ const NAV_LABELS: Record<string, string> = {
 	Channels: "渠道",
 	"Circuit Breaker": "熔断",
 	"Client Settings": "客户端设置",
-	"Cluster Config": "集群配置",
 	Compatibility: "兼容性",
 	"Complexity Router": "复杂度路由",
 	Connectors: "连接器",

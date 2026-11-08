@@ -6,7 +6,6 @@ export enum RbacResource {
 	GuardrailsProviders = "GuardrailsProviders",
 	GuardrailRules = "GuardrailRules",
 	UserProvisioning = "UserProvisioning",
-	Cluster = "Cluster",
 	Settings = "Settings",
 	Users = "Users",
 	Logs = "Logs",

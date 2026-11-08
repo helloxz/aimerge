@@ -18,12 +18,6 @@ test.describe('Placeholder and Enterprise Pages', () => {
     await expect(page).toHaveURL(/\/workspace\/audit-logs(?:\?.*)?$/)
   })
 
-  test('should load cluster page', async ({ page }) => {
-    await page.goto('/workspace/cluster')
-    await page.waitForLoadState('networkidle')
-    await expect(page).toHaveURL(/\/workspace\/cluster(?:\?.*)?$/)
-  })
-
   test('should load custom-pricing page', async ({ page }) => {
     await page.goto('/workspace/custom-pricing')
     await page.waitForLoadState('networkidle')

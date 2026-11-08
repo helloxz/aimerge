@@ -535,7 +535,6 @@ export default function AppSidebar() {
 	const hasGuardrailsProvidersAccess = useRbac(RbacResource.GuardrailsProviders, RbacOperation.View);
 	const hasGuardrailsConfigAccess = useRbac(RbacResource.GuardrailsConfig, RbacOperation.View);
 	const hasCircuitBreakerAccess = useRbac(RbacResource.CircuitBreaker, RbacOperation.View);
-	const hasClusterConfigAccess = useRbac(RbacResource.Cluster, RbacOperation.View);
 	const isAdaptiveRoutingAllowed = useRbac(RbacResource.AdaptiveRouter, RbacOperation.View);
 	const hasSettingsAccess = useRbac(RbacResource.Settings, RbacOperation.View);
 	const hasFeatureFlagsAccess = useRbac(RbacResource.FeatureFlags, RbacOperation.View);
@@ -852,13 +851,6 @@ export default function AppSidebar() {
 				hasAccess: hasGovernanceLegacyAccess,
 			},
 			{
-				title: "Cluster Config",
-				url: "/workspace/cluster",
-				icon: Network,
-				description: "Manage Bifrost cluster",
-				hasAccess: hasClusterConfigAccess,
-			},
-			{
 				title: "Adaptive Routing",
 				url: "/workspace/adaptive-routing",
 				icon: Shuffle,
@@ -1001,7 +993,6 @@ export default function AppSidebar() {
 			hasGuardrailsProvidersAccess,
 			hasGuardrailsConfigAccess,
 			hasCircuitBreakerAccess,
-			hasClusterConfigAccess,
 			isAdaptiveRoutingAllowed,
 			hasSettingsAccess,
 			hasPromptRepositoryAccess,

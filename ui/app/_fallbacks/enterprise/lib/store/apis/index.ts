@@ -3,7 +3,6 @@
 
 export const scimApi = null;
 export const guardrailsApi = null;
-export const clusterApi = null;
 export const rbacApi = null;
 export const auditLogsApi = null;
 

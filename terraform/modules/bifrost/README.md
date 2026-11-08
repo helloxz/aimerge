@@ -126,7 +126,6 @@ All 18 top-level properties from the [Bifrost config schema](../../../transports
 | `vector_store`       | `vector_store`       | Vector database configuration                  |
 | `config_store`       | `config_store`       | Config storage (SQLite/Postgres)               |
 | `logs_store`         | `logs_store`         | Logging storage (SQLite/Postgres)              |
-| `cluster_config`     | `cluster_config`     | Cluster mode (peers, gossip, discovery)        |
 | `scim_config`        | `scim_config`        | SCIM/SSO (Okta, Entra)                         |
 | `load_balancer_config` | `load_balancer_config` | Intelligent load balancer               |
 | `guardrails_config`  | `guardrails_config`  | Guardrails (rules, providers)                  |
