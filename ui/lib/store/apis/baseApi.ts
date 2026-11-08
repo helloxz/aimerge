@@ -100,7 +100,7 @@ const baseQueryWithErrorHandling: typeof baseQueryWithRefresh = async (args: any
 					...error,
 					data: {
 						error: {
-							message: "Network error: Unable to connect to the server",
+							message: "网络错误：无法连接到服务器",
 						},
 					},
 				},
@@ -122,7 +122,7 @@ const baseQueryWithErrorHandling: typeof baseQueryWithRefresh = async (args: any
 				...error,
 				data: {
 					error: {
-						message: "An unexpected error occurred",
+						message: "发生意外错误",
 					},
 				},
 			},

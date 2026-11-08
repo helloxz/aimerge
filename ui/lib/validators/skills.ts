@@ -20,33 +20,33 @@ export interface ValidationError {
 
 /** Validate skill name against Agent Skills spec */
 export function validateSkillName(name: string): string | null {
-	if (!name) return "Name is required";
-	if (name.length > 64) return "Name must be 64 characters or fewer";
+	if (!name) return "请填写名称";
+	if (name.length > 64) return "名称不能超过 64 个字符";
 	if (!SKILL_NAME_REGEX.test(name)) {
-		return "Name must be lowercase alphanumeric with hyphens only (no leading/trailing/consecutive hyphens)";
+		return "名称只能包含小写字母、数字和连字符（不能以连字符开头、结尾或连续出现）";
 	}
 	const reservedNames = ["all-skills", "all", "codex", "claude-code"];
 	if (reservedNames.includes(name)) {
-		return `"${name}" is a reserved name used by the skills serving layer`;
+		return `"${name}" 是技能服务层保留的名称`;
 	}
 	return null;
 }
 
 /** Validate description (hard limit 1024 chars) */
 export function validateDescription(description: string): string | null {
-	if (!description || !description.trim()) return "Description is required";
-	if (description.length > 1024) return `Description exceeds 1024 character limit (${description.length}/1024)`;
+	if (!description || !description.trim()) return "请填写描述";
+	if (description.length > 1024) return `描述超过 1024 字符限制（${description.length}/1024）`;
 	return null;
 }
 
 /** Validate version string as semver */
 export function validateVersion(version: string): string | null {
-	if (!version) return "Version is required";
+	if (!version) return "请填写版本号";
 	const match = SEMVER_REGEX.exec(version);
-	if (!match) return "Version must be semver format (e.g., 1.0.0 or 1.0.0-beta.1)";
+	if (!match) return "版本号必须为 semver 格式（例如 1.0.0 或 1.0.0-beta.1）";
 	const [, major, minor, patch] = match;
 	if (parseInt(major) < 0 || parseInt(minor) < 0 || parseInt(patch) < 0) {
-		return "Version parts must be non-negative integers";
+		return "版本号的各部分必须为非负整数";
 	}
 	return null;
 }
@@ -121,7 +121,7 @@ export function validateVersionBump(newVersion: string, previousVersion: string)
 		return null;
 	}
 
-	return `Version must be different from ${previousVersion}. Bump at least one of: major (${prev.major + 1}.x.x), minor (${prev.major}.${prev.minor + 1}.x), patch (${prev.major}.${prev.minor}.${prev.patch + 1}), or change the suffix (e.g., -beta.1).`;
+	return `版本号必须与 ${previousVersion} 不同。请至少提升以下之一：主版本号（${prev.major + 1}.x.x）、次版本号（${prev.major}.${prev.minor + 1}.x）、补丁版本号（${prev.major}.${prev.minor}.${prev.patch + 1}），或更改后缀（例如 -beta.1）。`;
 }
 
 /** Validate extra_frontmatter keys don't conflict with reserved names */
@@ -130,15 +130,15 @@ export function validateExtraFrontmatter(json: string): string | null {
 	try {
 		const parsed = JSON.parse(json);
 		if (typeof parsed !== "object" || Array.isArray(parsed) || parsed === null) {
-			return "Extra frontmatter must be a JSON object";
+			return "额外 Frontmatter 必须为 JSON 对象";
 		}
 		const conflicts = Object.keys(parsed).filter((k) => RESERVED_FRONTMATTER_KEYS.has(k));
 		if (conflicts.length > 0) {
-			return `Reserved keys cannot be used: ${conflicts.join(", ")}`;
+			return `不能使用保留键：${conflicts.join(", ")}`;
 		}
 		return null;
 	} catch {
-		return "Invalid JSON";
+		return "无效的 JSON";
 	}
 }
 
@@ -148,15 +148,15 @@ export function validateMetadata(json: string): string | null {
 	try {
 		const parsed = JSON.parse(json);
 		if (typeof parsed !== "object" || Array.isArray(parsed) || parsed === null) {
-			return "Metadata must be a JSON object";
+			return "元数据必须为 JSON 对象";
 		}
 		for (const [key, value] of Object.entries(parsed)) {
-			if (typeof key !== "string") return "Metadata keys must be strings";
-			if (typeof value !== "string") return `Metadata value for "${key}" must be a string`;
+			if (typeof key !== "string") return "元数据的键必须为字符串";
+			if (typeof value !== "string") return `"${key}" 的元数据值必须为字符串`;
 		}
 		return null;
 	} catch {
-		return "Invalid JSON";
+		return "无效的 JSON";
 	}
 }
 
@@ -166,12 +166,12 @@ export function validateSkillMdBody(body: string): {
 	warning: string | null;
 } {
 	if (!body || !body.trim()) {
-		return { error: "SKILL.md body is required", warning: null };
+		return { error: "请填写 SKILL.md 正文", warning: null };
 	}
 	// Soft limit warning (no blocking)
 	const warning =
 		body.length > 50000
-			? "This SKILL.md body is above the recommended size. Consider moving detailed material into files under references/ and linking to them from the skill body."
+			? "该 SKILL.md 正文超过建议大小。建议将详细内容移至 references/ 下的文件，并在技能正文中链接引用。"
 			: null;
 	return { error: null, warning };
 }
@@ -199,7 +199,7 @@ function dataURLDecodedLength(value: string): number | null {
 
 export function validateSkillFileSize(sizeBytes: number): string | null {
 	if (sizeBytes > MAX_SKILL_FILE_SIZE_BYTES) {
-		return `File exceeds ${MAX_SKILL_FILE_SIZE_LABEL} limit`;
+		return `文件超过 ${MAX_SKILL_FILE_SIZE_LABEL} 限制`;
 	}
 	return null;
 }
@@ -217,15 +217,15 @@ export function validateSourceType(
 ): string | null {
 	switch (sourceType) {
 		case "url":
-			if (!values.url) return "URL is required";
+			if (!values.url) return "请填写 URL";
 			if (!values.url.startsWith("http://") && !values.url.startsWith("https://")) {
-				return "URL must start with http:// or https://";
+				return "URL 必须以 http:// 或 https:// 开头";
 			}
 			return null;
 		case "dataurl":
-			if (!values.dataurl) return "Data URL is required";
+			if (!values.dataurl) return "请填写 Data URL";
 			if (!values.dataurl.startsWith("data:") || !values.dataurl.includes(";base64,")) {
-				return "Data URL must start with data: and contain ;base64,";
+				return "Data URL 必须以 data: 开头并包含 ;base64,";
 			}
 			{
 				const decodedLength = dataURLDecodedLength(values.dataurl);
@@ -236,38 +236,38 @@ export function validateSourceType(
 			}
 			return null;
 		case "text":
-			if (!values.content || !values.content.trim()) return "Text content is required";
+			if (!values.content || !values.content.trim()) return "请填写文本内容";
 			return validateSkillFileSize(utf8ByteLength(values.content));
 		case "upload":
 			return null; // Upload validation happens during the upload process
 		default:
-			return `Unknown source type: ${sourceType}`;
+			return `未知的来源类型：${sourceType}`;
 	}
 }
 
 /** Validate file basename (no separators, traversal, or reserved SKILL.md) */
 export function validateFilename(filename: string): string | null {
 	const value = filename.trim();
-	if (!value) return "Filename is required";
-	if (value === "." || value === "..") return "Filename cannot be . or ..";
-	if (value.includes("/") || value.includes("\\")) return "Filename must not include folders";
-	if (value.toLowerCase() === "skill.md") return "SKILL.md is managed by the skill body";
+	if (!value) return "请填写文件名";
+	if (value === "." || value === "..") return "文件名不能为 . 或 ..";
+	if (value.includes("/") || value.includes("\\")) return "文件名不能包含目录";
+	if (value.toLowerCase() === "skill.md") return "SKILL.md 由技能正文统一管理";
 	return null;
 }
 
 /** Validate relative file path (no traversal, absolute paths, or reserved SKILL.md) */
 export function validateFilePath(path: string | undefined): string | null {
-	if (!path || !path.trim()) return "File path is required";
+	if (!path || !path.trim()) return "请填写文件路径";
 	const value = path.trim();
-	if (value.startsWith("/")) return "Path must be relative (no leading /)";
-	if (value.endsWith("/")) return "Path must point to a file, not a folder";
-	if (value.includes("\\")) return "Path must use forward slashes only";
+	if (value.startsWith("/")) return "路径必须为相对路径（不能以 / 开头）";
+	if (value.endsWith("/")) return "路径必须指向文件，不能指向目录";
+	if (value.includes("\\")) return "路径只能使用正斜杠";
 	const segments = value.split("/");
 	if (segments.some((segment) => segment === "" || segment === "." || segment === "..")) {
-		return "Path must not contain empty, current, or parent directory segments";
+		return "路径不能包含空段、当前目录段或上级目录段";
 	}
 	if (segments.length === 1 && segments[0].toLowerCase() === "skill.md") {
-		return "SKILL.md is managed by the skill body";
+		return "SKILL.md 由技能正文统一管理";
 	}
 	return null;
 }

@@ -1,22 +1,22 @@
 // Governance-related constants
 
 export const resetDurationOptions = [
-	{ label: "Every Minute", value: "1m" },
-	{ label: "Every 5 Minutes", value: "5m" },
-	{ label: "Every 15 Minutes", value: "15m" },
-	{ label: "Every 30 Minutes", value: "30m" },
-	{ label: "Hourly", value: "1h" },
-	{ label: "Every 6 Hours", value: "6h" },
-	{ label: "Daily", value: "1d" },
-	{ label: "Weekly", value: "1w" },
-	{ label: "Monthly", value: "1M" },
+	{ label: "每分钟", value: "1m" },
+	{ label: "每 5 分钟", value: "5m" },
+	{ label: "每 15 分钟", value: "15m" },
+	{ label: "每 30 分钟", value: "30m" },
+	{ label: "每小时", value: "1h" },
+	{ label: "每 6 小时", value: "6h" },
+	{ label: "每天", value: "1d" },
+	{ label: "每周", value: "1w" },
+	{ label: "每月", value: "1M" },
 ];
 
 // Reset periods offered on budgets. Quarterly is budget-only: resetDurationOptions
 // above is shared with the rate-limit selects, and the backend has no notion of a
 // quarterly token or request limit, so adding "1Q" there would offer a window it
 // cannot enforce.
-export const budgetResetDurationOptions = [...resetDurationOptions, { label: "Quarterly", value: "1Q" }];
+export const budgetResetDurationOptions = [...resetDurationOptions, { label: "每季度", value: "1Q" }];
 
 // Durations that support calendar-aligned resets (snap to day/week/month/quarter/year boundaries).
 // Must stay in sync with IsCalendarAlignableDuration in framework/configstore/tables/utils.go.
@@ -25,19 +25,19 @@ export const supportsCalendarAlignment = (duration: string): boolean => duration
 
 // Map of duration values to short labels for display
 export const resetDurationLabels: Record<string, string> = {
-	"1m": "Every Minute",
-	"5m": "Every 5 Minutes",
-	"15m": "Every 15 Minutes",
-	"30m": "Every 30 Minutes",
-	"1h": "Hourly",
-	"6h": "Every 6 Hours",
-	"1d": "Daily",
-	"1w": "Weekly",
-	"1M": "Monthly",
-	"1Q": "Quarterly",
+	"1m": "每分钟",
+	"5m": "每 5 分钟",
+	"15m": "每 15 分钟",
+	"30m": "每 30 分钟",
+	"1h": "每小时",
+	"6h": "每 6 小时",
+	"1d": "每天",
+	"1w": "每周",
+	"1M": "每月",
+	"1Q": "每季度",
 };
 
-const MONTH_ABBREVIATIONS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTH_ABBREVIATIONS = ["1月", "2月", "3月", "4月", "5月", "6月", "7月", "8月", "9月", "10月", "11月", "12月"];
 
 // Fall back to January for a missing, fractional, or out-of-range month, matching
 // BudgetResetConfig.QuarterStart on the Go side. Number.isInteger also rejects a
@@ -78,9 +78,9 @@ export function formatQuarterPreview(startMonth?: number): string {
 
 /**
  * Compact read-only note naming a quarterly budget's fiscal-year start, e.g.
- * " · FY starts Apr". Returns "" for non-quarterly budgets and for a January /
+ * " · 财年起始月为 4月"。Returns "" for non-quarterly budgets and for a January /
  * unset start (the default), so it only ever appears when it changes behaviour.
- * Callers append it after the reset-period label (which already reads "Quarterly").
+ * Callers append it after the reset-period label (which already reads "每季度").
  */
 export function fiscalQuarterNote(resetDuration?: string, resetConfig?: { quarter_start_month?: number } | null): string {
 	if (!resetDuration || !resetDuration.endsWith("Q")) return "";
@@ -88,12 +88,12 @@ export function fiscalQuarterNote(resetDuration?: string, resetConfig?: { quarte
 	// Number.isInteger also rejects undefined/NaN; a fractional month like 2.5 would
 	// otherwise pass the range check and index MONTH_ABBREVIATIONS between slots.
 	if (start === undefined || !Number.isInteger(start) || start === 1 || start < 1 || start > 12) return "";
-	return ` · FY starts ${MONTH_ABBREVIATIONS[start - 1]}`;
+	return ` · 财年起始月为 ${MONTH_ABBREVIATIONS[start - 1]}`;
 }
 
 /**
  * The four fiscal quarters as `{label, range}` for the quarter-map chips, e.g.
- * April → `[{label:"Q1", range:"Apr–Jun"}, …]`. Uses an en-dash to match the design.
+ * April → `[{label:"Q1", range:"4月–6月"}, …]`. Uses an en-dash to match the design.
  */
 export function quarterRanges(startMonth?: number): { label: string; range: string }[] {
 	return quarterMonthIndices(startMonth).map((month, quarter) => ({
@@ -128,6 +128,6 @@ export function nextQuarterReset(startMonth?: number, now: Date = new Date()): D
 
 // Month choices for the fiscal quarter start select.
 export const quarterStartMonthOptions = MONTH_ABBREVIATIONS.map((_, index) => ({
-	label: new Date(Date.UTC(2026, index, 1)).toLocaleString("en-US", { month: "long", timeZone: "UTC" }),
+	label: MONTH_ABBREVIATIONS[index],
 	value: String(index + 1),
 }));

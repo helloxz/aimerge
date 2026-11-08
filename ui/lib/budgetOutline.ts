@@ -12,20 +12,20 @@ export interface BudgetLineLike {
 	reset_config?: { quarter_start_month?: number };
 }
 
-// Short, mono-friendly period suffixes (e.g. "$20/wk"). Falls back to the raw
+// Short, mono-friendly period suffixes (例如 "$20/周"). Falls back to the raw
 // duration string for anything not in the map.
 const SHORT_PERIOD: Record<string, string> = {
-	"1m": "min",
-	"5m": "5min",
-	"15m": "15min",
-	"30m": "30min",
-	"1h": "hr",
-	"6h": "6hr",
-	"1d": "day",
-	"1w": "wk",
-	"1M": "mo",
-	"1Q": "qtr",
-	"1Y": "yr",
+	"1m": "分钟",
+	"5m": "5 分钟",
+	"15m": "15 分钟",
+	"30m": "30 分钟",
+	"1h": "小时",
+	"6h": "6 小时",
+	"1d": "天",
+	"1w": "周",
+	"1M": "月",
+	"1Q": "季度",
+	"1Y": "年",
 };
 
 export function shortPeriod(duration?: string | null): string {
@@ -51,7 +51,7 @@ export function money(value: number | null | undefined): string {
 
 // "$50/wk · $150/mo" — every budget line joined, in ascending period order.
 // Returns `fallback` when empty.
-export function budgetLinesLabel(budgets: BudgetLineLike[] | undefined, fallback = "No budget"): string {
+export function budgetLinesLabel(budgets: BudgetLineLike[] | undefined, fallback = "无预算"): string {
 	if (!budgets || budgets.length === 0) return fallback;
 	const label = [...budgets]
 		.sort((a, b) => periodRank(a.reset_duration) - periodRank(b.reset_duration))

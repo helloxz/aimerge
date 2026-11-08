@@ -61,21 +61,21 @@ export class Validator {
 	}
 
 	// Built-in validators
-	static required(value: any, message = "This field is required"): ValidationRule {
+	static required(value: any, message = "请填写此字段"): ValidationRule {
 		return {
 			isValid: value !== undefined && value !== null && value !== "" && value !== 0,
 			message,
 		};
 	}
 
-	static minValue(value: number, min: number, message = `Must be at least ${min}`): ValidationRule {
+	static minValue(value: number, min: number, message = `不得小于 ${min}`): ValidationRule {
 		return {
 			isValid: !isNaN(value) && value >= min,
 			message,
 		};
 	}
 
-	static maxValue(value: number, max: number, message = `Must be at most ${max}`): ValidationRule {
+	static maxValue(value: number, max: number, message = `不得大于 ${max}`): ValidationRule {
 		return {
 			isValid: !isNaN(value) && value <= max,
 			message,
@@ -89,50 +89,50 @@ export class Validator {
 		};
 	}
 
-	static email(value: string, message = "Must be a valid email"): ValidationRule {
+	static email(value: string, message = "请输入有效的邮箱地址"): ValidationRule {
 		return this.pattern(value, /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i, message);
 	}
 
-	static url(value: string, message = "Must be a valid URL"): ValidationRule {
+	static url(value: string, message = "请输入有效的 URL"): ValidationRule {
 		return this.pattern(value, /^https?:\/\/.+/, message);
 	}
 
-	static minLength(value: string, min: number, message = `Must be at least ${min} characters`): ValidationRule {
+	static minLength(value: string, min: number, message = `至少 ${min} 个字符`): ValidationRule {
 		return {
 			isValid: (value || "").length >= min,
 			message,
 		};
 	}
 
-	static maxLength(value: string, max: number, message = `Must be at most ${max} characters`): ValidationRule {
+	static maxLength(value: string, max: number, message = `最多 ${max} 个字符`): ValidationRule {
 		return {
 			isValid: (value || "").length <= max,
 			message,
 		};
 	}
 
-	static arrayMinLength<T>(array: T[], min: number, message = `Must have at least ${min} items`): ValidationRule {
+	static arrayMinLength<T>(array: T[], min: number, message = `至少 ${min} 项`): ValidationRule {
 		return {
 			isValid: array?.length >= min,
 			message,
 		};
 	}
 
-	static arrayMaxLength<T>(array: T[], max: number, message = `Must have at most ${max} items`): ValidationRule {
+	static arrayMaxLength<T>(array: T[], max: number, message = `最多 ${max} 项`): ValidationRule {
 		return {
 			isValid: array?.length <= max,
 			message,
 		};
 	}
 
-	static arrayUnique<T>(array: T[], message = "Must have unique items"): ValidationRule {
+	static arrayUnique<T>(array: T[], message = "各项必须唯一"): ValidationRule {
 		return {
 			isValid: array?.length === new Set(array).size,
 			message,
 		};
 	}
 
-	static arraysEqual<T>(array1: T[], array2: T[], message = "Must be equal"): ValidationRule {
+	static arraysEqual<T>(array1: T[], array2: T[], message = "必须相同"): ValidationRule {
 		return {
 			isValid: array1?.length === array2?.length && array1?.every((value, index) => value === array2[index]),
 			message,
@@ -545,7 +545,7 @@ export const cleanJson = (text: unknown) => {
 		if (Array.isArray(text)) return text; // keep arrays as-is
 		if (text !== null && typeof text === "object") return text; // keep objects as-is
 		if (typeof text === "number" || typeof text === "boolean") return text;
-		return "Invalid payload";
+		return "无效的数据";
 	} catch {
 		return text;
 	}

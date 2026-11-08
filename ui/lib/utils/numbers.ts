@@ -40,6 +40,6 @@ export function formatTokenPriceCompact(cost?: number): string {
 }
 
 export function formatTokenPriceFull(cost?: number): string {
-	if (cost === undefined || cost === null) return "Not available";
-	return `${formatTokenPriceValue(cost)} / 1M tokens`;
+	if (cost === undefined || cost === null) return "不可用";
+	return `${formatTokenPriceValue(cost)} / 100 万 Token`;
 }

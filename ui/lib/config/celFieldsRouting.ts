@@ -4,7 +4,7 @@
  */
 
 import { getProviderLabel } from "@/lib/constants/logs";
-import { COMPLEXITY_TIER_VALUES } from "@/lib/types/complexityRouter";
+import { COMPLEXITY_TIER_LABELS, COMPLEXITY_TIER_VALUES } from "@/lib/types/complexityRouter";
 
 export interface CELFieldDefinition {
 	name: string;
@@ -30,8 +30,8 @@ export interface CELFieldDefinition {
 export const baseRoutingFields: CELFieldDefinition[] = [
 	{
 		name: "model",
-		label: "Model",
-		placeholder: "e.g., gpt-4, claude-3-sonnet",
+		label: "模型",
+		placeholder: "例如 gpt-4、claude-3-sonnet",
 		inputType: "text",
 		valueEditorType: (operator: string) =>
 			operator === "=" || operator === "!=" ? "select" : operator === "in" || operator === "notIn" ? "select" : "text",
@@ -40,8 +40,8 @@ export const baseRoutingFields: CELFieldDefinition[] = [
 	},
 	{
 		name: "provider",
-		label: "Provider",
-		placeholder: "Select provider",
+		label: "提供商",
+		placeholder: "选择提供商",
 		inputType: "select",
 		valueEditorType: (operator: string) =>
 			operator === "matches" ? "text" : operator === "in" || operator === "notIn" ? "select" : "select",
@@ -50,41 +50,41 @@ export const baseRoutingFields: CELFieldDefinition[] = [
 	},
 	{
 		name: "request_type",
-		label: "Request Type",
-		placeholder: "Select request type",
+		label: "请求类型",
+		placeholder: "选择请求类型",
 		inputType: "select",
 		valueEditorType: (operator: string) =>
 			operator === "matches" ? "text" : operator === "in" || operator === "notIn" ? "select" : "select",
 		operators: ["=", "!=", "in", "notIn", "matches"],
 		defaultOperator: "=",
 		values: [
-			{ name: "text_completion", label: "Text Completion" },
-			{ name: "text_completion_stream", label: "Text Completion (Streaming)" },
-			{ name: "chat_completion", label: "Chat Completion" },
-			{ name: "chat_completion_stream", label: "Chat Completion (Streaming)" },
+			{ name: "text_completion", label: "文本补全" },
+			{ name: "text_completion_stream", label: "文本补全（流式）" },
+			{ name: "chat_completion", label: "对话补全" },
+			{ name: "chat_completion_stream", label: "对话补全（流式）" },
 			{ name: "responses", label: "Responses" },
-			{ name: "responses_stream", label: "Responses (Streaming)" },
-			{ name: "embedding", label: "Embeddings" },
-			{ name: "image_generation", label: "Image Generation" },
-			{ name: "image_generation_stream", label: "Image Generation (Streaming)" },
-			{ name: "image_edit", label: "Image Edit" },
-			{ name: "image_edit_stream", label: "Image Edit (Streaming)" },
-			{ name: "image_variation", label: "Image Variation" },
-			{ name: "speech", label: "Speech" },
-			{ name: "speech_stream", label: "Speech (Streaming)" },
-			{ name: "transcription", label: "Transcription" },
-			{ name: "transcription_stream", label: "Transcription (Streaming)" },
-			{ name: "count_tokens", label: "Count Tokens" },
-			{ name: "rerank", label: "Rerank" },
-			{ name: "video_generation", label: "Video Generation" },
+			{ name: "responses_stream", label: "Responses（流式）" },
+			{ name: "embedding", label: "向量化" },
+			{ name: "image_generation", label: "图像生成" },
+			{ name: "image_generation_stream", label: "图像生成（流式）" },
+			{ name: "image_edit", label: "图像编辑" },
+			{ name: "image_edit_stream", label: "图像编辑（流式）" },
+			{ name: "image_variation", label: "图像变体" },
+			{ name: "speech", label: "语音" },
+			{ name: "speech_stream", label: "语音（流式）" },
+			{ name: "transcription", label: "转写" },
+			{ name: "transcription_stream", label: "转写（流式）" },
+			{ name: "count_tokens", label: "Token 计数" },
+			{ name: "rerank", label: "重排" },
+			{ name: "video_generation", label: "视频生成" },
 		],
 		description:
-			"Filter rules by the type of API request (chat, text, embeddings, images, audio, etc.). Streaming and non-streaming requests are distinct types: select both to cover all requests of a kind.",
+			"按 API 请求类型筛选规则（对话、文本、向量化、图像、音频等）。流式与非流式请求属于不同类型：如需覆盖某类请求的全部情况，请同时选择两者。",
 	},
 	{
 		name: "headers",
-		label: "Header",
-		placeholder: "e.g., authorization, x-custom-header (use lowercase)",
+		label: "请求头",
+		placeholder: "例如 authorization、x-custom-header（使用小写）",
 		inputType: "keyValue",
 		valueEditorType: "keyValue",
 		operators: ["=", "!=", "contains", "beginsWith", "endsWith", "matches", "null", "notNull"],
@@ -92,48 +92,48 @@ export const baseRoutingFields: CELFieldDefinition[] = [
 	},
 	{
 		name: "tokens_used",
-		label: "Tokens Used (%)",
-		placeholder: "e.g., 80",
+		label: "已用 Token 占比（%）",
+		placeholder: "例如 80",
 		inputType: "text",
 		valueEditorType: "number",
 		operators: ["=", "!=", ">", "<", ">=", "<="],
 		defaultOperator: ">=",
-		description: "Check token usage as percentage. Checked against max of model and provider configs.",
+		description: "以百分比检查 Token 用量，取模型与提供商配置中的较高阈值。",
 	},
 	{
 		name: "request",
-		label: "Request (%)",
-		placeholder: "e.g., 80",
+		label: "请求占比（%）",
+		placeholder: "例如 80",
 		inputType: "text",
 		valueEditorType: "number",
 		operators: ["=", "!=", ">", "<", ">=", "<="],
 		defaultOperator: ">=",
-		description: "Check request usage as percentage. Checked against max of model and provider configs.",
+		description: "以百分比检查请求用量，取模型与提供商配置中的较高阈值。",
 	},
 	{
 		name: "budget_used",
-		label: "Budget Used (%)",
-		placeholder: "e.g., 50",
+		label: "已用预算占比（%）",
+		placeholder: "例如 50",
 		inputType: "text",
 		valueEditorType: "number",
 		operators: ["=", "!=", ">", "<", ">=", "<="],
 		defaultOperator: ">=",
-		description: "Check budget usage as percentage. Checked against max of model and provider configs.",
+		description: "以百分比检查预算用量，取模型与提供商配置中的较高阈值。",
 	},
 	{
 		name: "complexity_tier",
-		label: "Complexity Tier",
-		placeholder: "Select complexity tier",
+		label: "复杂度层级",
+		placeholder: "选择复杂度层级",
 		inputType: "select",
 		valueEditorType: "select",
 		operators: ["=", "!=", "in", "notIn"],
 		defaultOperator: "=",
-		values: COMPLEXITY_TIER_VALUES.map((tier) => ({ name: tier, label: tier.charAt(0) + tier.slice(1).toLowerCase() })),
+		values: COMPLEXITY_TIER_VALUES.map((tier) => ({ name: tier, label: COMPLEXITY_TIER_LABELS[tier] })),
 	},
 	{
 		name: "params",
-		label: "Query Parameter",
-		placeholder: "e.g., api_key, user_id",
+		label: "查询参数",
+		placeholder: "例如 api_key、user_id",
 		inputType: "keyValue",
 		valueEditorType: "keyValue",
 		operators: ["=", "!=", "contains", "beginsWith", "endsWith", "matches", "null", "notNull"],
@@ -154,7 +154,7 @@ export function getRoutingFields(providers: string[] = [], models: string[] = []
 				name: provider,
 				label: getProviderLabel(provider),
 			}))
-			: [{ name: "_no_providers", label: "No providers configured", disabled: true }];
+			: [{ name: "_no_providers", label: "未配置提供商", disabled: true }];
 
 	// Create model field values
 	const modelValues =
@@ -167,14 +167,14 @@ export function getRoutingFields(providers: string[] = [], models: string[] = []
 
 	// Create metric options for scope input: providers + models
 	const scopeOptions = [
-		{ name: "", label: "(provider-level)" }, // Empty scope for provider-level
+		{ name: "", label: "（提供商级）" }, // Empty scope for provider-level
 		...providers.map((provider) => ({
 			name: provider,
-			label: `${provider} (provider)`,
+			label: `${provider}（提供商）`,
 		})),
 		...models.map((model) => ({
 			name: model,
-			label: `${model} (model)`,
+			label: `${model}（模型）`,
 		})),
 	];
 

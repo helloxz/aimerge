@@ -2,20 +2,20 @@
  * Parses a duration string (e.g., "1m", "5m", "1h", "1d", "1w", "1M") into human readable format
  */
 export function parseResetPeriod(duration: string): string {
-	if (!duration) return "Unknown";
+	if (!duration) return "未知";
 
 	const timeValue = parseInt(duration.slice(0, -1));
 	const timeUnit = duration.slice(-1);
 
 	const unitMap: Record<string, { singular: string; plural: string }> = {
-		s: { singular: "second", plural: "seconds" },
-		m: { singular: "minute", plural: "minutes" },
-		h: { singular: "hour", plural: "hours" },
-		d: { singular: "day", plural: "days" },
-		w: { singular: "week", plural: "weeks" },
-		M: { singular: "month", plural: "months" },
-		Q: { singular: "quarter", plural: "quarters" },
-		y: { singular: "year", plural: "years" },
+		s: { singular: "秒", plural: "秒" },
+		m: { singular: "分钟", plural: "分钟" },
+		h: { singular: "小时", plural: "小时" },
+		d: { singular: "天", plural: "天" },
+		w: { singular: "周", plural: "周" },
+		M: { singular: "月", plural: "月" },
+		Q: { singular: "季度", plural: "季度" },
+		y: { singular: "年", plural: "年" },
 	};
 
 	const unit = unitMap[timeUnit];
@@ -54,7 +54,7 @@ export function getEffectiveBudgetLimit(budget: BudgetOverrideFields): number {
 /** Validates the operator-entered override fields before sending them to the API. Delegates to budgetOverrideFormSchema. */
 export function validateBudgetOverride(amount: number, mode: "cycles" | "forever", cycles: number): string | null {
 	const result = budgetOverrideFormSchema.safeParse({ amount, mode, ...(mode === "cycles" ? { cycles } : {}) });
-	return result.success ? null : (result.error.issues[0]?.message ?? "Invalid input");
+	return result.success ? null : (result.error.issues[0]?.message ?? "输入无效");
 }
 
 /**
@@ -126,20 +126,20 @@ export function getBudgetOverrideValidUntil(
 }
 
 const shortDurationLabels: Record<string, string> = {
-	"1m": "/min",
-	"5m": "/5min",
-	"15m": "/15min",
-	"30m": "/30min",
-	"1h": "/hr",
-	"6h": "/6hr",
-	"1d": "/day",
-	"1w": "/wk",
-	"1M": "/mo",
+	"1m": "/分钟",
+	"5m": "/5 分钟",
+	"15m": "/15 分钟",
+	"30m": "/30 分钟",
+	"1h": "/小时",
+	"6h": "/6 小时",
+	"1d": "/天",
+	"1w": "/周",
+	"1M": "/月",
 };
 
 /**
  * Formats rate limit into compact display lines.
- * e.g. ["10K tokens/hr", "100 req/hr"]
+ * 例如 ["10K Token/小时", "100 请求/小时"]
  */
 export function formatRateLimitLines(
 	rateLimits:
@@ -157,12 +157,12 @@ export function formatRateLimitLines(
 	if (rateLimits.token_max_limit != null) {
 		const duration = rateLimits.token_reset_duration ?? "";
 		const suffix = shortDurationLabels[duration] ?? (duration ? `/${duration}` : "");
-		lines.push(`${formatCompactNumber(rateLimits.token_max_limit)} tokens${suffix}`);
+		lines.push(`${formatCompactNumber(rateLimits.token_max_limit)} Token${suffix}`);
 	}
 	if (rateLimits.request_max_limit != null) {
 		const duration = rateLimits.request_reset_duration ?? "";
 		const suffix = shortDurationLabels[duration] ?? (duration ? `/${duration}` : "");
-		lines.push(`${formatCompactNumber(rateLimits.request_max_limit)} req${suffix}`);
+		lines.push(`${formatCompactNumber(rateLimits.request_max_limit)} 请求${suffix}`);
 	}
 	return lines;
 }

@@ -65,7 +65,7 @@ describe("quarterly budgets", () => {
 	it("keeps the budget list ordered with Quarterly after Monthly", () => {
 		const values = budgetResetDurationOptions.map((o) => o.value);
 		expect(values.indexOf("1Q")).toBeGreaterThan(values.indexOf("1M"));
-		expect(resetDurationLabels["1Q"]).toBe("Quarterly");
+		expect(resetDurationLabels["1Q"]).toBe("每季度");
 	});
 
 	it("treats a quarter as calendar-alignable", () => {
@@ -77,9 +77,9 @@ describe("quarterly budgets", () => {
 	});
 
 	it("renders a quarter in human readable and compact forms", () => {
-		expect(parseResetPeriod("1Q")).toBe("1 quarter");
-		expect(parseResetPeriod("2Q")).toBe("2 quarters");
-		expect(shortPeriod("1Q")).toBe("qtr");
+		expect(parseResetPeriod("1Q")).toBe("1 季度");
+		expect(parseResetPeriod("2Q")).toBe("2 季度");
+		expect(shortPeriod("1Q")).toBe("季度");
 		expect(periodRank("1Q")).toBeGreaterThan(periodRank("1M"));
 		expect(periodRank("1Q")).toBeLessThan(periodRank("1Y"));
 	});
@@ -98,13 +98,13 @@ describe("quarterly budgets", () => {
 
 describe("fiscal quarter preview", () => {
 	it("labels the four quarters from the configured start month", () => {
-		expect(formatQuarterPreview(4)).toBe("Q1 Apr-Jun · Q2 Jul-Sep · Q3 Oct-Dec · Q4 Jan-Mar");
-		expect(formatQuarterPreview(1)).toBe("Q1 Jan-Mar · Q2 Apr-Jun · Q3 Jul-Sep · Q4 Oct-Dec");
-		expect(formatQuarterPreview(10)).toBe("Q1 Oct-Dec · Q2 Jan-Mar · Q3 Apr-Jun · Q4 Jul-Sep");
+		expect(formatQuarterPreview(4)).toBe("Q1 4月-6月 · Q2 7月-9月 · Q3 10月-12月 · Q4 1月-3月");
+		expect(formatQuarterPreview(1)).toBe("Q1 1月-3月 · Q2 4月-6月 · Q3 7月-9月 · Q4 10月-12月");
+		expect(formatQuarterPreview(10)).toBe("Q1 10月-12月 · Q2 1月-3月 · Q3 4月-6月 · Q4 7月-9月");
 	});
 
 	it("handles a start month that straddles the year end", () => {
-		expect(formatQuarterPreview(11)).toBe("Q1 Nov-Jan · Q2 Feb-Apr · Q3 May-Jul · Q4 Aug-Oct");
+		expect(formatQuarterPreview(11)).toBe("Q1 11月-1月 · Q2 2月-4月 · Q3 5月-7月 · Q4 8月-10月");
 	});
 
 	it("falls back to January for an absent or out-of-range month", () => {
@@ -123,8 +123,8 @@ describe("fiscal quarter preview", () => {
 });
 describe("fiscalQuarterNote", () => {
 	it("names the fiscal start only for a non-January quarterly budget", () => {
-		expect(fiscalQuarterNote("1Q", { quarter_start_month: 4 })).toBe(" · FY starts Apr");
-		expect(fiscalQuarterNote("1Q", { quarter_start_month: 10 })).toBe(" · FY starts Oct");
+		expect(fiscalQuarterNote("1Q", { quarter_start_month: 4 })).toBe(" · 财年起始月为 4月");
+		expect(fiscalQuarterNote("1Q", { quarter_start_month: 10 })).toBe(" · 财年起始月为 10月");
 	});
 
 	it("is empty for a January or unset start (the default)", () => {
@@ -149,10 +149,10 @@ describe("fiscalQuarterNote", () => {
 describe("quarter map helpers", () => {
 	it("labels the four quarters with en-dash ranges from the start month", () => {
 		expect(quarterRanges(4)).toEqual([
-			{ label: "Q1", range: "Apr–Jun" },
-			{ label: "Q2", range: "Jul–Sep" },
-			{ label: "Q3", range: "Oct–Dec" },
-			{ label: "Q4", range: "Jan–Mar" },
+			{ label: "Q1", range: "4月–6月" },
+			{ label: "Q2", range: "7月–9月" },
+			{ label: "Q3", range: "10月–12月" },
+			{ label: "Q4", range: "1月–3月" },
 		]);
 	});
 

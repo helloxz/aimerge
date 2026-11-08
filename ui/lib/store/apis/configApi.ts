@@ -62,8 +62,8 @@ export const configApi = baseApi.injectEndpoints({
 							return {
 								error: {
 									status: "TIMEOUT_ERROR",
-									error: "Request timeout",
-									data: { error: { message: "Request timeout" } },
+									error: "请求超时",
+									data: { error: { message: "请求超时" } },
 								},
 							};
 						}
@@ -75,7 +75,7 @@ export const configApi = baseApi.injectEndpoints({
 						error: {
 							status: "FETCH_ERROR",
 							error: String(error),
-							data: { error: { message: "Network error" } },
+							data: { error: { message: "网络错误" } },
 						},
 					};
 				}

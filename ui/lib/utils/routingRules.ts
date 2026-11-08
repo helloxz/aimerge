@@ -102,7 +102,7 @@ export function truncateCELExpression(expression: string, maxLength: number = 60
  */
 export function validateProviderModel(provider: string, _model?: string): string {
 	if (!provider || provider.trim().length === 0) {
-		return "Provider is required";
+		return "请选择提供商";
 	}
 	return "";
 }
@@ -126,20 +126,20 @@ export function detectCELOperators(expression: string): string[] {
 
 	// Common CEL operators
 	const operatorPatterns = [
-		{ regex: /==/, label: "Equals" },
-		{ regex: /!=/, label: "Not equals" },
-		{ regex: />=/, label: "Greater than or equal" },
-		{ regex: /<=/, label: "Less than or equal" },
-		{ regex: />/, label: "Greater than" },
-		{ regex: /</, label: "Less than" },
+		{ regex: /==/, label: "等于" },
+		{ regex: /!=/, label: "不等于" },
+		{ regex: />=/, label: "大于等于" },
+		{ regex: /<=/, label: "小于等于" },
+		{ regex: />/, label: "大于" },
+		{ regex: /</, label: "小于" },
 		{ regex: /&&/, label: "AND" },
 		{ regex: /\|\|/, label: "OR" },
 		{ regex: /!(?!=)/, label: "NOT" },
 		{ regex: /in\s/, label: "IN" },
-		{ regex: /.matches\(/, label: "Regex" },
-		{ regex: /.startsWith\(/, label: "StartsWith" },
-		{ regex: /.contains\(/, label: "Contains" },
-		{ regex: /.endsWith\(/, label: "EndsWith" },
+		{ regex: /.matches\(/, label: "正则" },
+		{ regex: /.startsWith\(/, label: "开头为" },
+		{ regex: /.contains\(/, label: "包含" },
+		{ regex: /.endsWith\(/, label: "结尾为" },
 	];
 
 	operatorPatterns.forEach(({ regex, label }) => {

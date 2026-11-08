@@ -32,19 +32,19 @@ export function validateRegexPattern(pattern: string): string | null {
 
 	// Reject RE2-unsupported constructs
 	if (pattern.includes(RE2_UNSUPPORTED.lookbehindPositive)) {
-		return "RE2 incompatible: positive lookbehind (?<=...) is not supported";
+		return "不兼容 RE2：不支持正向后行断言 (?<=...)";
 	}
 	if (pattern.includes(RE2_UNSUPPORTED.lookbehindNegative)) {
-		return "RE2 incompatible: negative lookbehind (?<!...) is not supported";
+		return "不兼容 RE2：不支持负向后行断言 (?<!...)";
 	}
 	if (pattern.includes(RE2_UNSUPPORTED.lookaheadPositive)) {
-		return "RE2 incompatible: positive lookahead (?=...) is not supported";
+		return "不兼容 RE2：不支持正向先行断言 (?=...)";
 	}
 	if (pattern.includes(RE2_UNSUPPORTED.lookaheadNegative)) {
-		return "RE2 incompatible: negative lookahead (?!...) is not supported";
+		return "不兼容 RE2：不支持负向先行断言 (?!...)";
 	}
 	if (RE2_BACKREF.test(pattern)) {
-		return "RE2 incompatible: numeric backreferences (e.g. \\1, \\2) are not supported";
+		return "不兼容 RE2：不支持数字反向引用（例如 \\1、\\2）";
 	}
 
 	// Basic syntax check via JS RegExp (catches invalid escaping, etc.)
@@ -52,8 +52,8 @@ export function validateRegexPattern(pattern: string): string | null {
 		new RegExp(pattern);
 		return null; // Valid regex
 	} catch (error: unknown) {
-		const errorMessage = error instanceof Error ? error.message : "Invalid regex pattern";
-		return `Invalid regex: ${errorMessage}`;
+		const errorMessage = error instanceof Error ? error.message : "无效的正则表达式";
+		return `无效的正则表达式：${errorMessage}`;
 	}
 }
 
@@ -312,7 +312,7 @@ export function validateRoutingRules(ruleGroup: RuleGroupType | undefined): stri
 			if (rule.operator === "matches" && rule.value) {
 				const regexError = validateRegexPattern(String(rule.value));
 				if (regexError) {
-					errors.push(`Field "${rule.field}": ${regexError}`);
+					errors.push(`字段 "${rule.field}"：${regexError}`);
 				}
 			}
 		}
@@ -363,7 +363,7 @@ export function validateRateLimitAndBudgetRules(ruleGroup: RuleGroupType | undef
 	if (ruleHasRateLimitOrBudget) {
 		const hasCondition = hasModelOrProviderCondition(ruleGroup);
 		if (!hasCondition) {
-			errors.push('Rules using rate limits or budget must have a "model" or "provider" condition');
+			errors.push("使用速率限制或预算的规则必须包含模型或提供商条件");
 		}
 	}
 

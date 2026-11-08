@@ -117,24 +117,24 @@ const DEFAULT_MODEL_PARAMETERS: ModelDatasheetResponse = {
 	model_parameters: [
 		{
 			id: "temperature",
-			label: "Temperature",
+			label: "温度",
 			helpText:
-				"What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.",
+				"采样温度，取值 0 到 2。数值越高（如 0.8）输出越随机，数值越低（如 0.2）输出越聚焦、越确定。",
 			type: "number",
 			range: { min: 0, max: 2, step: 0.01 },
 		},
 		{
 			id: "max_tokens",
-			label: "Max Tokens",
-			helpText: "The maximum number of tokens that can be generated in the Result.",
+			label: "最大 Token 数",
+			helpText: "结果中可生成的最大 Token 数。",
 			type: "number",
 			range: { min: 1, max: 8192, step: 1 },
 		},
 		{
 			id: "stream",
-			label: "Stream",
+			label: "流式输出",
 			helpText:
-				"The stream parameter in the API controls whether the response is sent in incremental updates, like tokenized data as it's generated, or as a complete result in one go.",
+				"API 的 stream 参数决定响应是采用增量更新（生成过程中逐 Token 返回），还是一次性返回完整结果。",
 			type: "boolean",
 		},
 	],

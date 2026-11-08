@@ -9,37 +9,37 @@ z.config({
 		if (issue.code === "invalid_type") {
 			// Field is missing / undefined
 			if (issue.input === undefined || issue.input === null) {
-				return "This field is required";
+				return "请填写此字段";
 			}
 			const expected = issue.expected;
 			const received = typeof issue.input;
-			if (expected === "number") return "Must be a valid number";
-			if (expected === "string") return "Must be a valid text value";
-			if (expected === "boolean") return "Must be true or false";
-			return `Expected ${expected}, received ${received}`;
+			if (expected === "number") return "请输入有效的数字";
+			if (expected === "string") return "请输入有效的文本";
+			if (expected === "boolean") return "必须为 true 或 false";
+			return `应为 ${expected}，实际为 ${received}`;
 		}
 		if (issue.code === "too_small") {
 			if (issue.origin === "string" && issue.minimum === 1) {
-				return "This field is required";
+				return "请填写此字段";
 			}
 			if (issue.origin === "number") {
-				return `Must be at least ${issue.minimum}`;
+				return `不得小于 ${issue.minimum}`;
 			}
 			if (issue.origin === "array" && issue.minimum === 1) {
-				return "At least one item is required";
+				return "请至少添加一项";
 			}
 		}
 		if (issue.code === "too_big") {
 			if (issue.origin === "number") {
-				return `Must be at most ${issue.maximum}`;
+				return `不得大于 ${issue.maximum}`;
 			}
 			if (issue.origin === "string") {
-				return `Must be at most ${issue.maximum} characters`;
+				return `最多 ${issue.maximum} 个字符`;
 			}
 		}
 		if (issue.code === "invalid_format") {
-			if (issue.format === "url") return "Must be a valid URL";
-			if (issue.format === "email") return "Must be a valid email";
+			if (issue.format === "url") return "请输入有效的 URL";
+			if (issue.format === "email") return "请输入有效的邮箱地址";
 		}
 		return undefined; // fall back to Zod default
 	},
@@ -51,7 +51,7 @@ z.config({
 export const knownProviderSchema = z.enum(KnownProvidersNames as unknown as [string, ...string[]]);
 
 // Custom provider name schema (branded type simulation)
-export const customProviderNameSchema = z.string().min(1, "Custom provider name is required");
+export const customProviderNameSchema = z.string().min(1, "请填写自定义提供商名称");
 
 // Model provider name schema (union of known and custom providers)
 export const modelProviderNameSchema = z.union([knownProviderSchema, customProviderNameSchema]);
@@ -85,7 +85,7 @@ export const azureKeyConfigSchema = z
 		scopes: z.array(z.string()).optional(),
 	})
 	.refine((data) => isSecretVarSet(data.endpoint), {
-		message: "Endpoint is required",
+		message: "请填写端点地址",
 		path: ["endpoint"],
 	})
 	.refine(
@@ -103,7 +103,7 @@ export const azureKeyConfigSchema = z
 			return hasClientId && hasClientSecret && hasTenantId;
 		},
 		{
-			message: "Client ID, Client Secret, and Tenant ID are all required for Entra ID authentication",
+			message: "使用 Entra ID 认证时，必须同时填写客户端 ID、客户端密钥和租户 ID",
 			path: ["client_id"],
 		},
 	);
@@ -119,11 +119,11 @@ export const vertexKeyConfigSchema = z
 		force_single_region: z.boolean().optional(),
 	})
 	.refine((data) => isSecretVarSet(data.project_id), {
-		message: "Project ID is required",
+		message: "请填写项目 ID",
 		path: ["project_id"],
 	})
 	.refine((data) => isSecretVarSet(data.region), {
-		message: "Region is required",
+		message: "请填写区域",
 		path: ["region"],
 	})
 	.refine(
@@ -135,14 +135,14 @@ export const vertexKeyConfigSchema = z
 			return true;
 		},
 		{
-			message: "Auth Credentials is required for service account JSON authentication",
+			message: "使用服务账号 JSON 认证时，请填写认证凭证",
 			path: ["auth_credentials"],
 		},
 	);
 
 // S3 bucket configuration for Bedrock batch operations
 export const s3BucketConfigSchema = z.object({
-	bucket_name: z.string().min(1, "Bucket name is required"),
+	bucket_name: z.string().min(1, "请填写存储桶名称"),
 	prefix: z.string().optional(),
 	is_default: z.boolean().optional(),
 });
@@ -173,7 +173,7 @@ export const bedrockKeyConfigSchema = z
 			return isSecretVarSet(data.region);
 		},
 		{
-			message: "Region is required",
+			message: "请填写区域",
 			path: ["region"],
 		},
 	)
@@ -190,7 +190,7 @@ export const bedrockKeyConfigSchema = z
 			return hasAccessKey && hasSecretKey;
 		},
 		{
-			message: "Both Access Key and Secret Key are required for explicit credentials",
+			message: "使用显式凭证时，必须同时填写访问密钥和私有密钥",
 			path: ["access_key"],
 		},
 	);
@@ -209,7 +209,7 @@ export const bedrockMantleKeyConfigSchema = z
 		project_id: secretVarSchema.optional(),
 	})
 	.refine((data) => isSecretVarSet(data.region), {
-		message: "Region is required",
+		message: "请填写区域",
 		path: ["region"],
 	})
 	.refine(
@@ -226,7 +226,7 @@ export const bedrockMantleKeyConfigSchema = z
 			return hasAccessKey && hasSecretKey;
 		},
 		{
-			message: "Both Access Key and Secret Key are required for explicit credentials",
+			message: "使用显式凭证时，必须同时填写访问密钥和私有密钥",
 			path: ["access_key"],
 		},
 	);
@@ -235,10 +235,10 @@ export const bedrockMantleKeyConfigSchema = z
 export const vllmKeyConfigSchema = z
 	.object({
 		url: secretVarSchema.optional(),
-		model_name: z.string().trim().min(1, "Model name is required"),
+		model_name: z.string().trim().min(1, "请填写模型名称"),
 	})
 	.refine((data) => isSecretVarSet(data.url), {
-		message: "Server URL is required",
+		message: "请填写服务器 URL",
 		path: ["url"],
 	});
 
@@ -252,7 +252,7 @@ export const ollamaKeyConfigSchema = z
 		url: secretVarSchema.optional(),
 	})
 	.refine((data) => isSecretVarSet(data.url), {
-		message: "Server URL is required",
+		message: "请填写服务器 URL",
 		path: ["url"],
 	});
 
@@ -262,7 +262,7 @@ export const sglKeyConfigSchema = z
 		url: secretVarSchema.optional(),
 	})
 	.refine((data) => isSecretVarSet(data.url), {
-		message: "Server URL is required",
+		message: "请填写服务器 URL",
 		path: ["url"],
 	});
 
@@ -285,7 +285,7 @@ export const modelFamilySchema = z.enum([
 // provider sub-configs flattened to top-level optional fields (matches Go's
 // embedded-pointer-struct JSON output).
 const aliasConfigObjectSchema = z.object({
-	model_id: z.string().trim().min(1, "Model ID is required"),
+	model_id: z.string().trim().min(1, "请填写模型 ID"),
 	model_name: z.string().trim().optional(),
 	model_family: modelFamilySchema.optional(),
 	description: z.string().optional(),
@@ -317,8 +317,8 @@ export const aliasConfigSchema = z.preprocess(
 // Model provider key schema
 export const modelProviderKeySchema = z
 	.object({
-		id: z.string().min(1, "Id is required"),
-		name: z.string().min(1, "Name is required"),
+		id: z.string().min(1, "请填写 ID"),
+		name: z.string().min(1, "请填写名称"),
 		value: secretVarSchema.optional(),
 		models: z.array(z.string()).optional().default(["*"]),
 		blacklisted_models: z.array(z.string()).default([]).optional(),
@@ -333,13 +333,13 @@ export const modelProviderKeySchema = z
 				if (!Number.isFinite(num)) {
 					ctx.addIssue({
 						code: "custom",
-						message: "Weight must be a valid number between 0 and 1",
+						message: "权重必须是 0 到 1 之间的有效数字",
 					});
 					return z.NEVER;
 				}
 				return num;
 			})
-			.pipe(z.number().min(0, "Weight must be equal to or greater than 0").max(1, "Weight must be equal to or less than 1")),
+			.pipe(z.number().min(0, "权重不得小于 0").max(1, "权重不得大于 1")),
 		aliases: z.record(z.string(), aliasConfigSchema).optional(),
 		azure_key_config: azureKeyConfigSchema.optional(),
 		vertex_key_config: vertexKeyConfigSchema.optional(),
@@ -392,7 +392,7 @@ export const modelProviderKeySchema = z
 			return isSecretVarSet(data.value);
 		},
 		{
-			message: "API Key is required",
+			message: "请填写 API 密钥",
 			path: ["value"],
 		},
 	);
@@ -400,46 +400,46 @@ export const modelProviderKeySchema = z
 // Network config schema
 export const networkConfigSchema = z
 	.object({
-		base_url: z.union([z.string().url("Must be a valid URL"), z.string().length(0)]).optional(),
+		base_url: z.union([z.string().url("请输入有效的 URL"), z.string().length(0)]).optional(),
 		extra_headers: z.record(z.string(), z.string()).optional(),
 		default_request_timeout_in_seconds: z
 			.number()
-			.min(1, "Timeout must be greater than 0 seconds")
-			.max(3600, "Timeout must be less than 3600 seconds"),
-		max_retries: z.number().min(0, "Max retries must be greater than 0").max(10, "Max retries must be less than 10"),
+			.min(1, "超时时间必须大于 0 秒")
+			.max(3600, "超时时间必须小于 3600 秒"),
+		max_retries: z.number().min(0, "最大重试次数必须大于 0").max(10, "最大重试次数必须小于 10"),
 		retry_backoff_initial: z.number().min(100),
 		retry_backoff_max: z.number().min(100),
 		insecure_skip_verify: z.boolean().optional(),
 		ca_cert_pem: secretVarSchema.optional(),
 		stream_idle_timeout_in_seconds: z
 			.number()
-			.int("Stream idle timeout must be a whole number of seconds")
-			.min(5, "Stream idle timeout must be at least 5 seconds")
-			.max(3600, "Stream idle timeout must be at most 3600 seconds i.e. 60 minutes")
+			.int("流式空闲超时必须为整数秒")
+			.min(5, "流式空闲超时不得小于 5 秒")
+			.max(3600, "流式空闲超时不得大于 3600 秒（即 60 分钟）")
 			.optional(),
 		keep_alive_timeout_in_seconds: z
 			.number()
-			.int("Keep-alive timeout must be a whole number of seconds")
-			.min(1, "Keep-alive timeout must be at least 1 second")
-			.max(3600, "Keep-alive timeout must be at most 3600 seconds i.e. 60 minutes")
+			.int("Keep-Alive 超时必须为整数秒")
+			.min(1, "Keep-Alive 超时不得小于 1 秒")
+			.max(3600, "Keep-Alive 超时不得大于 3600 秒（即 60 分钟）")
 			.optional(),
 		max_conns_per_host: z
 			.number()
-			.int("Max connections must be a whole number")
-			.min(1, "Max connections must be at least 1")
-			.max(10000, "Max connections must be at most 10000")
+			.int("最大连接数必须为整数")
+			.min(1, "最大连接数不得小于 1")
+			.max(10000, "最大连接数不得大于 10000")
 			.optional(),
 		enforce_http2: z.boolean().optional(),
 		http2_ping_interval_in_seconds: z
 			.number()
-			.int("HTTP/2 ping interval must be a whole number of seconds")
-			.min(0, "HTTP/2 ping interval must be at least 0 seconds")
-			.max(3600, "HTTP/2 ping interval must be at most 3600 seconds i.e. 60 minutes")
+			.int("HTTP/2 ping 间隔必须为整数秒")
+			.min(0, "HTTP/2 ping 间隔不得小于 0 秒")
+			.max(3600, "HTTP/2 ping 间隔不得大于 3600 秒（即 60 分钟）")
 			.optional(),
 		allow_private_network: z.boolean().optional(),
 	})
 	.refine((d) => d.retry_backoff_initial <= d.retry_backoff_max, {
-		message: "retry_backoff_initial must be <= retry_backoff_max",
+		message: "初始退避必须小于或等于最大退避",
 		path: ["retry_backoff_initial"],
 	});
 
@@ -450,68 +450,68 @@ export const networkFormConfigSchema = z
 			.union([
 				z
 					.string()
-					.url("Must be a valid URL")
+					.url("请输入有效的 URL")
 					.refine((url) => url.startsWith("https://") || url.startsWith("http://"), {
-						message: "Must be a valid HTTP or HTTPS URL",
+						message: "请输入有效的 HTTP 或 HTTPS URL",
 					}),
 				z.string().length(0),
 			])
 			.optional(),
 		extra_headers: z.record(z.string(), z.string()).optional(),
 		default_request_timeout_in_seconds: z.coerce
-			.number("Timeout must be a number")
-			.min(1, "Timeout must be greater than 0 seconds")
-			.max(172800, "Timeout must be less than 172800 seconds i.e. 48 hours"),
+			.number("超时时间必须为数字")
+			.min(1, "超时时间必须大于 0 秒")
+			.max(172800, "超时时间必须小于 172800 秒（即 48 小时）"),
 		max_retries: z.coerce
-			.number("Max retries must be a number")
-			.min(0, "Max retries must be greater than 0")
-			.max(10, "Max retries must be less than 10"),
+			.number("最大重试次数必须为数字")
+			.min(0, "最大重试次数必须大于 0")
+			.max(10, "最大重试次数必须小于 10"),
 		retry_backoff_initial: z.coerce
-			.number("Retry backoff initial must be a number")
-			.min(100, "Retry backoff initial must be at least 100ms")
-			.max(1000000, "Retry backoff initial must be at most 1000000ms"),
+			.number("初始退避必须为数字")
+			.min(100, "初始退避不得小于 100ms")
+			.max(1000000, "初始退避不得大于 1000000ms"),
 		retry_backoff_max: z.coerce
-			.number("Retry backoff max must be a number")
-			.min(100, "Retry backoff max must be at least 100ms")
-			.max(1000000, "Retry backoff max must be at most 1000000ms"),
+			.number("最大退避必须为数字")
+			.min(100, "最大退避不得小于 100ms")
+			.max(1000000, "最大退避不得大于 1000000ms"),
 		insecure_skip_verify: z.boolean().optional(),
 		ca_cert_pem: secretVarSchema.optional(),
 		stream_idle_timeout_in_seconds: z.coerce
-			.number("Stream idle timeout must be a number")
-			.int("Stream idle timeout must be a whole number of seconds")
-			.min(5, "Stream idle timeout must be at least 5 seconds")
-			.max(3600, "Stream idle timeout must be at most 3600 seconds i.e. 60 minutes")
+			.number("流式空闲超时必须为数字")
+			.int("流式空闲超时必须为整数秒")
+			.min(5, "流式空闲超时不得小于 5 秒")
+			.max(3600, "流式空闲超时不得大于 3600 秒（即 60 分钟）")
 			.optional(),
 		keep_alive_timeout_in_seconds: z.coerce
-			.number("Keep-alive timeout must be a number")
-			.int("Keep-alive timeout must be a whole number of seconds")
-			.min(1, "Keep-alive timeout must be at least 1 second")
-			.max(3600, "Keep-alive timeout must be at most 3600 seconds i.e. 60 minutes")
+			.number("Keep-Alive 超时必须为数字")
+			.int("Keep-Alive 超时必须为整数秒")
+			.min(1, "Keep-Alive 超时不得小于 1 秒")
+			.max(3600, "Keep-Alive 超时不得大于 3600 秒（即 60 分钟）")
 			.optional(),
 		max_conns_per_host: z.coerce
-			.number("Max connections must be a number")
-			.int("Max connections must be a whole number")
-			.min(1, "Max connections must be at least 1")
-			.max(10000, "Max connections must be at most 10000")
+			.number("最大连接数必须为数字")
+			.int("最大连接数必须为整数")
+			.min(1, "最大连接数不得小于 1")
+			.max(10000, "最大连接数不得大于 10000")
 			.optional(),
 		enforce_http2: z.boolean().optional(),
 		http2_ping_interval_in_seconds: z.coerce
-			.number("HTTP/2 ping interval must be a number")
-			.int("HTTP/2 ping interval must be a whole number of seconds")
-			.min(0, "HTTP/2 ping interval must be at least 0 seconds")
-			.max(3600, "HTTP/2 ping interval must be at most 3600 seconds i.e. 60 minutes")
+			.number("HTTP/2 ping 间隔必须为数字")
+			.int("HTTP/2 ping 间隔必须为整数秒")
+			.min(0, "HTTP/2 ping 间隔不得小于 0 秒")
+			.max(3600, "HTTP/2 ping 间隔不得大于 3600 秒（即 60 分钟）")
 			.optional(),
 		allow_private_network: z.boolean().optional(),
 	})
 	.refine((d) => d.retry_backoff_initial <= d.retry_backoff_max, {
-		message: "Initial backoff must be less than or equal to max backoff",
+		message: "初始退避必须小于或等于最大退避",
 		path: ["retry_backoff_initial"],
 	});
 
 // Concurrency and buffer size schema
 export const concurrencyAndBufferSizeSchema = z.object({
-	concurrency: z.number().min(1, "Concurrency must be greater than 0").max(100, "Concurrency must be less than or equal to 100"),
-	buffer_size: z.number().min(1, "Buffer size must be greater than 0").max(1000, "Buffer size must be less than or equal to 1000"),
+	concurrency: z.number().min(1, "并发数必须大于 0").max(100, "并发数不得大于 100"),
+	buffer_size: z.number().min(1, "缓冲区大小必须大于 0").max(1000, "缓冲区大小不得大于 1000"),
 });
 
 // Proxy type schema
@@ -533,7 +533,7 @@ export const proxyConfigSchema = z
 			data.url?.type === "vault" ||
 			(data.url?.value && data.url.value.trim().length > 0),
 		{
-			message: "Proxy URL is required when using HTTP or SOCKS5 proxy",
+			message: "使用 HTTP 或 SOCKS5 代理时必须填写代理 URL",
 			path: ["url"],
 		},
 	)
@@ -553,7 +553,7 @@ export const proxyConfigSchema = z
 			return true;
 		},
 		{
-			message: "Must be a valid URL (e.g., http://proxy.example.com:8080)",
+			message: "请输入有效的 URL（例如 http://proxy.example.com:8080）",
 			path: ["url"],
 		},
 	);
@@ -582,7 +582,7 @@ export const proxyFormConfigSchema = z
 			return true;
 		},
 		{
-			message: "Proxy URL is required when using HTTP or SOCKS5 proxy",
+			message: "使用 HTTP 或 SOCKS5 代理时必须填写代理 URL",
 			path: ["url"],
 		},
 	)
@@ -603,7 +603,7 @@ export const proxyFormConfigSchema = z
 			return true;
 		},
 		{
-			message: "Must be a valid URL (e.g., http://proxy.example.com:8080)",
+			message: "请输入有效的 URL（例如 http://proxy.example.com:8080）",
 			path: ["url"],
 		},
 	);
@@ -668,7 +668,7 @@ export const customProviderConfigSchema = z
 			return true;
 		},
 		{
-			message: "Is keyless is not allowed for Bedrock",
+			message: "Bedrock 不支持无需密钥模式",
 			path: ["is_key_less"],
 		},
 	);
@@ -676,7 +676,7 @@ export const customProviderConfigSchema = z
 // Form-specific custom provider config schema
 export const formCustomProviderConfigSchema = z
 	.object({
-		base_provider_type: z.string().min(1, "Base provider type is required"),
+		base_provider_type: z.string().min(1, "请填写基础提供商类型"),
 		is_key_less: z.boolean().optional(),
 		allowed_requests: allowedRequestsSchema.optional(),
 		request_path_overrides: z.record(z.string(), z.string().optional()).optional(),
@@ -689,14 +689,14 @@ export const formCustomProviderConfigSchema = z
 			return true;
 		},
 		{
-			message: "Is keyless is not allowed for Bedrock",
+			message: "Bedrock 不支持无需密钥模式",
 			path: ["is_key_less"],
 		},
 	);
 
 // Full model provider config schema
 export const modelProviderConfigSchema = z.object({
-	keys: z.array(modelProviderKeySchema).min(1, "At least one key is required"),
+	keys: z.array(modelProviderKeySchema).min(1, "请至少添加一个密钥"),
 	network_config: networkConfigSchema.optional(),
 	concurrency_and_buffer_size: concurrencyAndBufferSizeSchema.optional(),
 	proxy_config: proxyConfigSchema.optional(),
@@ -713,7 +713,7 @@ export const modelProviderSchema = modelProviderConfigSchema.extend({
 
 // Form-specific model provider config schema
 export const formModelProviderConfigSchema = z.object({
-	keys: z.array(modelProviderKeySchema).min(1, "At least one key is required"),
+	keys: z.array(modelProviderKeySchema).min(1, "请至少添加一个密钥"),
 	network_config: networkConfigSchema.optional(),
 	concurrency_and_buffer_size: concurrencyAndBufferSizeSchema.optional(),
 	proxy_config: proxyConfigSchema.optional(),
@@ -725,13 +725,13 @@ export const formModelProviderConfigSchema = z.object({
 
 // Flexible model provider schema for form data - allows any string for name
 export const formModelProviderSchema = formModelProviderConfigSchema.extend({
-	name: z.string().min(1, "Provider name is required"),
+	name: z.string().min(1, "请填写提供商名称"),
 });
 
 // Add provider request schema
 export const addProviderRequestSchema = z.object({
 	provider: modelProviderNameSchema,
-	keys: z.array(modelProviderKeySchema).min(1, "At least one key is required"),
+	keys: z.array(modelProviderKeySchema).min(1, "请至少添加一个密钥"),
 	network_config: networkConfigSchema.optional(),
 	concurrency_and_buffer_size: concurrencyAndBufferSizeSchema.optional(),
 	proxy_config: proxyConfigSchema.optional(),
@@ -744,7 +744,7 @@ export const addProviderRequestSchema = z.object({
 
 // Update provider request schema
 export const updateProviderRequestSchema = z.object({
-	keys: z.array(modelProviderKeySchema).min(1, "At least one key is required"),
+	keys: z.array(modelProviderKeySchema).min(1, "请至少添加一个密钥"),
 	network_config: networkConfigSchema,
 	concurrency_and_buffer_size: concurrencyAndBufferSizeSchema,
 	proxy_config: proxyConfigSchema,
@@ -780,8 +780,8 @@ const providerBackedCacheConfigSchema = baseCacheConfigSchema
 	.extend({
 		provider: modelProviderNameSchema,
 		keys: z.array(modelProviderKeySchema).optional(),
-		embedding_model: z.string().min(1, "Embedding model is required"),
-		dimension: z.number().int().min(2, "Dimension must be greater than 1 for provider-backed semantic cache"),
+		embedding_model: z.string().min(1, "请填写向量化模型"),
+		dimension: z.number().int().min(2, "提供商支持的语义缓存维度必须大于 1"),
 	})
 	.strict();
 
@@ -835,16 +835,16 @@ export const performanceFormSchema = z.object({
 	concurrency_and_buffer_size: z
 		.object({
 			concurrency: z
-				.number({ error: "Concurrency must be a number" })
-				.min(1, "Concurrency must be greater than 0")
-				.max(100000, "Concurrency must be less than 100000"),
+				.number({ error: "并发数必须为数字" })
+				.min(1, "并发数必须大于 0")
+				.max(100000, "并发数必须小于 100000"),
 			buffer_size: z
-				.number({ error: "Buffer size must be a number" })
-				.min(1, "Buffer size must be greater than 0")
-				.max(100000, "Buffer size must be less than 100000"),
+				.number({ error: "缓冲区大小必须为数字" })
+				.min(1, "缓冲区大小必须大于 0")
+				.max(100000, "缓冲区大小必须小于 100000"),
 		})
 		.refine((data) => data.concurrency <= data.buffer_size, {
-			message: "Concurrency must be less than or equal to buffer size",
+			message: "并发数不得大于缓冲区大小",
 			path: ["concurrency"],
 		}),
 });
@@ -874,13 +874,13 @@ export const otelConfigSchema = z
 		collector_url: secretVarSchema.default({ value: "" }),
 		trace_type: z
 			.enum(["genai_extension", "vercel", "open_inference"], {
-				message: "Please select a trace type",
+				message: "请选择追踪类型",
 			})
 			.default("genai_extension"),
 		headers: z.record(z.string(), secretVarSchema).optional(),
 		protocol: z
 			.enum(["http", "grpc"], {
-				message: "Please select a protocol",
+				message: "请选择协议",
 			})
 			.default("http"),
 		// TLS configuration
@@ -914,7 +914,7 @@ export const otelConfigSchema = z
 					ctx.addIssue({
 						code: "custom",
 						path,
-						message: "Must be a valid HTTP or HTTPS URL",
+						message: "请输入有效的 HTTP 或 HTTPS URL",
 					});
 					return false;
 				}
@@ -923,7 +923,7 @@ export const otelConfigSchema = z
 				ctx.addIssue({
 					code: "custom",
 					path,
-					message: "Must be a valid HTTP or HTTPS URL",
+					message: "请输入有效的 HTTP 或 HTTPS URL",
 				});
 				return false;
 			}
@@ -936,7 +936,7 @@ export const otelConfigSchema = z
 				ctx.addIssue({
 					code: "custom",
 					path,
-					message: `Must be in the format <host>:<port> for gRPC (e.g. ${example})`,
+					message: `gRPC 地址格式必须为 <host>:<port>（例如 ${example}）`,
 				});
 				return false;
 			}
@@ -945,7 +945,7 @@ export const otelConfigSchema = z
 				ctx.addIssue({
 					code: "custom",
 					path,
-					message: "Port must be between 1 and 65535",
+					message: "端口必须在 1 到 65535 之间",
 				});
 				return false;
 			}
@@ -957,7 +957,7 @@ export const otelConfigSchema = z
 			ctx.addIssue({
 				code: "custom",
 				path: ["collector_url"],
-				message: "Collector address is required",
+				message: "请填写采集器地址",
 			});
 		}
 
@@ -976,7 +976,7 @@ export const otelConfigSchema = z
 				ctx.addIssue({
 					code: "custom",
 					path: ["metrics_endpoint"],
-					message: "Metrics endpoint is required when metrics push is enabled",
+					message: "启用指标推送时必须填写指标端点",
 				});
 			} else if (metricsEndpoint && (data.metrics_endpoint?.type === "plain_text" || !data.metrics_endpoint?.type) && protocol === "http") {
 				validateHttpUrl(metricsEndpoint, ["metrics_endpoint"]);
@@ -990,7 +990,7 @@ export const otelConfigSchema = z
 // it carries one or more export profiles, each independently enable-able.
 export const otelFormSchema = z.object({
 	enabled: z.boolean().default(true),
-	profiles: z.array(otelConfigSchema).min(1, "At least one profile is required"),
+	profiles: z.array(otelConfigSchema).min(1, "请至少添加一个配置"),
 });
 
 // Maxim Configuration Schema
@@ -1013,13 +1013,13 @@ export const maximFormSchema = z
 				ctx.addIssue({
 					code: "custom",
 					path: ["maxim_config", "api_key"],
-					message: "API key is required",
+					message: "请填写 API 密钥",
 				});
 			} else if (!apiKey.startsWith("sk_mx_")) {
 				ctx.addIssue({
 					code: "custom",
 					path: ["maxim_config", "api_key"],
-					message: "API key must start with 'sk_mx_'",
+					message: "API 密钥必须以 'sk_mx_' 开头",
 				});
 			}
 		}
@@ -1045,14 +1045,14 @@ export const prometheusConfigSchema = z
 					ctx.addIssue({
 						code: "custom",
 						path: ["push_gateway_url"],
-						message: "Must be a valid HTTP or HTTPS URL",
+						message: "请输入有效的 HTTP 或 HTTPS URL",
 					});
 				}
 			} catch {
 				ctx.addIssue({
 					code: "custom",
 					path: ["push_gateway_url"],
-					message: "Must be a valid URL (e.g., http://pushgateway:9091)",
+					message: "请输入有效的 URL（例如 http://pushgateway:9091）",
 				});
 			}
 		}
@@ -1064,14 +1064,14 @@ export const prometheusConfigSchema = z
 			ctx.addIssue({
 				code: "custom",
 				path: ["basic_auth_password"],
-				message: "Password is required when username is provided",
+				message: "填写用户名时必须填写密码",
 			});
 		}
 		if (hasPassword && !hasUsername) {
 			ctx.addIssue({
 				code: "custom",
 				path: ["basic_auth_username"],
-				message: "Username is required when password is provided",
+				message: "填写密码时必须填写用户名",
 			});
 		}
 	});
@@ -1090,7 +1090,7 @@ export const prometheusFormSchema = z
 				ctx.addIssue({
 					code: "custom",
 					path: ["prometheus_config", "push_gateway_url"],
-					message: "Push Gateway URL is required when the push gateway is enabled",
+					message: "启用推送网关时必须填写 Push Gateway 地址",
 				});
 			}
 		}
@@ -1104,19 +1104,19 @@ export const mcpClientUpdateSchema = z.object({
 	disabled: z.boolean().optional(),
 	name: z
 		.string()
-		.min(1, "Name is required")
+		.min(1, "请填写名称")
 		.refine((val) => !val.includes("-"), {
-			message: "Client name cannot contain hyphens",
+			message: "客户端名称不能包含连字符",
 		})
 		.refine((val) => !val.includes(" "), {
-			message: "Client name cannot contain spaces",
+			message: "客户端名称不能包含空格",
 		})
 		.refine((val) => !/^[0-9]/.test(val), {
-			message: "Client name cannot start with a number",
+			message: "客户端名称不能以数字开头",
 		}),
 	headers: z.record(z.string(), secretVarSchema).optional().nullable(),
 	per_user_header_keys: z
-		.array(z.string().trim().min(1, "Header name cannot be empty"))
+		.array(z.string().trim().min(1, "请求头名称不能为空"))
 		.optional()
 		.refine(
 			(headers) => {
@@ -1124,7 +1124,7 @@ export const mcpClientUpdateSchema = z.object({
 				const normalized = headers.map((h) => h.trim().toLowerCase());
 				return normalized.length === new Set(normalized).size;
 			},
-			{ message: "Duplicate header names are not allowed" },
+			{ message: "请求头名称不能重复" },
 		),
 	tools_to_execute: z
 		.array(z.string())
@@ -1135,14 +1135,14 @@ export const mcpClientUpdateSchema = z.object({
 				const hasWildcard = tools.includes("*");
 				return !hasWildcard || tools.length === 1;
 			},
-			{ message: "Wildcard '*' cannot be combined with other tool names" },
+			{ message: "通配符 '*' 不能与其他工具名称同时使用" },
 		)
 		.refine(
 			(tools) => {
 				if (!tools) return true;
 				return tools.length === new Set(tools).size;
 			},
-			{ message: "Duplicate tool names are not allowed" },
+			{ message: "工具名称不能重复" },
 		),
 	tools_to_auto_execute: z
 		.array(z.string())
@@ -1153,16 +1153,16 @@ export const mcpClientUpdateSchema = z.object({
 				const hasWildcard = tools.includes("*");
 				return !hasWildcard || tools.length === 1;
 			},
-			{ message: "Wildcard '*' cannot be combined with other tool names" },
+			{ message: "通配符 '*' 不能与其他工具名称同时使用" },
 		)
 		.refine(
 			(tools) => {
 				if (!tools) return true;
 				return tools.length === new Set(tools).size;
 			},
-			{ message: "Duplicate tool names are not allowed" },
+			{ message: "工具名称不能重复" },
 		),
-	tool_pricing: z.record(z.string(), z.number().min(0, "Cost must be non-negative")).optional(),
+	tool_pricing: z.record(z.string(), z.number().min(0, "成本不能为负数")).optional(),
 	tool_sync_interval: z.number().optional(), // -1 = disabled, 0 = use global, >0 = custom interval in minutes
 	tool_execution_timeout: z.number().int().min(0).optional(), // 0 = use global, >0 = per-server timeout in seconds
 	allowed_extra_headers: z
@@ -1174,7 +1174,7 @@ export const mcpClientUpdateSchema = z.object({
 				const hasWildcard = headers.includes("*");
 				return !hasWildcard || headers.length === 1;
 			},
-			{ message: "Wildcard '*' cannot be combined with specific header names" },
+			{ message: "通配符 '*' 不能与具体请求头名称同时使用" },
 		),
 	oauth_config: z
 		.object({
@@ -1218,7 +1218,7 @@ export const globalProxyConfigSchema = z
 			return true;
 		},
 		{
-			message: "Proxy URL is required when proxy is enabled",
+			message: "启用代理时必须填写代理 URL",
 			path: ["url"],
 		},
 	)
@@ -1236,7 +1236,7 @@ export const globalProxyConfigSchema = z
 			return true;
 		},
 		{
-			message: "Must be a valid URL (e.g., http://proxy.example.com:8080)",
+			message: "请输入有效的 URL（例如 http://proxy.example.com:8080）",
 			path: ["url"],
 		},
 	);
@@ -1261,32 +1261,32 @@ export const globalHeaderFilterFormSchema = z.object({
 // Routing rule creation schema
 export const routingRuleSchema = z
 	.object({
-		name: z.string().min(1, "Rule name is required").max(255, "Rule name must be less than 255 characters"),
-		description: z.string().max(1000, "Description must be less than 1000 characters").optional(),
+		name: z.string().min(1, "请填写规则名称").max(255, "规则名称不能超过 255 个字符"),
+		description: z.string().max(1000, "描述不能超过 1000 个字符").optional(),
 		cel_expression: z.string().optional(),
-		provider: z.string().min(1, "Provider is required"),
+		provider: z.string().min(1, "请选择提供商"),
 		model: z.string().optional(),
 		fallbacks: z.array(z.string()).optional().default([]),
 		scope: z.enum(["global", "team", "customer", "virtual_key"]),
 		scope_id: z.string().optional(),
-		priority: z.number().min(0, "Priority must be 0 or greater").max(1000, "Priority must be 1000 or less"),
+		priority: z.number().min(0, "优先级必须大于或等于 0").max(1000, "优先级必须小于或等于 1000"),
 		enabled: z.boolean().default(true),
 		chain_rule: z.boolean().default(false),
 	})
 	.refine((data) => data.scope === "global" || (data.scope_id != null && data.scope_id.trim() !== ""), {
-		message: "Scope ID is required when scope is not global",
+		message: "范围不为全局时，必须填写范围 ID",
 		path: ["scope_id"],
 	});
 
 // Budget override form schema (BudgetOverrideDialog)
 export const budgetOverrideFormSchema = z
 	.object({
-		amount: z.number("Additional budget must be greater than 0.").positive("Additional budget must be greater than 0."),
+		amount: z.number("追加预算必须大于 0。").positive("追加预算必须大于 0。"),
 		mode: z.enum(["cycles", "forever"]),
 		cycles: z.number().optional(),
 	})
 	.refine((data) => data.mode !== "cycles" || (data.cycles !== undefined && Number.isSafeInteger(data.cycles) && data.cycles > 0), {
-		message: "Reset cycles must be a positive whole number.",
+		message: "重置周期数必须为正整数。",
 		path: ["cycles"],
 	});
 
