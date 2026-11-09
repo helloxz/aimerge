@@ -691,9 +691,14 @@ func (m *MCPManager) SetClientTools(clientID string, tools map[string]schemas.Ch
 	defer m.mu.Unlock()
 
 	if client, exists := m.clientMap[clientID]; exists {
+		// Replace the tool map instead of merging into it: a tool removed
+		// upstream must leave memory once the source of truth has dropped it,
+		// otherwise the map grows for the lifetime of the process.
+		newToolMap := make(map[string]schemas.ChatTool, len(tools))
 		for toolName, tool := range tools {
-			client.ToolMap[toolName] = tool
+			newToolMap[toolName] = tool
 		}
+		client.ToolMap = newToolMap
 		client.ToolNameMapping = toolNameMapping
 		client.State = schemas.MCPConnectionStateConnected
 		m.logger.Debug("%s Set %d tools on client '%s'", MCPLogPrefix, len(tools), client.Name)

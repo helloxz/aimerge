@@ -2877,6 +2877,12 @@ func (r *idleTimeoutReader) Read(p []byte) (n int, err error) {
 // stream_idle_timeout_in_seconds window.
 var ErrStreamIdleTimeout = errors.New("stream idle timeout: no data received within configured window")
 
+// errStreamParkedAfterFinish marks a stream whose upstream stopped on
+// heartbeats after a terminal signal. Closing the body with this error drives
+// fasthttp down its CloseConn path, keeping a half-read connection out of the
+// idle pool.
+var errStreamParkedAfterFinish = errors.New("stream parked after finish_reason: upstream stopped on heartbeats")
+
 // ErrStreamClosed is returned when a stream has already been closed by
 // cancellation or cleanup before the next read starts.
 var ErrStreamClosed = errors.New("stream closed")
@@ -3223,6 +3229,16 @@ func ReleaseStreamingResponse(ctx *schemas.BifrostContext, resp *fasthttp.Respon
 			getLogger().Debug("stream already closed before drain in ReleaseStreamingResponse: %v\n", r)
 		}
 	}()
+	// The upstream stopped on heartbeats after a terminal signal and the body is
+	// still open. Draining would block here (forever when the upstream keeps
+	// heartbeating), so abandon the connection instead: closing with an error
+	// takes fasthttp's CloseConn path and keeps a half-read stream out of the
+	// idle pool. The response is left to GC for the same reason as the early
+	// return above.
+	if parked, _ := ctx.Value(schemas.BifrostContextKeyStreamParkedAfterFinish).(bool); parked {
+		closeBodyStream(bodyStream, errStreamParkedAfterFinish)
+		return
+	}
 	// Drain any remaining data from the body stream before releasing.
 	// This prevents "whitespace in header" errors when the connection is reused
 	// (see: https://github.com/valyala/fasthttp/issues/1743).

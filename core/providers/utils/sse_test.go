@@ -6,6 +6,56 @@ import (
 	"testing"
 )
 
+// TestSSEDataReader_EndsOnPostFinishHeartbeats verifies that an upstream which
+// parks after a terminal signal and only sends keepalive comments is ended
+// instead of being read forever.
+func TestSSEDataReader_EndsOnPostFinishHeartbeats(t *testing.T) {
+	reader := newDefaultSSEDataReader(strings.NewReader(": ping\n\n: ping\n\n: ping\n\n"))
+	SSEEndOnCommentAfterFinish(reader)
+
+	data, err := reader.ReadDataLine()
+	if err != io.EOF {
+		t.Fatalf("expected io.EOF, got data=%q err=%v", data, err)
+	}
+	if !SSEEndedOnComment(reader) {
+		t.Fatal("expected the reader to report that it ended on a heartbeat")
+	}
+}
+
+// TestSSEDataReader_CommentCountResetsOnDataLine verifies that a keepalive
+// before a real frame does not end the stream, and that only consecutive
+// post-finish comments do.
+func TestSSEDataReader_CommentCountResetsOnDataLine(t *testing.T) {
+	reader := newDefaultSSEDataReader(strings.NewReader(": ping\n\ndata: {\"ok\":true}\n\n: ping\n\n: ping\n\n"))
+	SSEEndOnCommentAfterFinish(reader)
+
+	data, err := reader.ReadDataLine()
+	if err != nil {
+		t.Fatalf("expected the data frame, got err=%v", err)
+	}
+	if string(data) != `{"ok":true}` {
+		t.Fatalf("unexpected data frame: %q", data)
+	}
+	if _, err := reader.ReadDataLine(); err != io.EOF {
+		t.Fatalf("expected io.EOF after consecutive heartbeats, got %v", err)
+	}
+	if !SSEEndedOnComment(reader) {
+		t.Fatal("expected the reader to report that it ended on a heartbeat")
+	}
+}
+
+// TestSSEDataReader_UnarmedReaderIgnoresComments verifies that heartbeats are
+// only terminal once the caller has observed a terminal signal.
+func TestSSEDataReader_UnarmedReaderIgnoresComments(t *testing.T) {
+	reader := newDefaultSSEDataReader(strings.NewReader(": ping\n\n: ping\n\n"))
+	if _, err := reader.ReadDataLine(); err != io.EOF {
+		t.Fatalf("expected body EOF, got %v", err)
+	}
+	if SSEEndedOnComment(reader) {
+		t.Fatal("an unarmed reader must not report a heartbeat termination")
+	}
+}
+
 // drainSSEDataReader reads payloads until EOF, failing the test on any other error.
 func drainSSEDataReader(t *testing.T, r SSEDataReader) []string {
 	t.Helper()

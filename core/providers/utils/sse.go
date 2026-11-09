@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	sseInitialBufSize = 8 * 1024        // 8KB — sufficient for >99.9% of SSE lines
+	sseInitialBufSize = 8 * 1024         // 8KB — sufficient for >99.9% of SSE lines
 	sseMaxBufSize     = 10 * 1024 * 1024 // 10MB — allow large tokens (tool calls, audio)
 )
 
@@ -36,6 +36,37 @@ type SSEEventReader interface {
 // from an upstream connection that died mid-stream.
 type SSEStreamTerminator interface {
 	SawDoneMarker() bool
+}
+
+// SSEPostFinishTerminator is optionally implemented by SSE readers that can end
+// a stream once it has delivered a terminal signal and then produces nothing but
+// heartbeat comments. Some OpenAI-compatible upstreams omit "[DONE]" and keep
+// the connection open with keepalives forever; ReadDataLine would otherwise spin
+// on those comments while the worker, the connection and the accumulated
+// response stay pinned.
+type SSEPostFinishTerminator interface {
+	EndOnCommentAfterFinish()
+	EndedOnComment() bool
+}
+
+// SSEEndOnCommentAfterFinish arms readers that support it to end the stream on
+// consecutive SSE comments received after the caller has seen a terminal signal.
+// Readers injected through SSEReaderFactory that do not implement the interface
+// are left unchanged.
+func SSEEndOnCommentAfterFinish(r SSEDataReader) {
+	if t, ok := r.(SSEPostFinishTerminator); ok {
+		t.EndOnCommentAfterFinish()
+	}
+}
+
+// SSEEndedOnComment reports whether r stopped on a post-finish heartbeat comment
+// with the body still open. Cleanup must abandon such a connection instead of
+// draining it.
+func SSEEndedOnComment(r SSEDataReader) bool {
+	if t, ok := r.(SSEPostFinishTerminator); ok {
+		return t.EndedOnComment()
+	}
+	return false
 }
 
 // SSEStreamEndedOnMarker reports whether r ended on an explicit [DONE] marker.
@@ -96,10 +127,24 @@ type defaultSSEDataReader struct {
 	scanner *bufio.Scanner
 	pending []byte // line carried over from an aborted multi-line JSON accumulation
 	sawDone bool   // stream ended on "data: [DONE]" rather than a bare body EOF
+
+	// endOnComment is armed once the caller has seen a terminal signal (for
+	// example finish_reason) and records that only heartbeats can follow.
+	// sawComment records that such heartbeats ended the stream with the body
+	// still open, so cleanup must abandon the connection instead of draining.
+	endOnComment bool
+	sawComment   bool
+	commentsSeen int
 }
 
 // SawDoneMarker implements SSEStreamTerminator.
 func (r *defaultSSEDataReader) SawDoneMarker() bool { return r.sawDone }
+
+// EndOnCommentAfterFinish implements SSEPostFinishTerminator.
+func (r *defaultSSEDataReader) EndOnCommentAfterFinish() { r.endOnComment = true }
+
+// EndedOnComment implements SSEPostFinishTerminator.
+func (r *defaultSSEDataReader) EndedOnComment() bool { return r.sawComment }
 
 func newDefaultSSEDataReader(reader io.Reader) *defaultSSEDataReader {
 	scanner := bufio.NewScanner(reader)
@@ -114,9 +159,25 @@ func (r *defaultSSEDataReader) ReadDataLine() ([]byte, error) {
 			break
 		}
 		// Skip empty lines and comments
-		if len(line) == 0 || line[0] == ':' {
+		if len(line) == 0 {
 			continue
 		}
+		if line[0] == ':' {
+			// Heartbeats after finish_reason mean nothing further is coming. Two
+			// consecutive ones are required so a keepalive that merely straddles
+			// the trailing usage chunk cannot end the stream early; that chunk
+			// resets the count below.
+			if r.endOnComment {
+				r.commentsSeen++
+				if r.commentsSeen >= 2 {
+					r.sawComment = true
+					return nil, io.EOF
+				}
+			}
+			continue
+		}
+		// Any real SSE line means the upstream is still making progress.
+		r.commentsSeen = 0
 
 		// Parse "data:" lines
 		if bytes.HasPrefix(line, sseDataPrefix) {

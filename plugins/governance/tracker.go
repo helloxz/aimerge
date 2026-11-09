@@ -392,25 +392,27 @@ func (t *UsageTracker) validateStartupResetDurations(ctx context.Context) []erro
 
 // Cleanup stops all background workers and flushes pending operations
 func (t *UsageTracker) Cleanup() error {
-	// Final flush of in-memory deltas to DB before shutdown. Without this,
-	// any deltas accumulated since the last `workerInterval` tick are lost.
+	// Stop and join the periodic worker before taking the final snapshots. A
+	// final dump must be the last database writer: otherwise an in-flight cycle
+	// can be cancelled after mutating in-memory reset state, or can race the
+	// final rate-limit dump with a stale snapshot.
+	if t.trackerCancel != nil {
+		t.trackerCancel()
+	}
+	if t.resetTicker != nil {
+		t.resetTicker.Stop()
+	}
+	close(t.done)
+	t.wg.Wait()
+
+	// Flush all in-memory state after the worker has fully stopped, so these
+	// snapshots include every accepted update since the last tick.
 	if err := t.store.DumpBudgets(context.Background(), nil); err != nil {
 		t.logger.Error("final budget dump on shutdown failed: %v", err)
 	}
 	if err := t.store.DumpRateLimits(context.Background(), nil, nil); err != nil {
 		t.logger.Error("final rate-limit dump on shutdown failed: %v", err)
 	}
-
-	// Stop background workers
-	if t.trackerCancel != nil {
-		t.trackerCancel()
-	}
-	close(t.done)
-	if t.resetTicker != nil {
-		t.resetTicker.Stop()
-	}
-	// Wait for workers to finish
-	t.wg.Wait()
 
 	t.logger.Debug("usage tracker cleanup completed")
 	return nil

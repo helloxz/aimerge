@@ -2360,10 +2360,17 @@ func (s *BifrostHTTPServer) Bootstrap(ctx context.Context) error {
 
 	// Checking if config has server config and use it to set read buffer size
 	logger.Debug("server read buffer size: %d", s.Config.ServerConfig.ReadBufferSize)
-	// Create fasthttp server instance
+	// Bound the request-body buffer a pooled keep-alive connection retains. Without
+	// this a single large LLM payload ratchets per-connection memory for the life of
+	// the process. The setting is process-global, so apply it once before serving.
+	maxRequestBodySizeBytes := s.Config.ClientConfig.MaxRequestBodySizeMB * 1024 * 1024
+	lib.ApplyBodyBufferPoolLimit(s.Config.ServerConfig, maxRequestBodySizeBytes)
+	// Create fasthttp server instance. Panic recovery is the outermost layer:
+	// fasthttp recovers nothing on its own, so a panic anywhere below would
+	// otherwise take the process down.
 	s.Server = &fasthttp.Server{
-		Handler:            handlers.SecurityHeadersMiddleware()(s.CORSMiddleware.Middleware()(handlers.RequestDecompressionMiddleware(s.Config)(s.Router.Handler))),
-		MaxRequestBodySize: s.Config.ClientConfig.MaxRequestBodySizeMB * 1024 * 1024,
+		Handler:            handlers.PanicRecoveryMiddleware()(handlers.SecurityHeadersMiddleware()(s.CORSMiddleware.Middleware()(handlers.RequestDecompressionMiddleware(s.Config)(s.Router.Handler)))),
+		MaxRequestBodySize: maxRequestBodySizeBytes,
 		ReadBufferSize:     s.Config.ServerConfig.ReadBufferSize,
 	}
 	startSkillsOrphanCleanupWorker(s.Ctx, s.Config)

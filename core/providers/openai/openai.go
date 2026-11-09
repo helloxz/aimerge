@@ -607,11 +607,24 @@ func HandleOpenAITextCompletionStreaming(
 				if ctx.Err() != nil {
 					return
 				}
+				if errors.Is(readErr, providerUtils.ErrStreamIdleTimeout) && finishReason != nil {
+					// The response is complete: an idle timeout after a terminal
+					// signal means the upstream parked instead of sending [DONE].
+					// End cleanly and abandon the connection rather than failing a
+					// response the client already has.
+					ctx.SetValue(schemas.BifrostContextKeyStreamParkedAfterFinish, true)
+					break
+				}
 				if readErr != io.EOF {
 					ctx.SetValue(schemas.BifrostContextKeyStreamEndIndicator, true)
 					logger.Warn("Error reading stream: %v", readErr)
 					providerUtils.ProcessAndSendError(ctx, postHookRunner, readErr, responseChan, logger, postHookSpanFinalizer)
 					return
+				}
+				if providerUtils.SSEEndedOnComment(sseReader) {
+					// Stopped on post-finish heartbeats: the body is still open, so
+					// cleanup must abandon it instead of draining.
+					ctx.SetValue(schemas.BifrostContextKeyStreamParkedAfterFinish, true)
 				}
 				break
 			}
@@ -705,6 +718,9 @@ func HandleOpenAITextCompletionStreaming(
 				// Collect finish reason and send at the end of the stream
 				finishReason = choice.FinishReason
 				response.Choices[0].FinishReason = nil
+				// An upstream that parks instead of sending [DONE] can only
+				// heartbeat from here on; arm the reader to end on that.
+				providerUtils.SSEEndOnCommentAfterFinish(sseReader)
 			}
 
 			if response.ID != "" && messageID == "" {
@@ -1227,11 +1243,24 @@ func HandleOpenAIChatCompletionStreaming(
 				if ctx.Err() != nil {
 					return
 				}
+				if errors.Is(readErr, providerUtils.ErrStreamIdleTimeout) && finishReason != nil {
+					// The response is complete: an idle timeout after a terminal
+					// signal means the upstream parked instead of sending [DONE].
+					// End cleanly and abandon the connection rather than failing a
+					// response the client already has.
+					ctx.SetValue(schemas.BifrostContextKeyStreamParkedAfterFinish, true)
+					break
+				}
 				if readErr != io.EOF {
 					ctx.SetValue(schemas.BifrostContextKeyStreamEndIndicator, true)
 					logger.Warn("Error reading stream: %v", readErr)
 					providerUtils.ProcessAndSendError(ctx, postHookRunner, readErr, responseChan, logger, postHookSpanFinalizer)
 					return
+				}
+				if providerUtils.SSEEndedOnComment(sseReader) {
+					// Stopped on post-finish heartbeats: the body is still open, so
+					// cleanup must abandon it instead of draining.
+					ctx.SetValue(schemas.BifrostContextKeyStreamParkedAfterFinish, true)
 				}
 				break
 			}
@@ -1407,6 +1436,9 @@ func HandleOpenAIChatCompletionStreaming(
 				if choice.FinishReason != nil && *choice.FinishReason != "" {
 					// Collect finish reason and send at the end of the stream
 					finishReason = choice.FinishReason
+					// An upstream that parks instead of sending [DONE] can only
+					// heartbeat from here on; arm the reader to end on that.
+					providerUtils.SSEEndOnCommentAfterFinish(sseReader)
 				}
 
 				if response.ID != "" && messageID == "" {

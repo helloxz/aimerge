@@ -8,6 +8,54 @@ import (
 	schemas "github.com/maximhq/bifrost/core/schemas"
 )
 
+func TestCheckFirstStreamChunk_CancelledBeforeFirstChunk(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+
+	stream := make(chan *schemas.BifrostStreamChunk, 1)
+	wrapped, drainDone, err := CheckFirstStreamChunkForError(ctx, stream)
+	if wrapped != nil {
+		t.Fatal("expected nil stream channel on cancellation")
+	}
+	if err == nil {
+		t.Fatal("expected a cancellation error, got nil")
+	}
+	if err.StatusCode == nil || *err.StatusCode != 499 {
+		t.Fatalf("expected status 499, got %v", err.StatusCode)
+	}
+	if err.AllowFallbacks == nil || *err.AllowFallbacks {
+		t.Fatal("cancelled requests must not allow fallbacks")
+	}
+	// The producer may still be blocked on send; closing lets the background
+	// drain exit.
+	close(stream)
+	<-drainDone
+}
+
+func TestCheckFirstStreamChunk_DeadlineBeforeFirstChunk(t *testing.T) {
+	ctx, cancel := context.WithDeadline(context.Background(), time.Now().Add(-time.Second))
+	defer cancel()
+
+	stream := make(chan *schemas.BifrostStreamChunk, 1)
+	_, drainDone, err := CheckFirstStreamChunkForError(ctx, stream)
+	if err == nil {
+		t.Fatal("expected a timeout error, got nil")
+	}
+	if err.StatusCode == nil || *err.StatusCode != 504 {
+		t.Fatalf("expected status 504, got %v", err.StatusCode)
+	}
+	close(stream)
+	<-drainDone
+}
+
+func TestCheckFirstStreamChunk_NilStream(t *testing.T) {
+	wrapped, drainDone, err := CheckFirstStreamChunkForError(context.Background(), nil)
+	if wrapped != nil || err != nil {
+		t.Fatalf("expected nil stream and nil error, got %v / %v", wrapped, err)
+	}
+	<-drainDone
+}
+
 func TestCheckFirstStreamChunk_ErrorInFirstChunk(t *testing.T) {
 	stream := make(chan *schemas.BifrostStreamChunk, 2)
 	stream <- &schemas.BifrostStreamChunk{

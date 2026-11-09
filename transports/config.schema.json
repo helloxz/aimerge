@@ -17,6 +17,11 @@
           "type": "integer",
           "description": "Read buffer size in bytes. This controls the size of the buffer used for reading HTTP headers.",
           "default": 65536
+        },
+        "body_buffer_pool_limit_bytes": {
+          "type": "integer",
+          "description": "Caps the request-body buffer a pooled keep-alive connection retains between requests, in bytes. Buffers above this limit are released after each request instead of staying pinned to the connection. Omit to use 4194304 (4 MiB); set 0 or a negative value to keep fasthttp's default of unlimited retention.",
+          "default": 4194304
         }
       },
       "required": ["read_buffer_size"]
