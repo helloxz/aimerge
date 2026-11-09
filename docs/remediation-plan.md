@@ -2,15 +2,32 @@
 
 > 基线：本地 `transports v1.6.11` / `core v1.7.10` / `framework v1.5.10`
 > 上游参照：`transports v2.5.0` / `core v1.15.1`（2026-11-06）
-> 最后更新：2026-11-08
+> 最后更新：2026-11-09
 
 ## 背景
 
 本仓库基于 Bifrost **v1.6.11** 二次开发。v1.6.11 之后上游发布了 transports v2.0.0 → v2.5.0、core v1.7.12 → v1.15.1。
 本文档只收录**高危漏洞**与**内存/资源泄漏**，且已逐条在本地代码中确认仍然存在；新功能、体验问题不在此列。
 
-**当前暴露面（重要）**：`config.json` 为 0 字节（管理认证关闭），README 的启动命令是
-`-host 0.0.0.0 -port 8080`。在完成 P0-1 ~ P0-3 之前，管理 API 对同网段完全开放。
+**当前暴露面（重要）**：实际服务以 `bifrost-data/config.db` 为准（`-app-dir ./bifrost-data`），
+2026-11-09 核对时管理认证**已开启**（`governance_config.is_auth_enabled=true`），`GET /api/config` 未带凭据返回 `401`。
+仓库根目录的 `config.json`（0 字节）不参与该实例的加载。但 `enforce_auth_on_inference=0`，推理端点仍未鉴权；
+且一旦管理认证被关闭（重置数据目录、换 app-dir、Security 页误操作），管理 API 会立即对同网段完全开放。
+
+## 使用说明
+
+- 本文档是本次修复的**唯一进度源**：批次开始前把对应项改为 🚧，完成后改为 ✅ 并勾选复选框。
+- 只记录高危漏洞与内存/资源泄漏；新功能、体验问题不入表。
+- 每次改动同步「最后更新」日期与「执行日志」，不允许只改代码不改文档。
+
+## 版本对照
+
+| 组件 | 本地 | 上游最新 | 说明 |
+|---|---|---|---|
+| transports | v1.6.11 | v2.5.0 | P0/P1/P2 大部分落点 |
+| core | v1.7.10 | v1.15.1 | 安全 backport 主要来源 |
+| framework | v1.5.10 | v1.12.1 | ClickHouse / tracing |
+| 基线日期 | 2026-08-14 | 2026-11-06 | 区间共 12 个 transport 版本 |
 
 ## 状态图例
 
@@ -26,17 +43,42 @@
 
 | 批次 | 主题 | 项数 | 预计 | 状态 |
 |---|---|---|---|---|
-| P0 | 暴露面收敛（认证 / stdio / 插件路径） | 4 | 0.5 天 | ⏳ |
+| P0 | 暴露面收敛（认证 / stdio / 插件路径） | 4 | 0.5 天 | 🚧 1 完成 / 1 已满足 / 2 暂不修 |
 | P1 | 安全 backport（SSRF / 路径注入 / 头泄漏 / 计费） | 7 | 2–3 天 | ⏳ |
 | P2 | 内存与稳定性（ToolMap / buffer / 流生命周期） | 9 | 3–5 天 | ⏳ |
 
 > 执行顺序 P0 → P1 → P2，但 P2-M1（ToolMap）成本极低，可随时插队。
 
+## 批次执行流程
+
+**每批开始**
+
+1. 建分支：`fix/p0-<batch>` / `fix/p1-<batch>` / `fix/p2-<batch>`，基于 `main`。
+2. 总览表与逐项标题的状态改为 🚧。
+3. 先写复现/回归用例（确认变红），再改代码（AGENTS.md 的 red before green 要求）。
+
+**每项完成**
+
+1. 构建与测试：`go build ./...`；provider 改动跑 `make test-core PROVIDER=...`，framework 跑 `make test-framework`，governance 跑 `make test-governance`。
+2. wire-visible 的改动补 `tests/e2e/api/collections/provider-harness.json` 用例，并用 `augment-provider-harness.mjs` / `filter-collection.mjs` 做结构校验。
+3. 勾选复选框、标题改 ✅、更新总览进度、在「执行日志」追加一行（写清文件与验证结果）。
+
+**每批结束（退出标准）**
+
+- 该批所有项为 ✅，或明确标注 ⏭ 并写明原因；
+- 全量构建通过，该批相关测试通过；
+- 执行日志能对应到具体 commit / 文件；
+- 更新文首「最后更新」日期。
+
+
 ---
 
 ## P0｜暴露面收敛（0.5 天）
 
-### P0-1 管理面失败关闭 ⏳
+### P0-1 管理面失败关闭 ⏭
+
+> **用户决策（2026-11-09）**：当前实例管理认证已开启，此项非“当前可利用的致命漏洞”，暂不修复。
+> 保留为回归风险：一旦认证被关闭，管理面仍可被未认证改写（`PUT /api/config`、provider `base_url` 等）。
 
 - **问题**：管理认证关闭时，中间件把所有来源（包括公网/同网段）都标记为 local admin。
 - **落点**：`transports/bifrost-http/handlers/middlewares.go:968`
@@ -50,17 +92,28 @@
   - 本机（127.0.0.1）管理操作不受影响
 - **风险**：通过局域网 IP 访问 Dashboard 的写操作会被拒；需要时改用 SSH 隧道或开启 dashboard auth。
 
-### P0-2 stdio MCP 白名单 ⏳
+### P0-2 stdio MCP 未认证 RCE 门禁 ✅
 
-- **问题**：`POST /api/mcp/client` 接受任意 `stdio_config.command/args`，进程直接拉起。
-- **落点**：`transports/bifrost-http/handlers/mcp.go`（`addMCPClient` 约 717 行、`updateMCPClient` 约 819 行）+ `core/mcp` 入口
-- **改法**：
-  - 新增 `mcp.allow_stdio`（默认 `false`），未开启时 `connection_type: "stdio"` 直接 400。
-  - 开启后仍要求真实 admin 凭据。
-  - 四个入口（create / update / config.json 同步 / 批量）走同一校验，不能只堵 HTTP handler。
-- **验收**：默认配置下 stdio 注册返回 400；`allow_stdio: true` + 本机 admin 可正常注册。
+- **问题**：管理认证关闭时，任何能访问管理口的人都能 `POST /api/mcp/client` 带 `stdio_config.command/args`，Bifrost 直接以进程身份拉起命令（GHSA-86gf，Critical）。
+- **修复思路（对齐上游 transports v2.1.0）**：不新增配置开关，只看“这次请求是否真的认证过”。
+  - `middlewares.go`：认证关闭/未配置分支额外设置 `BifrostContextKeyAuthBypassed=true`（新增于 `core/schemas/bifrost.go`）。
+  - `handlers/mcp.go`：新增 `rejectStdioMCPClientIfAuthBypassed`，在 `addMCPClient` 最前面（生成 ID、连接上游之前）校验；stdio + 旁路 → `403`。
+  - `completeMCPClientOAuth` 对 pending config 的 `connection_type` 再校验一次，防止“创建时认证开着、完成时已关闭”。
+- **刻意不做**：不加 `mcp.allow_stdio` 开关——auth 关闭时 `PUT /api/config` 本身不需要认证，攻击者可把开关打开再注册，等于自毁门禁。也不改 config.json 加载路径，运维仍可用配置文件配置 stdio。
+- **落点文件**：`core/schemas/bifrost.go`、`transports/bifrost-http/handlers/middlewares.go`、`transports/bifrost-http/handlers/mcp.go`、`handlers/middlewares_test.go`、`handlers/mcpauthgate_test.go`
+- **验收**：
+  - 认证开启（现状）：stdio 注册行为完全不变；
+  - 认证关闭：API 注册 stdio 返回 `403`，config.json 预置的 stdio 客户端照常启动；
+  - 现场核对：`config_mcp_clients` 当前 0 行，本次改动不影响任何现有客户端。
+- **残余风险**：本项只关闭“未认证 RCE”。认证关闭时管理面仍可被改写（`PUT /api/config` 改 auth_config、provider base_url 等），属于 P0-1 范围，按用户决定暂不修复。
+- **上游**：GHSA-86gf，transports 2.1.0
+- **验证命令**：
+  - `cd transports && go build ./...`
+  - `cd transports && go test ./bifrost-http/handlers -run 'TestRejectStdioMCPClientIfAuthBypassed|TestAuthMiddleware_MarksAuthBypassed|TestAuthMiddleware_DoesNotMarkAuthBypassedWhenEnabled' -count=1`
 
-### P0-3 插件路径只允许本地文件 ⏳
+### P0-3 插件路径只允许本地文件 ⏭
+
+> **用户决策（2026-11-09）**：本地 `make build` 默认静态链接，且管理认证已开启；不具备“未认证 + 动态链接”双前提，暂不修复。
 
 - **问题**：`path` 为 `http(s)` URL 时自动下载并 `plugin.Open`，动态链接构建下等于 RCE。
 - **落点**：`framework/plugins/soloader.go:17`、`transports/bifrost-http/handlers/plugins.go`
@@ -70,7 +123,9 @@
   - 若确需远程 URL，加显式开关，并要求真实 admin。
 - **验收**：`POST /api/plugins` 传 `http://...` 被拒；本地 `.so` 仍可加载（动态构建下）。
 
-### P0-4 立即缓解（部署层） ⏳
+### P0-4 立即缓解（部署层） ✅
+
+> 已满足：实例已建 admin 账号并开启 dashboard auth，匿名写请求返回 `401`。仍监听 `0.0.0.0:8099`，但认证已生效。
 
 - **动作**：二选一或同时做
   - 启动参数改 `-host 127.0.0.1`；
@@ -232,12 +287,31 @@
 
 ---
 
+## 回滚预案
+
+| 批次 | 回滚方式 | 注意 |
+|---|---|---|
+| P0 | 还原 `middlewares.go` / `mcp.go` / `soloader.go`；配置层恢复 `-host` 与 admin 设置 | 回滚后管理面重新开放，必须同时保留网络层限制（防火墙 / 仅内网） |
+| P1 | 逐项 revert；S3 校验、路径注入、头过滤可独立回滚 | `EscapeResourceID` 若已扩散到多个 provider，需整体回退该 commit |
+| P2 | 逐项 revert；fasthttp 升级需重建镜像 | 降级 fasthttp 前确认没有依赖 1.74 新增 API 的代码 |
+
 ## 执行日志
 
-> 每完成一项：勾选对应任务的复选框、把状态改为 ✅、在此追加一行。
-> 格式：`YYYY-MM-DD | 编号 | 一句话说明`
+> 每完成一项：勾选复选框、把该项状态改为 ✅、在此追加一行。
 
-- 2026-11-08 | — | 建立本排期文档，完成本地代码核对
+| 日期 | 批次 | 编号 | 改动文件 | 验证 | 备注 |
+|---|---|---|---|---|---|
+| 2026-11-08 | — | — | `docs/remediation-plan.md` | — | 建立排期文档，完成本地代码核对 |
+| 2026-11-09 | P0 | P0-2 | `core/schemas/bifrost.go`、`handlers/middlewares.go`、`handlers/mcp.go`、`handlers/middlewares_test.go`、`handlers/mcpauthgate_test.go` | `go build ./...` 通过；新增 3 个测试通过；空实例（认证未配置）实测 stdio 注册 403 且命令未执行，http 类型不被拦截；handlers 全包仅剩既有失败 `TestPrepareSpeechRequestVoiceValidation`（改动前同样失败） | 对齐上游 v2.1.0 的 auth-bypass 门禁，不新增配置开关 |
+
+## 待确认事项
+
+| # | 事项 | 影响 | 当前假设 |
+|---|---|---|---|
+| Q1 | 是否允许跨机访问 Dashboard | 决定 P0-1 能否 loopback-only | 允许，用 SSH 隧道或开启 dashboard auth |
+| Q2 | 是否存在动态链接构建（自定义 `.so` 插件） | 决定 P0-3 紧急程度 | 按“会使用”处理，直接禁远程 URL |
+| Q3 | realtime / MCP / ClickHouse 是否启用 | 决定 P1-6、P1-7、P2-7 的优先级 | 全部可能启用，按计划执行 |
+| Q4 | P1-2 的资源 ID 校验放在 provider 层还是 HTTP 入口 | 影响改动面与回归成本 | provider 层统一 helper，入口只做兜底 |
 
 ---
 
@@ -251,10 +325,10 @@
 
 ### 复选框
 
-- [ ] P0-1 管理面失败关闭
-- [ ] P0-2 stdio MCP 白名单
-- [ ] P0-3 插件路径只允许本地文件
-- [ ] P0-4 立即缓解（部署层）
+- [ ] P0-1 管理面失败关闭（暂不修，见决策）
+- [x] P0-2 stdio MCP 未认证 RCE 门禁
+- [ ] P0-3 插件路径只允许本地文件（暂不修，见决策）
+- [x] P0-4 立即缓解（部署层）
 - [ ] P1-1 Bedrock S3 bucket SSRF
 - [ ] P1-2 资源 ID 路径注入
 - [ ] P1-3 凭据类响应头回传

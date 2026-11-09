@@ -976,6 +976,12 @@ func (m *AuthMiddleware) middleware(shouldSkip func(*configstore.AuthConfig, str
 				// auth is fully disabled; otherwise RBAC 401s and the UI enters
 				// a logout/login redirect loop.
 				ctx.SetUserValue(schemas.IsLocalAdminContextKey, true)
+				// Record that this request was let through with no credential
+				// check at all. Handlers that can reach an exec/bind surface
+				// (stdio MCP clients, private targets) must refuse the request
+				// when this is set, so a disabled dashboard cannot be turned
+				// into unauthenticated remote code execution.
+				ctx.SetUserValue(schemas.BifrostContextKeyAuthBypassed, true)
 				next(ctx)
 				return
 			}

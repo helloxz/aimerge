@@ -658,6 +658,78 @@ func TestAuthMiddleware_DisabledAuthConfig(t *testing.T) {
 	}
 }
 
+// TestAuthMiddleware_MarksAuthBypassed asserts that requests allowed through
+// only because dashboard auth is off are flagged as unauthenticated
+// (BifrostContextKeyAuthBypassed), so exec/bind surfaces such as stdio MCP
+// client registration can refuse them instead of granting admin capability.
+func TestAuthMiddleware_MarksAuthBypassed(t *testing.T) {
+	SetLogger(&mockLogger{})
+
+	disabledAuth := &AuthMiddleware{}
+	disabledAuth.UpdateAuthConfig(&configstore.AuthConfig{
+		AdminUserName: schemas.NewSecretVar("admin"),
+		AdminPassword: schemas.NewSecretVar("password"),
+		IsEnabled:     false,
+	})
+
+	cases := []struct {
+		name string
+		am   *AuthMiddleware
+	}{
+		{"nil auth config", &AuthMiddleware{}},
+		{"disabled auth config", disabledAuth},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			ctx := &fasthttp.RequestCtx{}
+			ctx.Request.SetRequestURI("/api/mcp/client")
+
+			var bypassed any
+			next := func(ctx *fasthttp.RequestCtx) {
+				bypassed = ctx.UserValue(schemas.BifrostContextKeyAuthBypassed)
+			}
+
+			tc.am.APIMiddleware()(next)(ctx)
+
+			if got, ok := bypassed.(bool); !ok || !got {
+				t.Fatalf("expected %q to be true, got %v", schemas.BifrostContextKeyAuthBypassed, bypassed)
+			}
+			if !ctx.UserValue(schemas.IsLocalAdminContextKey).(bool) {
+				t.Fatal("expected the bypassed request to keep the existing local-admin marker")
+			}
+		})
+	}
+}
+
+// TestAuthMiddleware_DoesNotMarkAuthBypassedWhenEnabled asserts that the
+// unauthenticated flag is never set on a deployment whose auth is enabled.
+func TestAuthMiddleware_DoesNotMarkAuthBypassedWhenEnabled(t *testing.T) {
+	SetLogger(&mockLogger{})
+
+	am := &AuthMiddleware{}
+	am.UpdateAuthConfig(&configstore.AuthConfig{
+		AdminUserName: schemas.NewSecretVar("admin"),
+		AdminPassword: schemas.NewSecretVar("hashedpassword"),
+		IsEnabled:     true,
+	})
+
+	ctx := &fasthttp.RequestCtx{}
+	ctx.Request.SetRequestURI("/api/mcp/client")
+
+	middleware := am.APIMiddleware()
+	middleware(func(ctx *fasthttp.RequestCtx) {
+		t.Fatal("next handler must not run without credentials")
+	})(ctx)
+
+	if ctx.Response.StatusCode() != fasthttp.StatusUnauthorized {
+		t.Fatalf("expected status %d, got %d", fasthttp.StatusUnauthorized, ctx.Response.StatusCode())
+	}
+	if got := ctx.UserValue(schemas.BifrostContextKeyAuthBypassed); got != nil {
+		t.Fatalf("expected %q to stay unset when auth is enabled, got %v", schemas.BifrostContextKeyAuthBypassed, got)
+	}
+}
+
 // TestAuthMiddleware_EnabledAuthConfig_NoAuth tests that auth middleware blocks unauthenticated requests
 func TestAuthMiddleware_EnabledAuthConfig_NoAuth(t *testing.T) {
 	SetLogger(&mockLogger{})

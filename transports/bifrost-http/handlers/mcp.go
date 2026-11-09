@@ -606,6 +606,30 @@ type MCPClientUpdateRequest struct {
 	OauthConfig           *OAuthConfigRequest          `json:"oauth_config,omitempty"`
 }
 
+// rejectStdioMCPClientIfAuthBypassed refuses to register a stdio MCP client
+// for a caller that was let through because dashboard auth is unconfigured or
+// disabled (schemas.BifrostContextKeyAuthBypassed). A stdio client makes
+// Bifrost exec the admin-supplied command and args as the gateway process:
+// intentional admin functionality, but only for a caller who actually
+// authenticated. Registering one over the network API with no credential check
+// is equivalent to unauthenticated remote code execution, so it is refused
+// even though the rest of the management API stays open for the zero-config
+// experience. Stdio clients can still be provisioned by an operator with
+// host/filesystem access via config.json.
+//
+// Returns true when the request was rejected; the error response has already
+// been written and the caller must return immediately.
+func rejectStdioMCPClientIfAuthBypassed(ctx *fasthttp.RequestCtx, connType string) bool {
+	if connType != string(schemas.MCPConnectionTypeSTDIO) {
+		return false
+	}
+	if bypassed, _ := ctx.UserValue(schemas.BifrostContextKeyAuthBypassed).(bool); !bypassed {
+		return false
+	}
+	SendError(ctx, fasthttp.StatusForbidden, "registering a stdio MCP client requires an authenticated admin session; dashboard authentication is disabled or unconfigured. Enable dashboard authentication, or provision this client via config.json instead")
+	return true
+}
+
 // addMCPClient handles POST /api/mcp/client - Add a new MCP client
 func (h *MCPHandler) addMCPClient(ctx *fasthttp.RequestCtx) {
 	if h.store.ConfigStore == nil {
@@ -618,6 +642,13 @@ func (h *MCPHandler) addMCPClient(ctx *fasthttp.RequestCtx) {
 	var req MCPClientRequest
 	if err := json.Unmarshal(ctx.PostBody(), &req); err != nil {
 		SendError(ctx, fasthttp.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	// Refuse a stdio client before any work is scheduled: registering one is
+	// what makes Bifrost spawn the subprocess, so the credential-check gate
+	// has to run before ID generation and before the connect path.
+	if rejectStdioMCPClientIfAuthBypassed(ctx, req.ConnectionType) {
 		return
 	}
 
@@ -1774,6 +1805,13 @@ func (h *MCPHandler) completeMCPClientOAuth(ctx *fasthttp.RequestCtx) {
 	}
 	if mcpClientConfig == nil {
 		SendError(ctx, fasthttp.StatusNotFound, "MCP client not found in pending OAuth clients. The OAuth flow may have expired or already been completed.")
+		return
+	}
+
+	// A pending config is operator-supplied at create time, but check it again
+	// here so a stdio client cannot be completed into existence on a deployment
+	// whose auth was disabled after the flow started.
+	if rejectStdioMCPClientIfAuthBypassed(ctx, string(mcpClientConfig.ConnectionType)) {
 		return
 	}
 
