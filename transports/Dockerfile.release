@@ -1,0 +1,56 @@
+# Runtime image for aimerge.
+#
+# The binary is built outside this image (.github/workflows/release.yml) as a
+# statically linked linux/amd64 executable, so this stage only carries the
+# runtime bits: CA certificates, timezone data and a health-check client.
+#
+# Build context (prepared by the release workflow):
+#   main                  <- prebuilt bifrost-http binary
+#   docker-entrypoint.sh  <- transports/docker-entrypoint.sh
+
+FROM debian:bookworm-slim
+
+ARG APP_PORT=8090
+ARG APP_HOST=0.0.0.0
+ARG LOG_LEVEL=info
+ARG LOG_STYLE=json
+ARG APP_DIR=/app/data
+
+ENV APP_PORT=${APP_PORT} \
+    APP_HOST=${APP_HOST} \
+    LOG_LEVEL=${LOG_LEVEL} \
+    LOG_STYLE=${LOG_STYLE} \
+    APP_DIR=${APP_DIR} \
+    GOGC="" \
+    GOMEMLIMIT=""
+
+# curl is only used by HEALTHCHECK; the app itself is a static binary.
+RUN set -eux; \
+    export DEBIAN_FRONTEND=noninteractive; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends ca-certificates tzdata curl; \
+    rm -rf /var/lib/apt/lists/*; \
+    groupadd --gid 1000 appuser; \
+    useradd --uid 1000 --gid appuser --no-create-home --shell /usr/sbin/nologin appuser; \
+    mkdir -p "${APP_DIR}/logs"; \
+    chown -R appuser:0 "${APP_DIR}"; \
+    chmod -R g=rwX "${APP_DIR}"
+
+WORKDIR /app
+
+COPY main /app/main
+COPY docker-entrypoint.sh /app/docker-entrypoint.sh
+RUN chmod 0755 /app/main /app/docker-entrypoint.sh
+
+VOLUME ["${APP_DIR}"]
+EXPOSE ${APP_PORT}
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD curl -fsS "http://127.0.0.1:${APP_PORT}/health" || exit 1
+
+# Numeric uid:gid keeps runAsNonRoot verifiable; gid 0 keeps the data volume
+# writable under arbitrary UIDs (OpenShift) as well as the default appuser.
+USER 1000:0
+
+ENTRYPOINT ["/app/docker-entrypoint.sh"]
+CMD ["/app/main"]

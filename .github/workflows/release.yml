@@ -1,0 +1,249 @@
+name: Release
+
+# Triggered when a version tag is pushed, when a GitHub Release is published,
+# or manually with an explicit tag.
+#
+# Produces:
+#   * a statically linked linux/amd64 binary (tar.gz + sha256)
+#   * a GHCR image tagged with both the git tag (v1.2.3) and the release
+#     version (1.2.3), plus `latest` for stable builds
+#   * release assets, attached only when the run was started by
+#     `release: published`
+
+on:
+  push:
+    tags:
+      - 'v*'
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to build (for example v1.2.3)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+# A tag push and a release publish for the same tag produce two runs; the later
+# one supersedes the earlier one instead of racing it. The build is idempotent.
+concurrency:
+  group: release-${{ github.event.release.tag_name || inputs.tag || github.ref_name }}
+  cancel-in-progress: true
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build:
+    name: Build (linux/amd64)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    outputs:
+      tag: ${{ steps.meta.outputs.tag }}
+      version: ${{ steps.meta.outputs.version }}
+      is_latest: ${{ steps.meta.outputs.is_latest }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Resolve version
+        id: meta
+        shell: bash
+        env:
+          # Passed through env (not interpolated into the script) so a crafted
+          # tag name cannot inject shell commands.
+          TAG_NAME: ${{ github.event.release.tag_name || inputs.tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+          TAG="$TAG_NAME"
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "::error::Unsupported tag '$TAG' (expected vMAJOR.MINOR.PATCH[-PRERELEASE])"
+            exit 1
+          fi
+          VERSION="${TAG#v}"
+
+          # Move `latest` only for the highest stable version, so re-running an
+          # old tag cannot roll the alias backwards. Prereleases never get it.
+          IS_LATEST=false
+          if [[ "$VERSION" != *-* ]]; then
+            highest_tag="$(git tag --list 'v*' --sort=-v:refname \
+              | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$' \
+              | head -n 1 || true)"
+            if [[ "$highest_tag" == "$TAG" ]]; then
+              IS_LATEST=true
+            fi
+          fi
+
+          {
+            echo "tag=$TAG"
+            echo "version=$VERSION"
+            echo "is_latest=$IS_LATEST"
+          } >> "$GITHUB_OUTPUT"
+          {
+            echo "TAG=$TAG"
+            echo "VERSION=$VERSION"
+          } >> "$GITHUB_ENV"
+          echo "Building $TAG (version $VERSION, latest=$IS_LATEST)"
+
+      - name: Set up Go
+        uses: actions/setup-go@v7
+        with:
+          go-version: '1.27.x'
+          cache: true
+          cache-dependency-path: '**/go.sum'
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: '11.20.0'
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+          cache-dependency-path: ui/pnpm-lock.yaml
+
+      # go.work / go.work.sum are gitignored; regenerate them so Go resolves
+      # core/, framework/ and plugins/ from this checkout instead of the
+      # upstream published modules.
+      - name: Set up Go workspace
+        run: make setup-workspace
+
+      # make build performs the production UI build (vite + typecheck) and the
+      # CGO/static sqlite binary build, with -trimpath and -s -w.
+      - name: Build UI and binary
+        run: make build LOCAL=1 VERSION="${VERSION}"
+
+      - name: Verify binary
+        shell: bash
+        run: |
+          set -euo pipefail
+          file tmp/bifrost-http
+          case "$(file -b tmp/bifrost-http)" in
+            *x86-64*) ;;
+            *) echo "::error::binary is not an x86-64 executable"; exit 1 ;;
+          esac
+          # ldd exits non-zero for static binaries, so capture its output
+          # instead of relying on the pipeline status (pipefail is on).
+          ldd_out="$(ldd tmp/bifrost-http 2>&1 || true)"
+          case "$ldd_out" in
+            *"not a dynamic executable"*) echo "Static binary OK" ;;
+            *) echo "::error::binary is not statically linked"; echo "$ldd_out"; exit 1 ;;
+          esac
+
+      - name: Package artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          PKG="bifrost-http_${VERSION}_linux_amd64"
+          mkdir -p dist
+          install -m 0755 tmp/bifrost-http dist/bifrost-http
+          cp LICENSE dist/LICENSE
+          tar -C dist -czf "dist/${PKG}.tar.gz" bifrost-http LICENSE
+          (cd dist && sha256sum "${PKG}.tar.gz" > "${PKG}.tar.gz.sha256")
+          rm -f dist/bifrost-http dist/LICENSE
+          ls -lh dist
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-artifacts
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 7
+
+  docker:
+    name: Publish GHCR image
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: release-artifacts
+          path: dist
+
+      - name: Prepare Docker context
+        shell: bash
+        run: |
+          set -euo pipefail
+          CTX="${RUNNER_TEMP}/docker-context"
+          rm -rf "$CTX"
+          mkdir -p "$CTX"
+          tar -xzf dist/bifrost-http_*_linux_amd64.tar.gz -C "$CTX"
+          mv "$CTX/bifrost-http" "$CTX/main"
+          cp transports/docker-entrypoint.sh "$CTX/docker-entrypoint.sh"
+          ls -lh "$CTX"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker metadata
+        id: docker-meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}
+          tags: |
+            type=raw,value=${{ needs.build.outputs.tag }}
+            type=raw,value=${{ needs.build.outputs.version }}
+            type=raw,value=latest,enable=${{ needs.build.outputs.is_latest == 'true' }}
+          labels: |
+            org.opencontainers.image.title=aimerge
+            org.opencontainers.image.description=Bifrost-based AI gateway (aimerge)
+            org.opencontainers.image.version=${{ needs.build.outputs.version }}
+            org.opencontainers.image.revision=${{ github.sha }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v7
+        with:
+          context: ${{ runner.temp }}/docker-context
+          file: ${{ github.workspace }}/transports/Dockerfile.release
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.docker-meta.outputs.tags }}
+          labels: ${{ steps.docker-meta.outputs.labels }}
+
+  release:
+    name: Attach assets to release
+    needs: [build, docker]
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: release-artifacts
+          path: dist
+
+      - name: Upload release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ needs.build.outputs.tag }}
+        run: gh release upload "$TAG" dist/*.tar.gz dist/*.sha256 --clobber
