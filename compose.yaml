@@ -1,0 +1,50 @@
+# aimerge 生产部署模板
+#
+# 启动：docker compose up -d
+# 更新：docker compose pull && docker compose up -d
+# 日志：docker compose logs -f --tail=200
+#
+# 使用前请确认：
+#   1. 数据目录可被容器内 uid 1000 写入：
+#        mkdir -p bifrost-data && sudo chown -R 1000:1000 bifrost-data
+#   2. 生产环境建议在 .env 中固定镜像版本，例如 AIMERGE_VERSION=v1.7.0，
+#      不要长期直接使用 latest。
+#   3. 服务默认未开启鉴权。首次启动后打开 http://<host>:8090，
+#      在「配置 → 安全」里开启管理员账号；或只绑定 127.0.0.1 并通过反向代理暴露。
+#
+# 可用环境变量（可写在同目录 .env 中）：
+#   AIMERGE_VERSION    镜像版本，默认 latest
+#   AIMERGE_PORT       宿主机端口，默认 8090（容器内固定 8090）
+#   AIMERGE_BIND       宿主机监听地址，默认 0.0.0.0（反代场景可设 127.0.0.1）
+#   AIMERGE_DATA_DIR   数据目录，默认 ./bifrost-data
+#   LOG_LEVEL          日志级别，默认 info
+#   LOG_STYLE          日志格式，默认 json
+#   GOGC / GOMEMLIMIT  Go 运行时调优，默认留空
+services:
+  aimerge:
+    image: ghcr.io/helloxz/aimerge:${AIMERGE_VERSION:-latest}
+    container_name: aimerge
+    restart: unless-stopped
+    stop_grace_period: 30s
+    ports:
+      - "8090:8090"
+    environment:
+      # 东八区
+      TZ: Asia/Shanghai
+      # 容器内监听配置，修改 APP_PORT 时需同步调整上面的 ports 映射
+      APP_PORT: "8090"
+      APP_HOST: "0.0.0.0"
+      APP_DIR: /app/data
+      LOG_LEVEL: "${LOG_LEVEL:-info}"
+      LOG_STYLE: "${LOG_STYLE:-json}"
+      GOGC: "${GOGC:-}"
+      GOMEMLIMIT: "${GOMEMLIMIT:-}"
+    volumes:
+      - "./data:/app/data"
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

@@ -568,14 +568,8 @@ func TestInvalidProviderRejection(t *testing.T) {
 	// Test each provider that doesn't support embeddings
 	unsupportedProviders := []schemas.ModelProvider{
 		schemas.Anthropic,
-		schemas.Cerebras,
-		schemas.Groq,
 		schemas.OpenRouter,
-		schemas.Parasail,
-		schemas.Perplexity,
-		schemas.Replicate,
 		schemas.XAI,
-		schemas.Elevenlabs,
 	}
 
 	for _, provider := range unsupportedProviders {

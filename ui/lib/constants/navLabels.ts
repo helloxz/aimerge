@@ -33,7 +33,6 @@ const NAV_LABELS: Record<string, string> = {
 	"Model Providers": "模型提供商",
 	Models: "模型",
 	"Model Settings": "模型设置",
-	"Need help with production setup?": "需要生产环境部署协助？",
 	"OAuth Grants": "OAuth 授权",
 	Observability: "可观测性",
 	"Performance Tuning": "性能调优",
