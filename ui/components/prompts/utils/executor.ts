@@ -13,7 +13,7 @@ export interface ExecutionConfig {
 
 function getBaseUrl() {
 	if (process.env.NODE_ENV === "development") {
-		return "http://localhost:8080";
+		return `http://localhost:${process.env.BIFROST_PORT || "8090"}`;
 	} else {
 		return "";
 	}

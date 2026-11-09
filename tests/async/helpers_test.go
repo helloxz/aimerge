@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	defaultBaseURL      = "http://localhost:8080"
+	defaultBaseURL      = "http://localhost:8090"
 	defaultPollTimeout  = 30 * time.Second
 	defaultPollInterval = 500 * time.Millisecond
 )
@@ -264,7 +264,7 @@ func chatCompletionCase() endpointCase {
 }
 
 // TestMain checks that the Bifrost gateway is reachable before running any tests.
-// Set BIFROST_BASE_URL to override the default http://localhost:8080.
+// Set BIFROST_BASE_URL to override the default http://localhost:8090.
 func TestMain(m *testing.M) {
 	resp, err := httpClient.Get(cfg.BaseURL + "/health")
 	if err != nil || resp.StatusCode >= 500 {

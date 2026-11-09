@@ -8,6 +8,9 @@ import { defineConfig } from "vite";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const isEnterpriseBuild = fs.existsSync(path.join(__dirname, "app", "enterprise"));
+// Keep the dev proxy in sync with the Go server's port. `make dev` passes
+// BIFROST_PORT so an overridden PORT still works; otherwise use the default.
+const backendPort = process.env.BIFROST_PORT || "8090";
 
 export default defineConfig({
 	plugins: [
@@ -54,7 +57,7 @@ export default defineConfig({
 		port: 3000,
 		proxy: {
 			"/api": {
-				target: "http://localhost:8080",
+				target: `http://localhost:${backendPort}`,
 				changeOrigin: true,
 			},
 		},

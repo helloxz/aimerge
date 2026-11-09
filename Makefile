@@ -2,7 +2,7 @@
 
 # Variables
 HOST ?= localhost
-PORT ?= 8080
+PORT ?= 8090
 APP_DIR ?=
 PROMETHEUS_LABELS ?=
 LOG_STYLE ?= json
@@ -10,7 +10,10 @@ LOG_LEVEL ?= info
 TEST_REPORTS_DIR ?= test-reports
 GOTESTSUM_FORMAT ?= standard-verbose
 FLOW ?=
-VERSION ?= dev-build
+# Version injected into the binary. On a version tag the tag wins (tag v1.7.0
+# -> binary v1.7.0); untagged checkouts build as dev-build. Override with VERSION=1.2.3.
+GIT_TAG := $(shell git describe --tags --exact-match --match 'v[0-9]*' 2>/dev/null)
+VERSION ?= $(if $(GIT_TAG),$(patsubst v%,%,$(GIT_TAG)),dev-build)
 LOCAL ?=
 DEBUG ?=
 COMPAT ?=
@@ -85,7 +88,7 @@ help: ## Show this help message
 	@$(ECHO) ""
 	@$(ECHO) "$(YELLOW)Environment Variables:$(NC)"
 	@$(ECHO) "  HOST              Server host (default: localhost)"
-	@$(ECHO) "  PORT              Server port (default: 8080)"
+	@$(ECHO) "  PORT              Server port (default: 8090)"
 	@$(ECHO) "  PROMETHEUS_LABELS Labels for Prometheus metrics"
 	@$(ECHO) "  LOG_STYLE         Logger output format: json|pretty (default: json)"
 	@$(ECHO) "  LOG_LEVEL         Logger level: debug|info|warn|error (default: info)"
@@ -229,9 +232,9 @@ dev: install-ui install-air setup-workspace $(if $(DEBUG),install-delve) ## Star
 	$(ECHO) "$(YELLOW)Starting UI development server...$(NC)"; \
 	$(USE_NODE); if [ -n "$(DISABLE_PROFILER)" ]; then \
 		$(ECHO) "$(CYAN)DevProfiler disabled for testing$(NC)"; \
-		(cd ui && BIFROST_DISABLE_PROFILER=1 pnpm run dev) & \
+		(cd ui && BIFROST_PORT="$(PORT)" BIFROST_DISABLE_PROFILER=1 pnpm run dev) & \
 	else \
-		(cd ui && pnpm run dev) & \
+		(cd ui && BIFROST_PORT="$(PORT)" pnpm run dev) & \
 	fi; \
 	ui_pid="$$!"; \
 	$(ECHO) "$(YELLOW)[make dev] UI dev server started with pid $$ui_pid$(NC)"; \
@@ -315,9 +318,9 @@ dev-pulse: install-ui install-pulse setup-workspace $(if $(DEBUG),install-delve)
 	$(ECHO) "$(YELLOW)Starting UI development server...$(NC)"; \
 	$(USE_NODE); if [ -n "$(DISABLE_PROFILER)" ]; then \
 		$(ECHO) "$(CYAN)DevProfiler disabled for testing$(NC)"; \
-		(cd ui && BIFROST_DISABLE_PROFILER=1 pnpm run dev) & \
+		(cd ui && BIFROST_PORT="$(PORT)" BIFROST_DISABLE_PROFILER=1 pnpm run dev) & \
 	else \
-		(cd ui && pnpm run dev) & \
+		(cd ui && BIFROST_PORT="$(PORT)" pnpm run dev) & \
 	fi; \
 	ui_pid="$$!"; \
 	$(ECHO) "$(YELLOW)[make dev-pulse] UI dev server started with pid $$ui_pid$(NC)"; \
@@ -1373,7 +1376,7 @@ test-integrations-py: ## Run Python integration tests (Usage: make test-integrat
 	BIFROST_STARTED=0; \
 	BIFROST_PID=""; \
 	TAIL_PID=""; \
-	TEST_PORT=$${PORT:-8080}; \
+	TEST_PORT=$${PORT:-8090}; \
 	TEST_HOST=$${HOST:-localhost}; \
 	$(ECHO) "$(CYAN)Checking if Bifrost is running on $$TEST_HOST:$$TEST_PORT...$(NC)"; \
 	if curl -s -o /dev/null -w "%{http_code}" http://$$TEST_HOST:$$TEST_PORT/health 2>/dev/null | grep -q "200\|404"; then \
@@ -1509,7 +1512,7 @@ test-integrations-ts: ## Run TypeScript integration tests (Usage: make test-inte
 	BIFROST_STARTED=0; \
 	BIFROST_PID=""; \
 	TAIL_PID=""; \
-	TEST_PORT=$${PORT:-8080}; \
+	TEST_PORT=$${PORT:-8090}; \
 	TEST_HOST=$${HOST:-localhost}; \
 	$(ECHO) "$(CYAN)Checking if Bifrost is running on $$TEST_HOST:$$TEST_PORT...$(NC)"; \
 	if curl -s -o /dev/null -w "%{http_code}" http://$$TEST_HOST:$$TEST_PORT/health 2>/dev/null | grep -q "200\|404"; then \
@@ -1816,10 +1819,10 @@ test-cli: install-gotestsum ## Run CLI tests
 # the single most important line in the output.
 CLI_HARNESS_FILTER = awk '/^=== /||/^[ \t]*--- (PASS|FAIL|SKIP)[: ]/||/^(PASS|FAIL)$$/||/^ok[ \t]/||/^FAIL\t/||/unsupported for /||/not configured in bifrost/{next} {print; fflush()}'
 
-run-cli-harness-test: ## Run the Claude Code + Codex + OpenCode E2E harness (non-interactive, multi-turn JSON streams). Prints one line per cell plus a progress table; MIRROR=1 adds the raw CLI stream, VERBOSE=1 adds go test -v. Usage: make run-cli-harness-test [TESTCASE='TestCLIs/...'] [CLI=claude|codex|opencode] [PROVIDER=openai|anthropic|azure|gemini|bedrock|vertex] [MODEL=<id-substring>] [SCENARIO=simple-chat|conversation-memory|...] [PARALLEL=4] [BASE_URL=http://localhost:8080] [API_KEY=...] [TIMEOUT=60m] [MIRROR=1] [VERBOSE=1] [QUIET=1]
+run-cli-harness-test: ## Run the Claude Code + Codex + OpenCode E2E harness (non-interactive, multi-turn JSON streams). Prints one line per cell plus a progress table; MIRROR=1 adds the raw CLI stream, VERBOSE=1 adds go test -v. Usage: make run-cli-harness-test [TESTCASE='TestCLIs/...'] [CLI=claude|codex|opencode] [PROVIDER=openai|anthropic|azure|gemini|bedrock|vertex] [MODEL=<id-substring>] [SCENARIO=simple-chat|conversation-memory|...] [PARALLEL=4] [BASE_URL=http://localhost:8090] [API_KEY=...] [TIMEOUT=60m] [MIRROR=1] [VERBOSE=1] [QUIET=1]
 	@$(EXPOSE_ENV); \
 	$(ECHO) "$(GREEN)Running CLI harness E2E tests...$(NC)"; \
-	BASE_URL_VAL="$${BASE_URL:-$(BASE_URL)}"; BASE_URL_VAL="$${BASE_URL_VAL:-http://localhost:8080}"; \
+	BASE_URL_VAL="$${BASE_URL:-$(BASE_URL)}"; BASE_URL_VAL="$${BASE_URL_VAL:-http://localhost:8090}"; \
 	PARALLEL_VAL="$${PARALLEL:-$(PARALLEL)}"; PARALLEL_VAL="$${PARALLEL_VAL:-4}"; \
 	$(ECHO) "$(CYAN)  Bifrost:  $$BASE_URL_VAL$(NC)"; \
 	$(ECHO) "$(CYAN)  Parallel: $$PARALLEL_VAL$(NC)"; \
@@ -1970,7 +1973,7 @@ install-newman: ## Install newman + htmlextra reporter if not already installed 
 	@$(USE_NODE); npm list -g newman-reporter-htmlextra > /dev/null 2>&1 || ([ -n "$$CI" ] || $(ECHO) "$(YELLOW)Installing newman-reporter-htmlextra@$(NEWMAN_HTMLEXTRA_VERSION)...$(NC)"; npm install -g newman-reporter-htmlextra@$(NEWMAN_HTMLEXTRA_VERSION))
 	@[ -n "$$CI" ] || $(ECHO) "$(GREEN)Newman + htmlextra are ready$(NC)"
 
-run-provider-harness-test: $(if $(HELP),,install-newman) ## Run the Bifrost provider-harness Postman collection. HELP=1 prints full parameter docs. Filter via PROVIDER=openai|anthropic|bedrock|gemini|vertex|azure|passthrough|openrouter, FEATURE="<kw>" or FEATURE="<kw1>,<kw2>" (AND across substrings; matches request name/URL/body), RERUN_FAILED=1 (re-run only items that failed last run). INCLUDE_PREVIEW=1 to run [PREVIEW]-tagged account/region-scoped cases. SKIP_STREAM_CANCEL=1 skips stream cancellation probes. USE_INFISICAL=1 to source from Infisical (Usage: make run-provider-harness-test [HELP=1] [PROVIDER=anthropic] [FEATURE="web search"] [FEATURE="cross-cut,structured output"] [RERUN_FAILED=1] [INCLUDE_PREVIEW=1] [BASE_URL=...] [FOLDER="..."] [ENV_FILE=...] [VIEWER_PORT=8090] [CI=1])
+run-provider-harness-test: $(if $(HELP),,install-newman) ## Run the Bifrost provider-harness Postman collection. HELP=1 prints full parameter docs. Filter via PROVIDER=openai|anthropic|bedrock|gemini|vertex|azure|passthrough|openrouter, FEATURE="<kw>" or FEATURE="<kw1>,<kw2>" (AND across substrings; matches request name/URL/body), RERUN_FAILED=1 (re-run only items that failed last run). INCLUDE_PREVIEW=1 to run [PREVIEW]-tagged account/region-scoped cases. SKIP_STREAM_CANCEL=1 skips stream cancellation probes. USE_INFISICAL=1 to source from Infisical (Usage: make run-provider-harness-test [HELP=1] [PROVIDER=anthropic] [FEATURE="web search"] [FEATURE="cross-cut,structured output"] [RERUN_FAILED=1] [INCLUDE_PREVIEW=1] [BASE_URL=...] [FOLDER="..."] [ENV_FILE=...] [VIEWER_PORT=8091] [CI=1])
 	@if [ -n "$(HELP)" ]; then \
 		printf '\n%s\n' "$(CYAN)run-provider-harness-test - Bifrost provider harness runner$(NC)"; \
 		printf '%s\n\n' "Runs the Bifrost provider-harness Postman collection through newman, with optional filtering."; \
@@ -1984,13 +1987,13 @@ run-provider-harness-test: $(if $(HELP),,install-newman) ## Run the Bifrost prov
 		printf '  %-18s %s\n' ""                "  \"cross-cut\" is a structural keyword - matches any row routed through unified /v1/chat/completions with a provider/model body, regardless of name."; \
 		printf '  %-18s %s\n' "RERUN_FAILED=1"  "Re-run only requests that failed in the prior run (reads tmp/newman-report.json)."; \
 		printf '  %-18s %s\n' ""                "  Composes with PROVIDER and FEATURE (predicates AND together)."; \
-		printf '  %-18s %s\n' "BASE_URL=<url>"  "Bifrost gateway URL (default: http://localhost:8080). Skips auto-start if /health responds."; \
+		printf '  %-18s %s\n' "BASE_URL=<url>"  "Bifrost gateway URL (default: http://localhost:8090). Skips auto-start if /health responds."; \
 		printf '  %-18s %s\n' "APP_DIR=<dir>"   "Config dir passed to 'make dev' if Bifrost isn't already running (default: tests/integrations/python)."; \
 		printf '  %-18s %s\n' "FOLDER=\"<name>\"" "Scope to a single Postman folder (substring match, e.g. \"8. Cross-Model\"). Pre-filters (like PROVIDER/FEATURE) AND is"; \
 		printf '  %-18s %s\n' ""                "  passed to newman's own --folder as the final scope. In parallel mode (default), provider forks with zero items"; \
 		printf '  %-18s %s\n' ""                "  in that folder are skipped cleanly instead of forked-then-failed - use with PROVIDER=<one> to run a single fork."; \
 		printf '  %-18s %s\n' "ENV_FILE=<path>" "Postman environment JSON with real keys (kept out of git)."; \
-		printf '  %-18s %s\n' "VIEWER_PORT=N"   "Port for the interactive HTML viewer (default: 8090). Ignored if CI=1."; \
+		printf '  %-18s %s\n' "VIEWER_PORT=N"   "Port for the interactive HTML viewer (default: 8091). Ignored if CI=1."; \
 		printf '  %-18s %s\n' "CI=1"            "CI mode: skip the interactive viewer, emit artifacts only. Prints a one-line heartbeat every"; \
 		printf '  %-18s %s\n' ""                "  MONITOR_INTERVAL seconds and the provider status table (provider x total/pass/failed) exactly ONCE,"; \
 		printf '  %-18s %s\n' ""                "  at the end - an Actions log is append-only, so reprinting the table left hundreds of stale copies."; \
@@ -2204,9 +2207,9 @@ run-provider-harness-test: $(if $(HELP),,install-newman) ## Run the Bifrost prov
 	fi; \
 	$(EXPOSE_ENV); \
 	mkdir -p tmp; \
-	BASE_URL_VAL="$(or $(BASE_URL),http://localhost:8080)"; \
+	BASE_URL_VAL="$(or $(BASE_URL),http://localhost:8090)"; \
 	APP_DIR_VAL="$(or $(APP_DIR),tests/integrations/python)"; \
-	VIEWER_PORT_VAL="$(or $(VIEWER_PORT),8090)"; \
+	VIEWER_PORT_VAL="$(or $(VIEWER_PORT),8091)"; \
 	: "Measured per-request cost, used to size the shard grid and to fill each shard (see"; \
 	: "lib/shard-cost.mjs). tmp/ first because it is refreshed by every run and so tracks the"; \
 	: "collection as it changes; the committed baseline is the fallback that makes a fresh"; \

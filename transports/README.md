@@ -18,7 +18,7 @@ Choose your preferred method:
 # Install and run locally
 npx -y @maximhq/bifrost
 
-# Open web interface at http://localhost:8080
+# Open web interface at http://localhost:8090
 ```
 
 #### Docker
@@ -26,19 +26,19 @@ npx -y @maximhq/bifrost
 ```bash
 # Pull and run Bifrost Gateway
 docker pull maximhq/bifrost
-docker run -p 8080:8080 maximhq/bifrost
+docker run -p 8090:8090 maximhq/bifrost
 
 # For persistent configuration
-docker run -p 8080:8080 -v $(pwd)/data:/app/data maximhq/bifrost
+docker run -p 8090:8090 -v $(pwd)/data:/app/data maximhq/bifrost
 ```
 
 ### Configuration
 
-Bifrost starts with zero configuration needed. Configure providers through the **built-in web UI** at `http://localhost:8080` or via API:
+Bifrost starts with zero configuration needed. Configure providers through the **built-in web UI** at `http://localhost:8090` or via API:
 
 ```bash
 # Add OpenAI provider via API
-curl -X POST http://localhost:8080/api/providers \
+curl -X POST http://localhost:8090/api/providers \
   -H "Content-Type: application/json" \
   -d '{
     "provider": "openai",
@@ -61,7 +61,7 @@ For file-based configuration, create `config.json` in your app directory:
 ### Your First API Call
 
 ```bash
-curl -X POST http://localhost:8080/v1/chat/completions \
+curl -X POST http://localhost:8090/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
     "model": "openai/gpt-4o-mini",
@@ -114,7 +114,7 @@ Replace your existing SDK base URLs to unlock Bifrost's features instantly:
 ```python
 import openai
 client = openai.OpenAI(
-    base_url="http://localhost:8080/openai",
+    base_url="http://localhost:8090/openai",
     api_key="dummy"  # Handled by Bifrost
 )
 ```
@@ -124,7 +124,7 @@ client = openai.OpenAI(
 ```python
 import anthropic
 client = anthropic.Anthropic(
-    base_url="http://localhost:8080/anthropic",
+    base_url="http://localhost:8090/anthropic",
     api_key="dummy"  # Handled by Bifrost
 )
 ```
@@ -135,7 +135,7 @@ client = anthropic.Anthropic(
 import google.generativeai as genai
 genai.configure(
     transport="rest",
-    api_endpoint="http://localhost:8080/genai",
+    api_endpoint="http://localhost:8090/genai",
     api_key="dummy"  # Handled by Bifrost
 )
 ```

@@ -22,7 +22,7 @@ import (
 
 const (
 	// Bifrost base URL. Override with BASE_URL.
-	baseURL = "http://localhost:8080"
+	baseURL = "http://localhost:8090"
 
 	// provider/model to route to. Override with MODEL.
 	model = "openai/gpt-realtime"

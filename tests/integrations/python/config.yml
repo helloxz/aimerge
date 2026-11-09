@@ -4,7 +4,7 @@
 # Bifrost Gateway Configuration
 # All integrations route through Bifrost as a proxy/gateway
 bifrost:
-  base_url: "${BIFROST_BASE_URL:-http://localhost:8080}"
+  base_url: "${BIFROST_BASE_URL:-http://localhost:8090}"
 
   # Integration-specific endpoints (suffixes appended to base_url)
   endpoints:
@@ -22,11 +22,11 @@ bifrost:
 
   # Full URLs constructed as: {base_url.rstrip('/')}/{endpoints[integration]}
   # Examples:
-  # - OpenAI: http://localhost:8080/openai
-  # - Anthropic: http://localhost:8080/anthropic
-  # - Google: http://localhost:8080/genai
-  # - LiteLLM: http://localhost:8080/litellm
-  # - LangChain: http://localhost:8080/langchain
+  # - OpenAI: http://localhost:8090/openai
+  # - Anthropic: http://localhost:8090/anthropic
+  # - Google: http://localhost:8090/genai
+  # - LiteLLM: http://localhost:8090/litellm
+  # - LangChain: http://localhost:8090/langchain
 
 # API Configuration
 api:

@@ -4,7 +4,7 @@ import type { MCPClient } from "@/lib/types/mcp";
 import type { HarnessPlatform, ServerScope } from "./types";
 
 /** Default port Bifrost serves on; used when guessing the gateway URL in local dev. */
-const DEFAULT_BIFROST_PORT = "8080";
+const DEFAULT_BIFROST_PORT = "8090";
 
 /**
  * Resolve the externally reachable Bifrost base URL used in generated commands/configs.

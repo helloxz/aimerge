@@ -21,7 +21,7 @@ config({ path: resolve(__dirname, '../../../../.env') })
 
 // Set default environment variables if not present
 if (!process.env.BIFROST_BASE_URL) {
-  process.env.BIFROST_BASE_URL = 'http://localhost:8080'
+  process.env.BIFROST_BASE_URL = 'http://localhost:8090'
 }
 
 // Log test environment info

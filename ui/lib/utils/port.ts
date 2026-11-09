@@ -24,7 +24,7 @@ function getPortConfig(): PortConfig {
 
 	if (isDevelopment) {
 		// Development mode: Vite dev server runs on different port than Go server
-		const port = process.env.BIFROST_PORT || "8080";
+		const port = process.env.BIFROST_PORT || "8090";
 		return {
 			port,
 			isDevelopment: true,

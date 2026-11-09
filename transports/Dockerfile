@@ -66,7 +66,7 @@
   COPY --from=builder /app/docker-entrypoint.sh .
 
   # Getting arguments
-  ARG ARG_APP_PORT=8080
+  ARG ARG_APP_PORT=8090
   ARG ARG_APP_HOST=0.0.0.0
   ARG ARG_LOG_LEVEL=info
   ARG ARG_LOG_STYLE=json

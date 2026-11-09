@@ -65,18 +65,20 @@ make setup-workspace   # 生成 go.work,把本地模块纳入构建
 make build LOCAL=1     # 构建前端 + 后端,产物在 tmp/bifrost-http
 ```
 
+> 版本号由构建时的 `v*` tag 自动注入(例如 tag `v1.7.0` → 页面左下角显示 `v1.7.0`);当前 checkout 没有版本 tag 时显示 `dev-build`。
+
 ### 运行
 
 ```bash
-./tmp/bifrost-http -app-dir ./bifrost-data -host 0.0.0.0 -port 8080
+./tmp/bifrost-http -app-dir ./bifrost-data -host 0.0.0.0 -port 8090
 ```
 
-浏览器打开 `http://<host>:8080` 即可。配置和日志默认存本地 SQLite(`bifrost-data/config.db`、`logs.db`)。
+浏览器打开 `http://<host>:8090` 即可。配置和日志默认存本地 SQLite(`bifrost-data/config.db`、`logs.db`)。
 
 ### 开发
 
 ```bash
-make dev    # 前端 vite 热更新(3000)+ 后端自动重启(8080)
+make dev    # 前端 vite 热更新(3000)+ 后端自动重启(8090)
 ```
 
 改了 `core/`、`framework/`、`plugins/` 的 Go 代码时,构建务必带 `LOCAL=1`,否则 `GOWORK=off` 会用上游发布版,你的改动不生效。

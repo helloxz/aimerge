@@ -184,7 +184,7 @@ func RunChooser(cfg ChooserConfig) (ChooserResult, error) {
 // values are already provided.
 func newChooserModel(cfg ChooserConfig) chooserModel {
 	base := textInput.New()
-	base.Placeholder = "http://localhost:8080"
+	base.Placeholder = "http://localhost:8090"
 	base.Prompt = ""
 	base.SetValue(strings.TrimSpace(cfg.BaseURL))
 	base.Focus()

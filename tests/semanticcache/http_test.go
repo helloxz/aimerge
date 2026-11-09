@@ -27,7 +27,7 @@ type runConfig struct {
 var cfg runConfig
 
 func loadConfig() {
-	cfg.BifrostURL = strings.TrimRight(getenv("BIFROST_URL", "http://localhost:8080"), "/")
+	cfg.BifrostURL = strings.TrimRight(getenv("BIFROST_URL", "http://localhost:8090"), "/")
 	cfg.OpenAIModel = getenv("SC_CHAT_MODEL_OPENAI", "openai/gpt-4o-mini")
 	cfg.OpenAIModelAlt = getenv("SC_CHAT_MODEL_OPENAI_ALT", "openai/gpt-4o")
 	cfg.OpenAIEmbed = getenv("SC_EMBED_MODEL_OPENAI", "text-embedding-3-small")

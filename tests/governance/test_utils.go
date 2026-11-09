@@ -93,13 +93,13 @@ type APIResponse struct {
 //
 // Overridable so a run can target a gateway other than the default dev one, for
 // example an instance started with provider credentials in scope while a
-// developer's own gateway keeps port 8080. Defaults to the historical value, so
+// developer's own gateway keeps port 8090. Defaults to the historical value, so
 // nothing changes for an unconfigured run.
 func baseURL() string {
 	if override := os.Getenv("BIFROST_TEST_BASE_URL"); override != "" {
 		return strings.TrimSuffix(override, "/")
 	}
-	return "http://localhost:8080"
+	return "http://localhost:8090"
 }
 
 func MakeRequest(t *testing.T, req APIRequest) *APIResponse {

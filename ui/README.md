@@ -34,13 +34,13 @@ pnpm install
 pnpm run dev
 ```
 
-The development server runs on `http://localhost:3000` and connects to your Bifrost HTTP transport backend (default: `http://localhost:8080`).
+The development server runs on `http://localhost:3000` and connects to your Bifrost HTTP transport backend (default: `http://localhost:8090`).
 
 ### Environment Variables
 
 ```bash
 # Development only - customize Bifrost backend port
-BIFROST_PORT=8080
+BIFROST_PORT=8090
 ```
 
 ## Architecture
@@ -67,7 +67,7 @@ BIFROST_PORT=8080
         └────────────────────────────────────────┘
 ```
 
-- **Development**: UI runs on port 3000, connects to Go backend on port 8080
+- **Development**: UI runs on port 3000, connects to Go backend on port 8090
 - **Production**: UI built as static assets served directly by Go HTTP transport
 - **Communication**: REST API + WebSocket for real-time features
 
