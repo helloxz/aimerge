@@ -28,6 +28,9 @@ type Config struct {
 	URL                string
 	ModelParametersURL string
 	SyncInterval       time.Duration
+	// LazyParams skips the bulk model-parameters load and resolves each model
+	// on demand from the config store. Requires a non-nil config store.
+	LazyParams bool
 }
 
 func (c Config) resolved() Config {
@@ -78,13 +81,18 @@ type Store struct {
 	modelParametersURL string
 	syncInterval       time.Duration
 	lastSyncedAt       time.Time
+
+	// lazyParams enables on-demand model-parameter resolution instead of the
+	// startup bulk load. lazyCache is nil when the mode is off.
+	lazyParams bool
+	lazyCache  *lazyParamsCache
 }
 
 // New constructs a Store with the given config. The store is empty; callers
 // (composer) drive bootstrap via LoadFromDB or LoadFromURLIntoMemory.
 func New(configStore configstore.ConfigStore, logger schemas.Logger, cfg Config) *Store {
 	cfg = cfg.resolved()
-	return &Store{
+	s := &Store{
 		configStore:            configStore,
 		logger:                 logger,
 		pricingData:            make(map[string]configstoreTables.TableModelPricing),
@@ -96,6 +104,24 @@ func New(configStore configstore.ConfigStore, logger schemas.Logger, cfg Config)
 		url:                    cfg.URL,
 		modelParametersURL:     cfg.ModelParametersURL,
 		syncInterval:           cfg.SyncInterval,
+		lazyParams:             cfg.LazyParams && configStore != nil,
+	}
+	if s.lazyParams {
+		s.lazyCache = newLazyParamsCache(defaultLazyParamsCacheSize)
+	}
+	return s
+}
+
+// LazyParams reports whether on-demand model-parameter resolution is enabled.
+func (s *Store) LazyParams() bool {
+	return s.lazyParams
+}
+
+// InvalidateParamsCache drops every cached model-parameter lookup. Called after
+// a datasheet sync/reload so the next lookup sees the fresh rows.
+func (s *Store) InvalidateParamsCache() {
+	if s.lazyCache != nil {
+		s.lazyCache.invalidate()
 	}
 }
 
@@ -315,6 +341,13 @@ func (s *Store) DatasheetProviders() []schemas.ModelProvider {
 // IsRequestTypeSupported checks whether a model declares support for the
 // given request type via the model-parameters datasheet.
 func (s *Store) IsRequestTypeSupported(model string, requestType schemas.RequestType) bool {
+	if s.lazyParams {
+		entry := s.lazyParamsForModel(model)
+		if entry == nil || entry.notFound {
+			return false
+		}
+		return slices.Contains(entry.outputs, string(requestType))
+	}
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 	outputs, ok := s.supportedResponseTypes[model]
@@ -324,6 +357,15 @@ func (s *Store) IsRequestTypeSupported(model string, requestType schemas.Request
 // GetSupportedParameters returns the list of OpenAI-compatible parameter
 // names a model accepts (e.g. temperature, top_p, tools). nil for unknown.
 func (s *Store) GetSupportedParameters(model string) []string {
+	if s.lazyParams {
+		entry := s.lazyParamsForModel(model)
+		if entry == nil || entry.notFound {
+			return nil
+		}
+		out := make([]string, len(entry.params))
+		copy(out, entry.params)
+		return out
+	}
 	s.mu.RLock()
 	params, ok := s.supportedParams[model]
 	s.mu.RUnlock()

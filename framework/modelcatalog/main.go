@@ -14,6 +14,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -78,6 +81,15 @@ func Init(ctx context.Context, config *Config, configStore configstore.ConfigSto
 	// are not surprised that setting interval=1h does not mean checks happen every second.
 	logger.Info("pricing sync interval set to %v (scheduler checks every %v)", syncInterval, syncWorkerTickerPeriod)
 
+	lazyModelParameters, lazyEnvErr := resolveLazyModelParameters(config)
+	if lazyEnvErr != nil {
+		logger.Warn("%v", lazyEnvErr)
+	}
+	if lazyModelParameters && configStore == nil {
+		logger.Warn("model parameters lazy mode requires a config store; falling back to full in-memory load")
+		lazyModelParameters = false
+	}
+
 	mc := &ModelCatalog{
 		mcpLibraryURL:          mcpLibraryURL,
 		mcpLibrarySyncInterval: mcpLibrarySyncInterval,
@@ -88,6 +100,7 @@ func Init(ctx context.Context, config *Config, configStore configstore.ConfigSto
 			URL:                pricingURL,
 			ModelParametersURL: modelParametersURL,
 			SyncInterval:       syncInterval,
+			LazyParams:         lazyModelParameters,
 		}),
 		live:    live.New(logger),
 		keyconf: keyconfig.New(logger),
@@ -165,6 +178,24 @@ func Init(ctx context.Context, config *Config, configStore configstore.ConfigSto
 		}()
 		go func() {
 			defer wg.Done()
+			if lazyModelParameters {
+				logger.Info("model parameters lazy mode enabled: startup bulk load skipped, lookups will query the config store on demand")
+				// Do not block startup on the datasheet fetch. Existing DB rows are
+				// served immediately by the lazy cache; the sync refreshes them in
+				// the background and invalidates the cache when it completes.
+				mc.wg.Add(1)
+				go func() {
+					defer mc.wg.Done()
+					if err := mc.withDistributedLock(mc.syncCtx, "model_catalog_params_startup_sync", 10, func() error {
+						return mc.runParamsSync(mc.syncCtx)
+					}); err != nil {
+						logger.Warn("background startup model parameters sync failed: %v", err)
+					} else {
+						logger.Info("background startup model parameters sync completed successfully")
+					}
+				}()
+				return
+			}
 			n, err := mc.datasheet.LoadModelParamsFromDB(ctx)
 			if err != nil {
 				paramsErr = fmt.Errorf("failed to load initial model parameters: %w", err)
@@ -626,4 +657,20 @@ func NewTestCatalogWithDatasheet(ds *datasheet.Store) *ModelCatalog {
 		keyconf:   keyconfig.New(nil),
 		done:      make(chan struct{}),
 	}
+}
+
+// resolveLazyModelParameters returns the effective lazy-model-parameters mode.
+// The environment variable wins over the programmatic config so operators can
+// flip it without editing config.json (and without a config-hash change).
+func resolveLazyModelParameters(config *Config) (bool, error) {
+	lazy := config != nil && config.LazyModelParameters
+	raw := strings.TrimSpace(os.Getenv("BIFROST_LAZY_MODEL_PARAMETERS"))
+	if raw == "" {
+		return lazy, nil
+	}
+	v, err := strconv.ParseBool(raw)
+	if err != nil {
+		return lazy, fmt.Errorf("invalid BIFROST_LAZY_MODEL_PARAMETERS=%q (expected true or false): %w", raw, err)
+	}
+	return v, nil
 }

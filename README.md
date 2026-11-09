@@ -75,6 +75,32 @@ make build LOCAL=1     # 构建前端 + 后端,产物在 tmp/bifrost-http
 
 浏览器打开 `http://<host>:8090` 即可。配置和日志默认存本地 SQLite(`bifrost-data/config.db`、`logs.db`)。
 
+### 懒加载模型参数(可选,省内存)
+
+Bifrost 启动时会把 `governance_model_parameters` 里的全部模型参数(默认约 1.4 万条)解析进内存,用于模型能力和参数查询。只用少量供应商/模型时,这部分常驻内存可以省掉:
+
+```bash
+# 默认 false;设为 true 后,模型参数改为按需查库(512 条 LRU + 负缓存)
+BIFROST_LAZY_MODEL_PARAMETERS=true ./tmp/bifrost-http -app-dir ./bifrost-data -host 0.0.0.0 -port 8090
+
+# Docker
+docker run -e BIFROST_LAZY_MODEL_PARAMETERS=true ...
+```
+
+- 默认关闭;不设置或设为 `false` 时,行为与原来完全一致。
+- 需要配置库(SQLite/Postgres);没有配置库时会自动回退到全量加载。
+- 价格表、`/v1/models`、成本计算和供应商路由不受影响。
+- 首次用到某个模型时按 model 查一行(有唯一索引,亚毫秒级),之后走内存 LRU;查不到的模型负缓存 5 分钟。
+- 启动时仍会在后台同步一次模型参数,前几分钟 RSS 可能短暂到 ~300MB,之后回落;实测 14k 条库空闲从 ~330MB 降到 ~158MB。
+- 可配合 `GOMEMLIMIT` 更快压回,例如 1GiB 容器用 `GOMEMLIMIT=300MiB`。
+- 回滚:去掉该环境变量或设为 `false`,重启即可。
+
+启动日志会出现:
+
+```text
+model parameters lazy mode enabled: startup bulk load skipped, lookups will query the config store on demand
+```
+
 ### 开发
 
 ```bash

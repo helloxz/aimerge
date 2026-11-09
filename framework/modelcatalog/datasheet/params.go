@@ -29,6 +29,13 @@ import (
 // at a time when an unknown model is queried; both paths use the same JSON
 // shape stored in the table.
 func (s *Store) LoadModelParamsFromDB(ctx context.Context) (int, error) {
+	if s.lazyParams {
+		s.InvalidateParamsCache()
+		if s.logger != nil {
+			s.logger.Debug("lazy model parameters enabled; skipping bulk load from database")
+		}
+		return 0, nil
+	}
 	if s.configStore == nil {
 		return 0, nil
 	}
@@ -66,6 +73,13 @@ func (s *Store) SyncModelParamsFromURL(ctx context.Context) error {
 	})
 	if err != nil {
 		if s.configStore != nil {
+			if s.lazyParams {
+				s.InvalidateParamsCache()
+				if s.logger != nil {
+					s.logger.Warn("failed to load model parameters from URL; lazy mode will serve existing database rows: %v", err)
+				}
+				return nil
+			}
 			rows, dbErr := s.configStore.GetModelParameters(ctx)
 			if dbErr == nil && len(rows) > 0 {
 				if s.logger != nil {
@@ -88,6 +102,14 @@ func (s *Store) SyncModelParamsFromURL(ctx context.Context) error {
 		if err := s.configStore.UpsertModelParametersBatch(ctx, records); err != nil {
 			return fmt.Errorf("failed to sync model parameters to database: %w", err)
 		}
+	}
+
+	if s.lazyParams {
+		s.InvalidateParamsCache()
+		if s.logger != nil {
+			s.logger.Info("successfully synced %d model parameters records (lazy mode: in-memory indexes not rebuilt)", len(paramsData))
+		}
+		return nil
 	}
 
 	s.applyModelParameters(paramsData)
@@ -179,8 +201,8 @@ func (s *Store) applyModelParameters(paramsData map[string]json.RawMessage) int 
 	applied := 0
 
 	for model, rawData := range paramsData {
-		var parsed modelParametersParseResult
-		if err := json.Unmarshal(rawData, &parsed); err != nil {
+		params, outputs, mp, err := s.parseModelParameterRow(model, rawData)
+		if err != nil {
 			if s.logger != nil {
 				s.logger.Warn("model-parameters-sync: skipping malformed parameters for model %s: %v", model, err)
 			}
@@ -188,48 +210,14 @@ func (s *Store) applyModelParameters(paramsData map[string]json.RawMessage) int 
 		}
 		applied++
 
-		outputs := make([]string, 0, len(parsed.SupportedEndpoints))
-		for _, endpoint := range parsed.SupportedEndpoints {
-			if normalized := normalizeEndpointToOutputType(endpoint); normalized != "" && !slices.Contains(outputs, normalized) {
-				outputs = append(outputs, normalized)
-			}
-		}
-		if parsed.Mode != nil {
-			if normalized := normalizeModeToOutputType(*parsed.Mode); normalized != "" && !slices.Contains(outputs, normalized) {
-				outputs = append(outputs, normalized)
-			}
-		}
-
-		// Backfill text_completion when the pricing catalog has a row for it
-		// even though supported_endpoints didn't mention /completions.
-		if !slices.Contains(outputs, "text_completion") {
-			if provider := gjson.GetBytes(rawData, "provider"); provider.Exists() {
-				key := makeKey(model, normalizeProvider(provider.String()), normalizeRequestType(schemas.TextCompletionRequest))
-				s.mu.RLock()
-				_, ok := s.pricingData[key]
-				s.mu.RUnlock()
-				if ok {
-					outputs = append(outputs, "text_completion")
-				}
-			}
-		}
-
 		if len(outputs) > 0 {
 			newResponseTypes[model] = outputs
 		}
-
-		if supported := extractSupportedParams(&parsed); len(supported) > 0 {
-			newParamsIndex[model] = supported
+		if len(params) > 0 {
+			newParamsIndex[model] = params
 		}
-
-		var p struct {
-			MaxOutputTokens *int `json:"max_output_tokens"`
-		}
-		if err := json.Unmarshal(rawData, &p); err == nil && (p.MaxOutputTokens != nil || parsed.VertexMultiRegionOnly != nil) {
-			modelParamsEntries[model] = providerUtils.ModelParams{
-				MaxOutputTokens:         p.MaxOutputTokens,
-				IsVertexMultiRegionOnly: parsed.VertexMultiRegionOnly,
-			}
+		if mp != nil {
+			modelParamsEntries[model] = *mp
 		}
 	}
 
@@ -242,6 +230,55 @@ func (s *Store) applyModelParameters(paramsData map[string]json.RawMessage) int 
 		providerUtils.BulkSetModelParams(modelParamsEntries)
 	}
 	return applied
+}
+
+// parseModelParameterRow parses one datasheet row into the same indexes the
+// bulk loader builds. Extracted so the lazy path and applyModelParameters
+// cannot drift.
+func (s *Store) parseModelParameterRow(model string, rawData []byte) (params []string, outputs []string, mp *providerUtils.ModelParams, err error) {
+	var parsed modelParametersParseResult
+	if err := json.Unmarshal(rawData, &parsed); err != nil {
+		return nil, nil, nil, err
+	}
+
+	outputs = make([]string, 0, len(parsed.SupportedEndpoints))
+	for _, endpoint := range parsed.SupportedEndpoints {
+		if normalized := normalizeEndpointToOutputType(endpoint); normalized != "" && !slices.Contains(outputs, normalized) {
+			outputs = append(outputs, normalized)
+		}
+	}
+	if parsed.Mode != nil {
+		if normalized := normalizeModeToOutputType(*parsed.Mode); normalized != "" && !slices.Contains(outputs, normalized) {
+			outputs = append(outputs, normalized)
+		}
+	}
+
+	// Backfill text_completion when the pricing catalog has a row for it
+	// even though supported_endpoints didn't mention /completions.
+	if !slices.Contains(outputs, "text_completion") {
+		if provider := gjson.GetBytes(rawData, "provider"); provider.Exists() {
+			key := makeKey(model, normalizeProvider(provider.String()), normalizeRequestType(schemas.TextCompletionRequest))
+			s.mu.RLock()
+			_, ok := s.pricingData[key]
+			s.mu.RUnlock()
+			if ok {
+				outputs = append(outputs, "text_completion")
+			}
+		}
+	}
+
+	params = extractSupportedParams(&parsed)
+
+	var p struct {
+		MaxOutputTokens *int `json:"max_output_tokens"`
+	}
+	if err := json.Unmarshal(rawData, &p); err == nil && (p.MaxOutputTokens != nil || parsed.VertexMultiRegionOnly != nil) {
+		mp = &providerUtils.ModelParams{
+			MaxOutputTokens:         p.MaxOutputTokens,
+			IsVertexMultiRegionOnly: parsed.VertexMultiRegionOnly,
+		}
+	}
+	return params, outputs, mp, nil
 }
 
 // GetModelParametersByModel reads a single model-parameter row from the DB.

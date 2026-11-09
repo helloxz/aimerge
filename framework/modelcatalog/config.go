@@ -54,6 +54,17 @@ type Config struct {
 	// is the transport's configuration channel, carried here to keep every
 	// catalog cadence in one place.
 	LiveModelsSyncInterval *int64 `json:"live_models_sync_interval,omitempty"` // seconds
+
+	// LazyModelParameters, when true, skips the startup bulk load of the
+	// model-parameters datasheet and resolves a model's capabilities/parameters
+	// from the config store on first use (bounded LRU + negative cache).
+	//
+	// It is process-local and deliberately NOT part of the persisted
+	// framework config: operators opt in with the
+	// BIFROST_LAZY_MODEL_PARAMETERS=true environment variable, so no schema
+	// migration or config-hash change is involved. Programmatic callers
+	// (tests, embedded users) can set it directly.
+	LazyModelParameters bool `json:"-"`
 }
 
 // Type re-exports so external callers can continue importing the legacy
